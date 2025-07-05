@@ -9,6 +9,7 @@ HTTP_METHODS = {"GET", "POST", "PUT", "DELETE", "PATCH"}
 class FastAPIScanner(ast.NodeVisitor):
     """
     Walks Python modules and gathers documentation items for FastAPI:
+      - Module-level docstrings (in visit_Module)
       - Module-level FastAPI() metadata (in visit_Assign)
       - Class docstrings (visit_ClassDef)
       - Both sync & async function docstrings (visit_FunctionDef / visit_AsyncFunctionDef)
@@ -19,6 +20,7 @@ class FastAPIScanner(ast.NodeVisitor):
         self.filename = filename
         self.module = os.path.splitext(os.path.basename(filename))[0]
         self.items: list[DocItem] = []
+        self.module_docstring_processed = False  # Track if we've captured module docstring
         # Read file once for snippets
         with open(filename, "r") as f:
             self.source = f.read()
