@@ -4,8 +4,10 @@ from setuptools import setup, find_packages
 install_requires = [
     "typer>=0.16.0",
     "pandas>=2.3",
-    "streamlit>=1.46",
     "openai>=1.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "python-multipart>=0.0.6",
 ]
 
 dev_requires = [

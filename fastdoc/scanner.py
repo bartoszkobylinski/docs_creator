@@ -49,6 +49,7 @@ class FastAPIScanner(ast.NodeVisitor):
                     docstring=module_doc,
                     description=None,
                     first_lines="",
+                    full_source="",
                     lineno=1,
                     file_path=self.filename,
                     coverage_score=coverage_score,
@@ -82,6 +83,7 @@ class FastAPIScanner(ast.NodeVisitor):
                         docstring=str(kw.value.value),     # the literal value
                         description=None,
                         first_lines="",
+                        full_source="",
                         lineno=node.lineno,
                         file_path=self.filename
                     ))
@@ -108,6 +110,7 @@ class FastAPIScanner(ast.NodeVisitor):
                         docstring=str(kw.value.value),
                         description=None,
                         first_lines="",
+                        full_source="",
                         lineno=node.lineno,
                         file_path=self.filename
                     ))
@@ -130,6 +133,7 @@ class FastAPIScanner(ast.NodeVisitor):
                         docstring=None,
                         description=f"Middleware: {middleware_info['middleware_class']}",
                         first_lines="",
+                        full_source="",
                         lineno=node.lineno,
                         file_path=self.filename
                     ))
@@ -147,6 +151,7 @@ class FastAPIScanner(ast.NodeVisitor):
                         docstring=None,
                         description=f"Router inclusion: {router_info['router_name']}",
                         first_lines="",
+                        full_source="",
                         lineno=node.lineno,
                         file_path=self.filename,
                         tags=router_info.get('tags', [])
@@ -236,6 +241,9 @@ class FastAPIScanner(ast.NodeVisitor):
         if is_pydantic_model:
             pydantic_fields = self._extract_pydantic_fields(node)
         
+        # Get full source code for the class
+        class_full_source = ast.get_source_segment(self.source, node) or ""
+        
         # Calculate coverage score
         class_data = {
             'method': method_type,
@@ -252,6 +260,7 @@ class FastAPIScanner(ast.NodeVisitor):
             docstring=class_doc,
             description=None,
             first_lines="",
+            full_source=class_full_source,
             lineno=node.lineno,
             file_path=self.filename,
             param_types=pydantic_fields,  # Reuse param_types for Pydantic field types
@@ -267,6 +276,7 @@ class FastAPIScanner(ast.NodeVisitor):
                 if nested_node.name == "Config" and is_pydantic_model:
                     config_info = self._extract_pydantic_config(nested_node)
                     if config_info:
+                        config_full_source = ast.get_source_segment(self.source, nested_node) or ""
                         self.items.append(DocItem(
                             module=self.module,
                             qualname=qualified_name + ".Config",
@@ -276,6 +286,7 @@ class FastAPIScanner(ast.NodeVisitor):
                             docstring=ast.get_docstring(nested_node),
                             description=None,
                             first_lines="",
+                            full_source=config_full_source,
                             lineno=nested_node.lineno,
                             file_path=self.filename
                         ))
@@ -1053,9 +1064,10 @@ class FastAPIScanner(ast.NodeVisitor):
         func_doc = ast.get_docstring(node)
         sig = ast.unparse(node.args)
 
-        # Source snippet: lines 2–6 of the function
-        segment = ast.get_source_segment(self.source, node) or ""
-        snippet = "\n".join(segment.splitlines()[1:6])
+        # Full source code of the function
+        full_source = ast.get_source_segment(self.source, node) or ""
+        # Also keep the snippet for backward compatibility
+        snippet = "\n".join(full_source.splitlines()[1:6]) if full_source else ""
 
         # Parse docstring for parameter validation
         documented_params, has_return_doc = self._parse_docstring_params(func_doc)
@@ -1115,6 +1127,7 @@ class FastAPIScanner(ast.NodeVisitor):
             docstring=func_doc,
             description=None,
             first_lines=snippet,
+            full_source=full_source,
             lineno=node.lineno,
             file_path=self.filename,
             documented_params=documented_params,
@@ -1223,6 +1236,7 @@ class FastAPIScanner(ast.NodeVisitor):
                         docstring=func_doc,
                         description=desc if desc is not None else summary,
                         first_lines=snippet,
+                        full_source=full_source,
                         lineno=node.lineno,
                         file_path=self.filename,
                         documented_params=documented_params,
@@ -1264,10 +1278,53 @@ class FastAPIScanner(ast.NodeVisitor):
         self.generic_visit(node)
 
 
+def should_skip_file(path: str) -> bool:
+    """
+    Check if a file should be skipped from documentation analysis.
+    """
+    import os
+    
+    filename = os.path.basename(path)
+    
+    # Skip migration files (Alembic, Django, etc.)
+    if 'migration' in path.lower() or 'migrations' in path.lower():
+        return True
+    
+    # Skip files that look like migration files (start with timestamp/hash)
+    if re.match(r'^[0-9a-f]{12}_.*\.py$', filename):
+        return True
+    
+    # Skip __pycache__ and other cache directories
+    if '__pycache__' in path:
+        return True
+    
+    # Skip test files if they're in a tests directory
+    if '/tests/' in path and filename.startswith('test_'):
+        return True
+    
+    # Skip __init__.py files (usually just imports)
+    if filename == '__init__.py':
+        return True
+    
+    # Skip setup.py, conftest.py, and other common non-API files
+    if filename in ['setup.py', 'conftest.py', 'manage.py']:
+        return True
+    
+    # Skip files starting with _ (private/internal)
+    if filename.startswith('_') and filename != '__init__.py':
+        return True
+    
+    return False
+
+
 def scan_file(path: str):
     """
     Parse `path`, walk its AST with FastAPIScanner, and return List[DocItem].
+    Skip files that shouldn't be documented.
     """
+    if should_skip_file(path):
+        return []
+    
     source = open(path, "r").read()
     tree = ast.parse(source)
     scanner = FastAPIScanner(path)

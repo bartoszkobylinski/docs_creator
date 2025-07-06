@@ -4,6 +4,7 @@ import json
 import streamlit as st
 import pandas as pd
 from typing import Dict, Any, Optional
+from pathlib import Path
 
 # Import our enhanced patcher
 from scripts.patcher import (
@@ -157,211 +158,150 @@ def init_session_state():
 def main():
     init_session_state()
     
-    st.title("🚀 FastAPI Documentation Assistant")
+    st.title("FastAPI Documentation Assistant")
     st.markdown("*Analyze, edit, and enhance your FastAPI project documentation with AI assistance*")
     
     # ————————————— Sidebar Configuration ————————————— #
     with st.sidebar:
-        st.header("📂 Project Setup")
+        st.header("Project Setup")
         
-        # Project source selection
-        scan_mode = st.radio(
-            "Choose how to load your project:",
-            ["📁 Browse for project folder", "📄 Use existing report file"],
-            help="Either scan a new project or load a previously generated report"
+        # Simple folder browser
+        st.markdown("**Browse for Project Folder**")
+        
+        # Method 1: Upload files from project folder
+        st.markdown("**Option 1: Upload files from your project**")
+        uploaded_files = st.file_uploader(
+            "Select Python files from your project folder",
+            type=['py'],
+            accept_multiple_files=True,
+            help="Select all .py files from your FastAPI project"
         )
         
-        if scan_mode == "📁 Browse for project folder":
-            st.markdown("**Step 1: Select Project Folder**")
-            project_path = st.text_input(
-                "FastAPI Project Path",
-                value="project",
-                help="Path to your FastAPI project folder (e.g., /path/to/my-fastapi-app)"
-            )
+        # Method 2: Manual path input  
+        st.markdown("**Option 2: Enter folder path manually**")
+        project_path = st.text_input(
+            "Project folder path:",
+            value="",
+            placeholder="/path/to/your/project",
+            help="Type the full path to your project folder"
+        )
+        
+        # Clean up the path (remove file:// prefix from drag & drop)
+        if project_path:
+            project_path = project_path.strip()
+            if project_path.startswith('file://'):
+                project_path = project_path[7:]  # Remove 'file://' prefix
+            # Handle URL encoding (spaces become %20, etc.)
+            import urllib.parse
+            project_path = urllib.parse.unquote(project_path)
+        
+        # Determine scan method and path
+        scan_path = None
+        scan_method = None
+        
+        if uploaded_files:
+            # Create temporary directory for uploaded files
+            import tempfile
+            import shutil
             
-            # Quick folder suggestions
-            if st.button("💡 Browse Current Directory"):
-                current_folders = [d for d in os.listdir('.') if os.path.isdir(d) and not d.startswith('.')]
-                if current_folders:
-                    st.info("📁 Folders found in current directory:")
-                    for folder in current_folders[:5]:  # Show first 5
-                        if st.button(f"📂 {folder}", key=f"folder_{folder}"):
-                            st.session_state.project_path_input = folder
-                            st.rerun()
+            temp_dir = tempfile.mkdtemp()
             
-            # Validate project path
-            if project_path and os.path.exists(project_path):
-                st.success(f"✅ Found project folder: `{project_path}`")
+            # Save uploaded files
+            for uploaded_file in uploaded_files:
+                # Create subdirectories if needed
+                file_path = os.path.join(temp_dir, uploaded_file.name)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
                 
-                # Show detected Python files
-                py_files = []
-                for root, _, files in os.walk(project_path):
-                    for file in files:
-                        if file.endswith('.py'):
-                            py_files.append(os.path.relpath(os.path.join(root, file), project_path))
+                with open(file_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+            
+            scan_path = temp_dir
+            scan_method = "uploaded"
+            st.success(f"Uploaded {len(uploaded_files)} Python files")
+            
+        elif project_path and os.path.exists(project_path):
+            scan_path = project_path
+            scan_method = "folder"
+            
+            # Show project summary
+            py_files = []
+            for root, _, files in os.walk(project_path):
+                for file in files:
+                    if file.endswith('.py'):
+                        py_files.append(os.path.relpath(os.path.join(root, file), project_path))
+            
+            if py_files:
+                st.success(f"Ready to scan {len(py_files)} Python files")
+            else:
+                st.warning("No Python files found in this directory")
                 
-                if py_files:
-                    st.info(f"🐍 Found {len(py_files)} Python files")
-                    with st.expander("📋 Show detected files"):
-                        for py_file in py_files[:10]:  # Show first 10
-                            st.text(f"• {py_file}")
-                        if len(py_files) > 10:
-                            st.text(f"... and {len(py_files) - 10} more files")
-                            
-                    # Check for FastAPI indicators
-                    fastapi_indicators = []
-                    for py_file in py_files[:20]:  # Check first 20 files
-                        try:
-                            full_path = os.path.join(project_path, py_file)
-                            with open(full_path, 'r', encoding='utf-8') as f:
-                                content = f.read()
-                                if 'FastAPI' in content or '@app.' in content or '@router.' in content:
-                                    fastapi_indicators.append(py_file)
-                        except:
-                            pass
+        elif project_path:
+            st.error(f"Project folder not found: {project_path}")
+            st.info("Make sure the path exists and is accessible")
+        
+        # Simple scan button
+        if scan_path and st.button("Scan Project Now", type="primary", use_container_width=True):
+            with st.spinner("Scanning project for documentation..."):
+                try:
+                    from fastdoc.scanner import scan_file
+                    import json
+                    all_items = []
                     
-                    if fastapi_indicators:
-                        st.success(f"🚀 FastAPI detected in {len(fastapi_indicators)} files")
-                    else:
-                        st.warning("⚠️ No FastAPI code detected - scanning will still work for regular Python")
-                else:
-                    st.warning("⚠️ No Python files found in this directory")
-                
-                # Scan button
-                st.markdown("**Step 2: Scan Project**")
-                col1, col2 = st.columns([2, 1])
-                with col1:
-                    scan_button = st.button("🔍 Scan Project Now", type="primary", use_container_width=True)
-                with col2:
-                    if st.button("🔄 Refresh", use_container_width=True):
-                        st.rerun()
-                
-                if scan_button:
-                    with st.spinner("Scanning project for documentation..."):
+                    # Simple progress
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    # Get all Python files
+                    py_files_full = []
+                    for root, _, files in os.walk(scan_path):
+                        for file in files:
+                            if file.endswith('.py'):
+                                py_files_full.append(os.path.join(root, file))
+                    
+                    # Scan files
+                    for i, file_path in enumerate(py_files_full):
                         try:
-                            from fastdoc.scanner import scan_file
-                            import json
-                            all_items = []
+                            rel_path = os.path.relpath(file_path, scan_path)
+                            status_text.text(f"Scanning: {rel_path}")
                             
-                            # Create progress tracking
-                            progress_bar = st.progress(0)
-                            status_text = st.empty()
-                            results_container = st.container()
+                            items = scan_file(file_path)
+                            all_items.extend(items)
                             
-                            # Get all Python files
-                            py_files_full = []
-                            for root, _, files in os.walk(project_path):
-                                for file in files:
-                                    if file.endswith('.py'):
-                                        py_files_full.append(os.path.join(root, file))
-                            
-                            # Scan files with progress updates
-                            scanned_files = 0
-                            error_files = []
-                            
-                            for i, file_path in enumerate(py_files_full):
-                                try:
-                                    rel_path = os.path.relpath(file_path, project_path)
-                                    status_text.text(f"📄 Scanning: {rel_path}")
-                                    
-                                    items = scan_file(file_path)
-                                    all_items.extend(items)
-                                    scanned_files += 1
-                                    
-                                    # Update progress
-                                    progress = (i + 1) / len(py_files_full)
-                                    progress_bar.progress(progress)
-                                    
-                                except Exception as e:
-                                    error_files.append((file_path, str(e)))
-                                    st.warning(f"⚠️ Error scanning {os.path.basename(file_path)}: {str(e)}")
-                            
-                            # Save report
-                            report_path = "comprehensive_report.json"
-                            with open(report_path, 'w') as f:
-                                json.dump([item.__dict__ for item in all_items], f, indent=2)
-                            
-                            # Show results
-                            progress_bar.progress(1.0)
-                            status_text.text("✅ Scan completed!")
-                            
-                            # Success summary
-                            with results_container:
-                                st.success(f"🎉 Successfully scanned {scanned_files}/{len(py_files_full)} files!")
-                                st.info(f"📊 Found {len(all_items)} documentation items")
-                                st.info(f"💾 Report saved to: `{report_path}`")
-                                
-                                if error_files:
-                                    st.warning(f"⚠️ {len(error_files)} files had errors:")
-                                    for error_file, error_msg in error_files[:3]:  # Show first 3 errors
-                                        st.text(f"• {os.path.basename(error_file)}: {error_msg}")
-                                
-                                # Auto-switch to the new report
-                                if st.button("📋 View Results Now", type="secondary"):
-                                    st.session_state.scan_mode = "📄 Use existing report file"
-                                    st.rerun()
+                            progress = (i + 1) / len(py_files_full)
+                            progress_bar.progress(progress)
                             
                         except Exception as e:
-                            st.error(f"❌ Scanning failed: {str(e)}")
-                            st.info("💡 Try using the terminal command: `make scan PROJECT_DIR=your_path`")
-                            st.code(f"make scan PROJECT_DIR={project_path}")
-            
-            elif project_path:
-                st.error(f"❌ Project folder not found: `{project_path}`")
-                st.info("💡 Tips:")
-                st.info("• Use absolute paths like `/Users/your-name/my-project`")
-                st.info("• Or relative paths like `../my-fastapi-app`")
-                st.info("• Make sure the folder exists and contains Python files")
-                
-                # Suggest similar folders
-                parent_dir = os.path.dirname(project_path) if os.path.dirname(project_path) else '.'
-                if os.path.exists(parent_dir):
-                    similar_folders = [d for d in os.listdir(parent_dir) 
-                                     if os.path.isdir(os.path.join(parent_dir, d)) 
-                                     and not d.startswith('.')]
-                    if similar_folders:
-                        st.info("📁 Folders in parent directory:")
-                        for folder in similar_folders[:5]:
-                            st.text(f"• {folder}")
-            
-            # Set default paths for new scans
-            report_path = "comprehensive_report.json"
-            base_path = project_path if project_path else "."
+                            st.warning(f"Error scanning {os.path.basename(file_path)}: {str(e)}")
+                    
+                    # Save report
+                    report_path = "comprehensive_report.json"
+                    with open(report_path, 'w') as f:
+                        json.dump([item.__dict__ for item in all_items], f, indent=2)
+                    
+                    # Show results
+                    progress_bar.progress(1.0)
+                    status_text.text("Scan completed successfully")
+                    
+                    st.success(f"Found {len(all_items)} documentation items")
+                    st.info(f"Report saved to: {report_path}")
+                    
+                    # Auto-reload the page to show results
+                    st.session_state.report_generated = True
+                    st.rerun()
+                    
+                except Exception as e:
+                    st.error(f"Scanning failed: {str(e)}")
+                    st.info("Try using the terminal command instead:")
+                    st.code(f"make scan PROJECT_DIR={scan_path}")
         
-        else:  # Use existing report file
-            st.markdown("**Load Existing Report**")
-            report_path = st.text_input(
-                "Report JSON Path", 
-                value="comprehensive_report.json",
-                help="Path to a previously generated JSON report"
-            )
-            
-            # File browser alternative
-            st.markdown("**Or upload report file:**")
-            uploaded_file = st.file_uploader(
-                "Upload Report File",
-                type=['json'],
-                help="Upload a .json report file generated by the scanner"
-            )
-            
-            if uploaded_file is not None:
-                # Save uploaded file temporarily
-                report_path = f"uploaded_report_{uploaded_file.name}"
-                with open(report_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                st.success(f"✅ Uploaded report: `{report_path}`")
-            
-            # Base path for relative file paths
-            base_path = st.text_input(
-                "Project Base Path",
-                value=".",
-                help="Base directory for resolving relative file paths in the report"
-            )
+        # Set default paths for scanning
+        report_path = "comprehensive_report.json"
+        base_path = scan_path if scan_path else "."
         
         st.markdown("---")
         
         # OpenAI configuration
-        st.header("🤖 AI Assistant")
+        st.header("AI Assistant")
         openai_enabled = st.checkbox(
             "Enable OpenAI Suggestions", 
             value=OPENAI_AVAILABLE,
@@ -380,21 +320,20 @@ def main():
             
             if api_key_input:
                 os.environ["OPENAI_API_KEY"] = api_key_input
-                st.success("🔑 API key configured")
+                st.success("API key configured")
             elif not os.getenv("OPENAI_API_KEY"):
-                st.warning("⚠️ OpenAI API key required for AI features")
-                st.info("💡 Get your API key from: https://platform.openai.com/api-keys")
+                st.warning("OpenAI API key required for AI features")
+                st.info("Get your API key from: https://platform.openai.com/api-keys")
         
         # Advanced settings
-        with st.expander("⚙️ Advanced Settings"):
+        with st.expander("Advanced Settings"):
             create_backups = st.checkbox("Create file backups", value=True, help="Create backup files before patching")
             validate_syntax = st.checkbox("Validate syntax", value=True, help="Validate docstring syntax before applying")
             docstring_style = st.selectbox("Docstring style preference", ["Auto-detect", "Google", "NumPy", "Sphinx"], help="Preferred docstring format")
     
     # ————————————— Load and Validate Data ————————————— #
     if not report_path or not os.path.exists(report_path):
-        st.warning(f"📄 Report file not found: {report_path}")
-        st.info("1. Run the scanner to generate a report\n2. Specify the correct path above")
+        st.info("Select a project folder and click 'Scan Project Now' to get started")
         return
     
     df = load_items(report_path)
@@ -406,7 +345,7 @@ def main():
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.header("📊 Documentation Overview")
+        st.header("Documentation Overview")
         
         # Method type filter
         methods = ["All"] + sorted(df["method"].unique().tolist())
@@ -445,7 +384,7 @@ def main():
         filtered_df = filtered_df[filtered_df["has_doc"]]
     
     # ————————————— Data Table ————————————— #
-    st.header("📋 Documentation Items")
+    st.header("Documentation Items")
     
     if filtered_df.empty:
         st.info("No items match the current filters")
@@ -465,7 +404,7 @@ def main():
         display_df,
         use_container_width=True,
         column_config={
-            "has_doc": st.column_config.CheckboxColumn("📝 Has Doc"),
+            "has_doc": st.column_config.CheckboxColumn("Has Documentation"),
             "coverage_score": st.column_config.ProgressColumn(
                 "Coverage %", 
                 min_value=0, 
@@ -480,7 +419,7 @@ def main():
     )
     
     # ————————————— Item Editor ————————————— #
-    st.header("✏️ Documentation Editor")
+    st.header("Documentation Editor")
     
     # Item selection
     if not filtered_df.empty:
@@ -506,7 +445,7 @@ def main():
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            st.markdown("**📁 Item Information**")
+            st.markdown("**Item Information**")
             st.markdown(f"**Module:** `{item.module}`")
             st.markdown(f"**Name:** `{item.qualname}`")
             st.markdown(f"**Type:** `{item.method}`")
@@ -520,7 +459,7 @@ def main():
                 st.markdown(f"**Quality:** {item.quality_score:.1f}%")
         
         with col2:
-            st.markdown("**🔍 Source Preview**")
+            st.markdown("**Source Preview**")
             source_preview = item.first_lines or "No source preview available"
             st.code(source_preview, language="python", line_numbers=True)
         
@@ -531,7 +470,7 @@ def main():
         current_doc = item.docstring or ""
         
         # Editor tabs
-        tab1, tab2, tab3 = st.tabs(["✍️ Manual Edit", "🤖 AI Assistant", "👀 Preview"])
+        tab1, tab2, tab3 = st.tabs(["Manual Edit", "AI Assistant", "Preview"])
         
         with tab1:
             st.markdown("**Edit Docstring Manually**")
@@ -549,9 +488,9 @@ def main():
             if new_docstring.strip():
                 validation = validate_docstring_syntax(new_docstring)
                 if validation["valid"]:
-                    st.success("✅ Docstring syntax is valid")
+                    st.success("Docstring syntax is valid")
                 else:
-                    st.error(f"❌ {validation['message']}")
+                    st.error(f"Syntax error: {validation['message']}")
         
         with tab2:
             st.markdown("**AI-Powered Docstring Generation**")
@@ -562,7 +501,7 @@ def main():
                 col1, col2 = st.columns([1, 1])
                 
                 with col1:
-                    if st.button("🎯 Generate Suggestion", type="primary"):
+                    if st.button("Generate Suggestion", type="primary"):
                         with st.spinner("Generating docstring suggestion..."):
                             suggestion = generate_docstring_with_openai(
                                 item.file_path, 
@@ -575,7 +514,7 @@ def main():
                 
                 # Show suggestion if available
                 if st.session_state.show_llm_suggestion and st.session_state.llm_suggestion:
-                    st.markdown("**🤖 AI Suggestion:**")
+                    st.markdown("**AI Suggestion:**")
                     
                     suggestion_text = st.text_area(
                         "Review and edit the AI suggestion",
@@ -586,18 +525,18 @@ def main():
                     
                     col1, col2 = st.columns([1, 1])
                     with col1:
-                        if st.button("✅ Accept Suggestion"):
+                        if st.button("Accept Suggestion"):
                             new_docstring = suggestion_text
                             st.success("AI suggestion accepted!")
                     
                     with col2:
-                        if st.button("❌ Reject Suggestion"):
+                        if st.button("Reject Suggestion"):
                             st.session_state.show_llm_suggestion = False
                             st.session_state.llm_suggestion = ""
                             st.info("Suggestion rejected")
         
         with tab3:
-            st.markdown("**📖 Docstring Preview**")
+            st.markdown("**Docstring Preview**")
             
             # Determine which docstring to preview
             preview_doc = ""
@@ -627,7 +566,7 @@ def main():
             elif st.session_state.show_llm_suggestion and 'suggestion_text' in locals():
                 final_docstring = suggestion_text
             
-            if st.button("💾 Save Docstring", type="primary"):
+            if st.button("Save Docstring", type="primary"):
                 if final_docstring.strip():
                     # Apply the patch
                     result = apply_docitem_patch(
@@ -638,29 +577,29 @@ def main():
                     )
                     
                     if result["success"]:
-                        st.success(f"✅ {result['message']}")
+                        st.success(f"Success: {result['message']}")
                         if result["backup_path"]:
-                            st.info(f"💾 Backup created: {result['backup_path']}")
+                            st.info(f"Backup created: {result['backup_path']}")
                         
                         # Clear session state
                         st.session_state.show_llm_suggestion = False
                         st.session_state.llm_suggestion = ""
                         
                         # Suggest rerun to refresh data
-                        st.info("🔄 Refresh the page to see updated coverage metrics")
+                        st.info("Refresh the page to see updated coverage metrics")
                     else:
-                        st.error(f"❌ {result['message']}")
+                        st.error(f"Error: {result['message']}")
                 else:
-                    st.warning("⚠️ Cannot save empty docstring")
+                    st.warning("Cannot save empty docstring")
         
         with col2:
-            if st.button("🔄 Reset to Original"):
+            if st.button("Reset to Original"):
                 st.session_state.show_llm_suggestion = False
                 st.session_state.llm_suggestion = ""
                 st.info("Reset to original docstring")
         
         with col3:
-            if st.button("⏭️ Next Undocumented"):
+            if st.button("Next Undocumented"):
                 # Find next undocumented item
                 undocumented = filtered_df[~filtered_df["has_doc"]]
                 if not undocumented.empty:
@@ -668,7 +607,7 @@ def main():
                     st.session_state.selected_item_idx = next_idx
                     st.experimental_rerun()
                 else:
-                    st.info("🎉 All items in current filter are documented!")
+                    st.info("All items in current filter are documented!")
 
 if __name__ == "__main__":
     main()

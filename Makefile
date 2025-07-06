@@ -1,7 +1,8 @@
-PROJECT_DIR ?= project
+PROJECT_DIR ?= ./project
 REPORT_FILE ?= comprehensive_report.json
+EXTERNAL_PROJECT_DIR ?=
 
-.PHONY: help install scan dashboard run-assistant test clean
+.PHONY: help install scan scan-verbose scan-external frontend frontend-dev run-assistant test clean docker-build docker-up docker-down
 
 help:  ## Show this help message
 	@echo "FastAPI Documentation Assistant"
@@ -11,15 +12,15 @@ help:  ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 install:  ## Install dependencies with Poetry (fallback to pip if Poetry fails)
-	@echo "🔧 Installing dependencies..."
+	@echo "Installing dependencies..."
 	@if command -v poetry >/dev/null 2>&1; then \
 		echo "Using Poetry..."; \
-		poetry install || (echo "⚠️ Poetry failed, falling back to pip..."; pip install -e .); \
+		poetry install || (echo "Poetry failed, falling back to pip..."; pip install typer fastapi uvicorn); \
 	else \
 		echo "Poetry not found, using pip..."; \
-		pip install -e .; \
+		pip install typer fastapi uvicorn; \
 	fi
-	@echo "✅ Dependencies installed"
+	@echo "Dependencies installed"
 
 install-dev:  ## Install development dependencies
 	@echo "🔧 Installing development dependencies..."
@@ -31,21 +32,77 @@ install-dev:  ## Install development dependencies
 	@echo "✅ Development dependencies installed"
 
 install-pip:  ## Install using pip only
-	@echo "🔧 Installing with pip..."
-	pip install -e .
-	@echo "✅ Dependencies installed via pip"
+	@echo "Installing with pip..."
+	pip install typer fastapi uvicorn
+	@echo "Dependencies installed via pip"
 
 scan:  ## Scan FastAPI project for documentation analysis
-	@echo "🔍 Scanning project: $(PROJECT_DIR)"
-	python -c "from fastdoc.scanner import scan_file; import json, os; \
-	all_items = []; \
-	[all_items.extend(scan_file(os.path.join(root, fn))) for root, _, files in os.walk('$(PROJECT_DIR)') for fn in files if fn.endswith('.py')]; \
-	open('$(REPORT_FILE)', 'w').write(json.dumps([item.__dict__ for item in all_items], indent=2)); \
-	print(f'✅ Generated report with {len(all_items)} items -> $(REPORT_FILE)')"
+	@if [ -n "$(EXTERNAL_PROJECT_DIR)" ]; then \
+		echo "Scanning external project: $(EXTERNAL_PROJECT_DIR)"; \
+		docker run --rm -v "$(EXTERNAL_PROJECT_DIR):/app/external_project:ro" -v "$(PWD)/reports:/app/reports" \
+			$$(docker-compose config --services | head -1) \
+			python fastdoc/cli.py /app/external_project --out /app/reports/$(REPORT_FILE); \
+	else \
+		echo "Scanning default project: $(PROJECT_DIR)"; \
+		docker-compose --profile scanner run --rm docs-scanner; \
+	fi
 
-dashboard:  ## Launch Streamlit documentation dashboard
-	@echo "🚀 Launching documentation dashboard..."
-	streamlit run scripts/streamlit_app.py --theme.base light
+scan-verbose:  ## Scan project with verbose output
+	@if [ -n "$(EXTERNAL_PROJECT_DIR)" ]; then \
+		echo "Scanning external project: $(EXTERNAL_PROJECT_DIR) (verbose)"; \
+		docker run --rm -v "$(EXTERNAL_PROJECT_DIR):/app/external_project:ro" -v "$(PWD)/reports:/app/reports" \
+			$$(docker-compose config --services | head -1) \
+			python fastdoc/cli.py /app/external_project --out /app/reports/$(REPORT_FILE) --verbose; \
+	else \
+		echo "Scanning default project: $(PROJECT_DIR) (verbose)"; \
+		docker-compose --profile scanner run --rm docs-scanner; \
+	fi
+
+scan-external:  ## Scan external project directory (usage: make scan-external EXTERNAL_PROJECT_DIR=/path/to/project)
+	@if [ -z "$(EXTERNAL_PROJECT_DIR)" ]; then \
+		echo "Error: Please specify EXTERNAL_PROJECT_DIR"; \
+		echo "Usage: make scan-external EXTERNAL_PROJECT_DIR=/path/to/your/project"; \
+		exit 1; \
+	fi
+	@echo "Scanning external project: $(EXTERNAL_PROJECT_DIR)"
+	@if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then \
+		echo "Using Docker for scanning..."; \
+		docker run --rm \
+			-v "$(EXTERNAL_PROJECT_DIR):/app/external_project:ro" \
+			-v "$(PWD)/reports:/app/reports" \
+			$$(docker build -q .) \
+			python fastdoc/cli.py /app/external_project --out /app/reports/$(REPORT_FILE) --verbose; \
+	else \
+		echo "Docker not available, using local Python..."; \
+		mkdir -p reports; \
+		PYTHONPATH=$$PWD python fastdoc/cli.py "$(EXTERNAL_PROJECT_DIR)" --out reports/$(REPORT_FILE) --verbose; \
+	fi
+
+scan-local:  ## Scan project using local Python (no Docker required)
+	@if [ -z "$(EXTERNAL_PROJECT_DIR)" ]; then \
+		echo "Error: Please specify EXTERNAL_PROJECT_DIR"; \
+		echo "Usage: make scan-local EXTERNAL_PROJECT_DIR=/path/to/your/project"; \
+		exit 1; \
+	fi
+	@echo "Scanning project locally: $(EXTERNAL_PROJECT_DIR)"
+	@mkdir -p reports
+	PYTHONPATH=$$PWD python fastdoc/cli.py "$(EXTERNAL_PROJECT_DIR)" --out reports/$(REPORT_FILE) --verbose
+
+frontend:  ## Launch HTML frontend with FastAPI backend (using Docker)
+	@echo "Starting FastAPI Documentation Assistant..."
+	@echo "Frontend: http://localhost:8200"
+	@echo "API docs: http://localhost:8200/docs"
+	@mkdir -p reports backups
+	docker run --rm -p 8200:8200 \
+		-v "$(PWD)/reports:/app/reports" \
+		-v "$(PWD)/backups:/app/backups" \
+		$$(docker build -q .) \
+		uvicorn api:app --host 0.0.0.0 --port 8200 --reload
+
+frontend-dev:  ## Launch frontend for development (direct host)
+	@echo "Starting frontend in development mode..."
+	@echo "Frontend: http://localhost:8200"
+	uvicorn api:app --host 0.0.0.0 --port 8200 --reload
 
 run-assistant:  ## Run complete documentation assistant workflow
 	@echo "🎯 Starting FastAPI Documentation Assistant"
@@ -71,21 +128,28 @@ docker-build:  ## Build Docker image
 	docker build -t fastapi-docs-assistant .
 
 docker-run:  ## Run Docker container
-	@echo "🐳 Running Docker container"
-	docker run -p 8501:8501 -v $(PWD):/workspace fastapi-docs-assistant
+	@echo "Running Docker container"
+	docker run -p 8200:8200 -v $(PWD):/workspace fastapi-docs-assistant
 
-docker-compose-up:  ## Start services with docker-compose
-	@echo "🐳 Starting services with docker-compose"
+docker-up:  ## Start services with docker-compose
+	@echo "Starting services with docker-compose"
+	@mkdir -p reports backups
 	docker-compose up --build
 
-docker-compose-down:  ## Stop docker-compose services
-	@echo "🐳 Stopping docker-compose services"
+docker-down:  ## Stop docker-compose services
+	@echo "Stopping docker-compose services"
 	docker-compose down
+
+docker-compose-up:  ## Start services with docker-compose (alias)
+	make docker-up
+
+docker-compose-down:  ## Stop docker-compose services (alias)
+	make docker-down
 
 # Environment setup
 check-env:  ## Check environment setup
 	@echo "🔍 Checking environment"
-	@python -c "import sys; print(f'Python: {sys.version}'); import streamlit; print(f'Streamlit: {streamlit.__version__}'); import pandas; print(f'Pandas: {pandas.__version__}')"
+	@python -c "import sys; print(f'Python: {sys.version}'); import fastapi; print(f'FastAPI: {fastapi.__version__}'); import uvicorn; print(f'Uvicorn: {uvicorn.__version__}'); import pandas; print(f'Pandas: {pandas.__version__}')"
 	@if [ -n "$$OPENAI_API_KEY" ]; then echo "✅ OPENAI_API_KEY is set"; else echo "⚠️  OPENAI_API_KEY not set (optional)"; fi
 
 # Development commands

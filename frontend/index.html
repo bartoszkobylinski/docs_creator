@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Documentation Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FastAPI Documentation Assistant</h1>
+            <p>Analyze, edit, and enhance your FastAPI project documentation</p>
+        </header>
+
+        <main>
+            <!-- Project Selection Section -->
+            <section class="section" id="project-section">
+                <h2>Project Setup</h2>
+                
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-content">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drop your project folder here</h3>
+                        <p>Or click to browse for Python files</p>
+                        <input type="file" id="file-input" webkitdirectory multiple accept=".py">
+                        <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                            Browse Project Folder
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-info" id="project-info" style="display: none;">
+                    <h3>Project Details</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Project Path:</span>
+                            <span id="project-path"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Python Files:</span>
+                            <span id="file-count"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">FastAPI Detected:</span>
+                            <span id="fastapi-status"></span>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" id="scan-btn" onclick="scanProject()">
+                        Scan Project Now
+                    </button>
+                </div>
+            </section>
+
+            <!-- Scanning Progress -->
+            <section class="section" id="scanning-section" style="display: none;">
+                <h2>Scanning Project</h2>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progress-percentage">0%</span>
+                        <span id="current-file"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="section" id="results-section" style="display: none;">
+                <h2>Documentation Overview</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="total-items">0</h3>
+                        <p>Total Items</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="documented-items">0</h3>
+                        <p>Documented</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="missing-docs">0</h3>
+                        <p>Missing Docs</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="coverage-percent">0%</h3>
+                        <p>Coverage</p>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <select id="type-filter">
+                        <option value="">All Types</option>
+                        <option value="FUNCTION">Functions</option>
+                        <option value="CLASS">Classes</option>
+                        <option value="ENDPOINT">Endpoints</option>
+                        <option value="MODULE">Modules</option>
+                    </select>
+                    
+                    <select id="doc-filter">
+                        <option value="">All Items</option>
+                        <option value="missing">Missing Documentation</option>
+                        <option value="documented">Has Documentation</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table id="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Has Doc</th>
+                                <th>Coverage</th>
+                                <th>Quality</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="docs-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Editor Section -->
+            <section class="section" id="editor-section" style="display: none;">
+                <h2>Documentation Editor</h2>
+                
+                <div class="editor-header">
+                    <h3 id="editor-title">Edit Documentation</h3>
+                    <button class="btn btn-secondary" onclick="closeEditor()">Close</button>
+                </div>
+
+                <div class="editor-content">
+                    <div class="editor-left">
+                        <div class="item-details">
+                            <h4>Item Information</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span class="label">Module:</span>
+                                    <span id="edit-module"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Name:</span>
+                                    <span id="edit-name"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Type:</span>
+                                    <span id="edit-type"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">File:</span>
+                                    <span id="edit-file"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Line:</span>
+                                    <span id="edit-line"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="source-preview">
+                            <h4>Source Preview</h4>
+                            <pre id="source-code"></pre>
+                        </div>
+                    </div>
+
+                    <div class="editor-right">
+                        <div class="docstring-editor">
+                            <h4>Docstring Editor</h4>
+                            <textarea id="docstring-textarea" placeholder="Enter docstring content (without triple quotes)"></textarea>
+                            
+                            <div class="editor-actions">
+                                <button class="btn btn-primary" onclick="saveDocstring()">Save Docstring</button>
+                                <button class="btn btn-secondary" onclick="generateAI()" id="ai-btn">Generate with AI</button>
+                                <button class="btn btn-warning" onclick="resetDocstring()">Reset</button>
+                            </div>
+                        </div>
+
+                        <div class="preview-section">
+                            <h4>Preview</h4>
+                            <pre id="docstring-preview"></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- OpenAI Configuration Modal -->
+        <div class="modal" id="openai-modal" style="display: none;">
+            <div class="modal-content">
+                <h3>OpenAI Configuration</h3>
+                <p>Enter your OpenAI API key to enable AI-powered docstring generation:</p>
+                <input type="password" id="openai-key" placeholder="sk-...">
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="saveOpenAIKey()">Save</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

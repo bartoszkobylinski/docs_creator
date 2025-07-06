@@ -13,6 +13,7 @@ class DocItem:
     first_lines: str
     lineno: int
     file_path: str = ""  # Actual file path
+    full_source: str = ""
     # Enhanced fields for parameter validation
     documented_params: List[str] = field(default_factory=list)
     actual_params: List[str] = field(default_factory=list)

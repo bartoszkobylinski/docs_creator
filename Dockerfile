@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN pip install poetry
+# Install Poetry (specific version)
+RUN pip install poetry==1.7.1
 
 # Configure Poetry to not create virtual environment (we're in a container)
 ENV POETRY_VENV_IN_PROJECT=false
@@ -23,8 +23,8 @@ ENV POETRY_CACHE_DIR=/tmp/poetry_cache
 # Copy dependency files
 COPY pyproject.toml poetry.lock* ./
 
-# Install dependencies
-RUN poetry install --no-dev && rm -rf $POETRY_CACHE_DIR
+# Install dependencies (try both new and old syntax)
+RUN poetry install --only=main || poetry install --no-dev && rm -rf $POETRY_CACHE_DIR
 
 # Copy application code
 COPY . .
@@ -32,18 +32,18 @@ COPY . .
 # Create directory for reports and backups
 RUN mkdir -p /app/reports /app/backups
 
-# Expose Streamlit port
-EXPOSE 8501
+# Expose ports (8200 for FastAPI, 8501 for Streamlit)
+EXPOSE 8200 8501
 
-# Set environment variables for Streamlit
-ENV STREAMLIT_SERVER_PORT=8501
-ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
-ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
-ENV STREAMLIT_SERVER_HEADLESS=true
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV PROJECT_BASE_PATH=/app/project
+ENV REPORTS_DIR=/app/reports
+ENV BACKUPS_DIR=/app/backups
 
-# Health check
+# Health check for FastAPI
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8501/_stcore/health || exit 1
+    CMD curl -f http://localhost:8200/health || exit 1
 
-# Default command - run the documentation assistant
-CMD ["poetry", "run", "streamlit", "run", "scripts/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Default command - run the FastAPI frontend
+CMD ["python", "-m", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8200"]

@@ -4,11 +4,11 @@ FastAPI Documentation Assistant - Complete Workflow
 ==================================================
 
 This script demonstrates the complete workflow for analyzing and improving
-FastAPI project documentation using the enhanced scanner and Streamlit dashboard.
+FastAPI project documentation using the enhanced scanner and web frontend.
 
 Usage:
 1. Run scanner to analyze your FastAPI project
-2. Launch Streamlit dashboard to edit docstrings
+2. Launch web frontend to edit docstrings
 3. Use AI assistance for generating professional docstrings
 """
 
@@ -63,34 +63,37 @@ def run_scanner(project_path="project", output_file="comprehensive_report.json")
         print(f"❌ Scanner failed: {e}")
         return False
 
-def launch_dashboard():
-    """Launch the Streamlit dashboard for interactive editing."""
-    print("\n🚀 Launching FastAPI Documentation Assistant Dashboard...")
-    print("   The dashboard will open in your browser automatically.")
+def launch_frontend():
+    """Launch the web frontend for interactive editing."""
+    print("\n🚀 Launching FastAPI Documentation Assistant Frontend...")
+    print("   The frontend will be available at: http://localhost:8000")
     print("   Features available:")
     print("   • 📊 Documentation coverage analysis")
     print("   • ✏️ Interactive docstring editing")  
     print("   • 🤖 AI-powered docstring generation")
     print("   • 💾 Automatic backup and patching")
     print("   • 🔍 Source code preview")
+    print("   • 📁 File browser for project selection")
     
     try:
         subprocess.run([
-            sys.executable, "-m", "streamlit", "run", 
-            "scripts/streamlit_app.py",
-            "--theme.base", "light"
+            "uvicorn", "api:app",
+            "--host", "0.0.0.0",
+            "--port", "8000",
+            "--reload"
         ])
     except KeyboardInterrupt:
-        print("\n👋 Dashboard closed by user")
+        print("\n👋 Frontend closed by user")
     except Exception as e:
-        print(f"❌ Failed to launch dashboard: {e}")
+        print(f"❌ Failed to launch frontend: {e}")
+        print("💡 You can launch it manually with: make frontend")
 
 def setup_environment():
     """Check and setup the environment."""
     print("🔧 Checking environment setup...")
     
     # Check required packages
-    required_packages = ["streamlit", "pandas"]
+    required_packages = ["fastapi", "uvicorn", "pandas"]
     missing_packages = []
     
     for package in required_packages:
@@ -150,8 +153,8 @@ def main():
     print("STEP 2: Interactive Documentation Editor")
     print("=" * 60)
     
-    input("\n🎯 Press ENTER to launch the documentation dashboard...")
-    launch_dashboard()
+    input("\n🎯 Press ENTER to launch the web frontend...")
+    launch_frontend()
 
 if __name__ == "__main__":
     main()

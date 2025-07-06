@@ -6,7 +6,7 @@ A comprehensive tool for analyzing, editing, and improving FastAPI project docum
 
 - **📊 Comprehensive Analysis**: Scans FastAPI projects for documentation coverage
 - **🤖 AI-Powered Generation**: Uses OpenAI GPT-4 to generate professional docstrings
-- **✏️ Interactive Editing**: Streamlit dashboard for easy docstring management
+- **✏️ Interactive Editing**: Modern web interface for easy docstring management
 - **💾 Safe Patching**: Automatic backups and validation before applying changes
 - **🔍 Deep Insights**: Coverage scores, quality metrics, and detailed analysis
 
@@ -19,8 +19,14 @@ fastdoc/
 └── cli.py         # Command-line interface
 
 scripts/
-├── patcher.py      # Safe docstring patching with backups
-└── streamlit_app.py # Interactive documentation dashboard
+└── patcher.py      # Safe docstring patching with backups
+
+frontend/
+├── index.html      # Modern web interface
+├── styles.css      # Responsive styling
+└── script.js       # Interactive functionality
+
+api.py              # FastAPI backend for web interface
 
 project/           # Example FastAPI project
 reports/          # Generated analysis reports
@@ -38,8 +44,8 @@ make install
 # Scan your FastAPI project
 make scan PROJECT_DIR=your_project_path
 
-# Launch the interactive dashboard
-make dashboard
+# Launch the web frontend
+make frontend
 ```
 
 ### Option 2: Docker Deployment
@@ -50,7 +56,7 @@ make docker-compose-up
 
 # Or manually
 docker build -t fastapi-docs-assistant .
-docker run -p 8501:8501 -v ./your_project:/app/project fastapi-docs-assistant
+docker run -p 8000:8000 -v ./your_project:/app/project fastapi-docs-assistant
 ```
 
 ### Option 3: Direct Python
@@ -61,7 +67,7 @@ python run_docs_assistant.py
 
 # Or step by step
 python -m fastdoc.scanner scan your_project --out report.json
-streamlit run scripts/streamlit_app.py
+python api.py
 ```
 
 ## 📋 Available Commands
@@ -71,7 +77,7 @@ Run `make help` to see all available commands:
 | Command | Description |
 |---------|-------------|
 | `make scan` | Scan FastAPI project for documentation analysis |
-| `make dashboard` | Launch interactive documentation dashboard |
+| `make frontend` | Launch modern web frontend |
 | `make run-assistant` | Complete documentation workflow |
 | `make docker-build` | Build Docker image |
 | `make clean` | Clean generated files |
@@ -106,7 +112,7 @@ The scanner detects and analyzes:
 - ✅ **Pydantic Models**: Including `Config` classes
 - ✅ **Regular Classes & Functions**: Complete code coverage
 
-## 📊 Dashboard Features
+## 📊 Web Frontend Features
 
 ### 1. Documentation Overview
 - Real-time coverage metrics
@@ -170,7 +176,7 @@ services:
   docs-assistant:
     build: .
     ports:
-      - "8501:8501"
+      - "8000:8000"
     volumes:
       - ./your_project:/app/project:ro
       - ./reports:/app/reports
@@ -182,7 +188,7 @@ services:
 # Start the service
 docker-compose up --build
 
-# Access at http://localhost:8501
+# Access at http://localhost:8000
 ```
 
 ### Standalone Scanner Service
@@ -220,9 +226,13 @@ fastapi-docs-assistant/
 │   ├── scanner.py           # AST-based code analysis
 │   ├── models.py            # Data models
 │   └── cli.py               # CLI interface
-├── scripts/                 # User interfaces
-│   ├── patcher.py           # Safe code patching
-│   └── streamlit_app.py     # Web dashboard
+├── scripts/                 # Utilities
+│   └── patcher.py           # Safe code patching
+├── frontend/                # Web interface
+│   ├── index.html           # Main HTML page
+│   ├── styles.css           # Styling
+│   └── script.js            # Frontend logic
+├── api.py                   # FastAPI backend
 ├── project/                 # Example FastAPI app
 ├── Dockerfile               # Container setup
 ├── docker-compose.yml       # Service orchestration
@@ -269,12 +279,12 @@ echo $OPENAI_API_KEY
 python -c "from openai import OpenAI; client = OpenAI(); print('✅ API key valid')"
 ```
 
-**Streamlit Not Starting**
+**Frontend Not Starting**
 ```bash
 # Check port availability
-lsof -i :8501
+lsof -i :8000
 # Use different port
-streamlit run scripts/streamlit_app.py --server.port 8502
+uvicorn api:app --host 0.0.0.0 --port 8001
 ```
 
 ## 📞 Support
