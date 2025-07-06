@@ -9,6 +9,11 @@ from app.schemas import UserCreate, ItemCreate, UserRead, ItemRead
 class UserService:
     """Handles user-related operations."""
     def __init__(self, db: Session):
+        """
+        Initialize the UserService.
+            
+            This is a test docstring to verify the patching functionality works correctly.
+        """
         self.db = db
 
     def create(self, user_in: UserCreate) -> UserRead:

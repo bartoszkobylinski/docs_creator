@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  docs-assistant:
+    build: .
+    container_name: fastapi-docs-assistant
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount your FastAPI project directory
+      - ./project:/app/project:ro
+      # Mount directory for generated reports and backups (persistent)
+      - ./reports:/app/reports
+      - ./backups:/app/backups
+      # Mount custom configuration if needed
+      - ./.env:/app/.env:ro
+    environment:
+      # OpenAI API key for AI features (optional)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      # Streamlit configuration
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+      - STREAMLIT_SERVER_HEADLESS=true
+      # Application settings
+      - PROJECT_BASE_PATH=/app/project
+      - REPORTS_DIR=/app/reports
+      - BACKUPS_DIR=/app/backups
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Additional service for batch processing
+  docs-scanner:
+    build: .
+    container_name: fastapi-docs-scanner
+    volumes:
+      - ./project:/app/project:ro
+      - ./reports:/app/reports
+    environment:
+      - PROJECT_BASE_PATH=/app/project
+      - REPORTS_DIR=/app/reports
+    command: >
+      sh -c "
+        echo 'Starting FastAPI Documentation Scanner...' &&
+        poetry run python -c '
+        from fastdoc.scanner import scan_file
+        import json, os
+        all_items = []
+        project_dir = \"/app/project\"
+        for root, _, files in os.walk(project_dir):
+            for fn in files:
+                if fn.endswith(\".py\"):
+                    try:
+                        file_path = os.path.join(root, fn)
+                        items = scan_file(file_path)
+                        all_items.extend(items)
+                        print(f\"Scanned {len(items)} items from {file_path}\")
+                    except Exception as e:
+                        print(f\"Error scanning {fn}: {e}\")
+        
+        report_path = \"/app/reports/comprehensive_report.json\"
+        with open(report_path, \"w\") as f:
+            json.dump([item.__dict__ for item in all_items], f, indent=2)
+        
+        print(f\"Generated report with {len(all_items)} items -> {report_path}\")
+        ' &&
+        echo 'Scanner completed. Report available at /app/reports/comprehensive_report.json'
+      "
+    profiles:
+      - scanner
+    
+volumes:
+  reports:
+    driver: local
+  backups:
+    driver: local
+
+networks:
+  default:
+    name: fastapi-docs-network
