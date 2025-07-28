@@ -277,7 +277,7 @@ class UMLService:
         if main_diagram.get("url"):
             lines.extend([
                 f"<h3>{main_diagram.get('type', 'Main').title()} Diagram</h3>",
-                f"<img src=\\"{main_diagram['url']}\\" alt=\\"Class Diagram\\" />",
+                f"<img src=\"{main_diagram['url']}\" alt=\"Class Diagram\" />",
                 "<details>",
                 "<summary>PlantUML Source</summary>",
                 "<pre><code>",
@@ -293,7 +293,7 @@ class UMLService:
             if diagram_data.get("url"):
                 lines.extend([
                     f"<h3>{diagram_type.title()} Diagram</h3>",
-                    f"<img src=\\"{diagram_data['url']}\\" alt=\\"{diagram_type} Diagram\\" />",
+                    f"<img src=\"{diagram_data['url']}\" alt=\"{diagram_type} Diagram\" />",
                     "<details>",
                     "<summary>PlantUML Source</summary>", 
                     "<pre><code>",
@@ -303,7 +303,7 @@ class UMLService:
                     ""
                 ])
         
-        return "\\n".join(lines)
+        return "\n".join(lines)
     
     def export_diagrams(self, diagrams: Dict[str, Any], export_format: str = "png") -> Dict[str, str]:
         """Export diagrams to files."""

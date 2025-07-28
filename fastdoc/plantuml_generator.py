@@ -102,7 +102,7 @@ class PlantUMLGenerator:
         # Footer
         plantuml_lines.extend(self._generate_footer())
         
-        return "\\n".join(plantuml_lines)
+        return "\n".join(plantuml_lines)
     
     def _filter_classes(self, classes: Dict[str, UMLClass], config: DiagramConfig) -> Dict[str, UMLClass]:
         """Filter classes based on configuration."""
@@ -312,7 +312,7 @@ class PlantUMLGenerator:
             "@enduml"
         ]
         
-        return "\\n".join(lines)
+        return "\n".join(lines)
     
     def generate_component_diagram(self, analysis_result: Dict[str, Any]) -> str:
         """Generate component diagram showing high-level architecture."""
@@ -351,7 +351,7 @@ class PlantUMLGenerator:
             "@enduml"
         ]
         
-        return "\\n".join(lines)
+        return "\n".join(lines)
 
 
 def create_diagram_configs() -> Dict[str, DiagramConfig]:
