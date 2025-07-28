@@ -18,6 +18,7 @@ from services.docstring_service import docstring_service
 from services.report_service import report_service
 from services.confluence_service import confluence_service
 from services.coverage_tracker import coverage_tracker
+from services.uml_service import uml_service
 
 # Create API router
 router = APIRouter()
@@ -172,3 +173,71 @@ async def get_progress_report(project_path: Optional[str] = None):
     """Get comprehensive progress report."""
     report = coverage_tracker.generate_progress_report(project_path)
     return report
+
+
+@router.post("/uml/generate")
+async def generate_uml_diagrams(request: dict):
+    """Generate UML diagrams from current documentation items."""
+    items_data = request.get("items", [])
+    config_name = request.get("config", "overview")
+    
+    if not items_data:
+        raise HTTPException(status_code=400, detail="No items provided for UML generation")
+    
+    # Convert dictionary items back to DocumentationItem objects
+    from fastdoc.models import DocumentationItem
+    items = []
+    for item_data in items_data:
+        item = DocumentationItem(**item_data)
+        items.append(item)
+    
+    try:
+        result = uml_service.generate_uml_diagrams(items, config_name)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"UML generation failed: {str(e)}")
+
+
+@router.post("/uml/generate-custom")
+async def generate_custom_uml_diagram(request: dict):
+    """Generate UML diagram with custom configuration."""
+    items_data = request.get("items", [])
+    custom_config = request.get("config", {})
+    
+    if not items_data:
+        raise HTTPException(status_code=400, detail="No items provided for UML generation")
+    
+    # Convert dictionary items back to DocumentationItem objects
+    from fastdoc.models import DocumentationItem
+    items = []
+    for item_data in items_data:
+        item = DocumentationItem(**item_data)
+        items.append(item)
+    
+    try:
+        result = uml_service.generate_custom_diagram(items, custom_config)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Custom UML generation failed: {str(e)}")
+
+
+@router.get("/uml/configurations")
+async def get_uml_configurations():
+    """Get available UML diagram configurations."""
+    return uml_service.get_available_configurations()
+
+
+@router.get("/uml/cache/{cache_key}")
+async def get_cached_diagram(cache_key: str):
+    """Serve cached UML diagram image."""
+    from fastapi.responses import FileResponse
+    
+    cached_file = uml_service.get_cached_diagram(cache_key)
+    if not cached_file:
+        raise HTTPException(status_code=404, detail="Diagram not found in cache")
+    
+    return FileResponse(
+        cached_file,
+        media_type="image/png",
+        filename=cache_key
+    )
