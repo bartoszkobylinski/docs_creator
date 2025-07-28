@@ -3,7 +3,7 @@ API endpoints for the FastAPI Documentation Assistant.
 """
 
 import os
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, File, UploadFile, HTTPException, Form
 
@@ -16,6 +16,7 @@ from services.scanner_service import scanner_service
 from services.docstring_service import docstring_service
 from services.report_service import report_service
 from services.confluence_service import confluence_service
+from services.coverage_tracker import coverage_tracker
 
 # Create API router
 router = APIRouter()
@@ -144,3 +145,29 @@ async def publish_coverage_to_confluence(request: dict):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")
+
+@router.get("/coverage/history")
+async def get_coverage_history(
+    project_path: Optional[str] = None,
+    limit: Optional[int] = 10
+):
+    """Get coverage history records."""
+    history = coverage_tracker.get_coverage_history(project_path, limit)
+    return {"history": history, "total_records": len(history)}
+
+
+@router.get("/coverage/trends")
+async def get_coverage_trends(
+    project_path: Optional[str] = None,
+    days: int = 30
+):
+    """Get coverage trends over specified period."""
+    trends = coverage_tracker.get_coverage_trends(project_path, days)
+    return trends
+
+
+@router.get("/coverage/progress-report")
+async def get_progress_report(project_path: Optional[str] = None):
+    """Get comprehensive progress report."""
+    report = coverage_tracker.generate_progress_report(project_path)
+    return report

@@ -13,6 +13,7 @@ from fastapi import UploadFile, HTTPException
 
 from fastdoc.scanner import scan_file
 from core.config import settings
+from services.coverage_tracker import coverage_tracker
 
 
 class ScannerService:
@@ -70,6 +71,17 @@ class ScannerService:
             
             # Save report
             self._save_report(items_data)
+            
+            # Record coverage statistics
+            coverage_tracker.record_coverage(
+                items_data, 
+                project_path,
+                metadata={
+                    'scan_type': 'uploaded_files',
+                    'total_files': len(file_paths),
+                    'scan_time': round(time.time() - start_time, 2)
+                }
+            )
             
             scan_time = time.time() - start_time
             
@@ -166,6 +178,17 @@ class ScannerService:
             
             # Save report
             self._save_report(items_data)
+            
+            # Record coverage statistics
+            coverage_tracker.record_coverage(
+                items_data, 
+                project_path,
+                metadata={
+                    'scan_type': 'local_project',
+                    'total_files': len(python_files),
+                    'scan_time': round(time.time() - start_time, 2)
+                }
+            )
             
             scan_time = time.time() - start_time
             
