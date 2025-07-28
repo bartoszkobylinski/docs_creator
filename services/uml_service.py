@@ -27,8 +27,13 @@ class UMLService:
         self.generator = PlantUMLGenerator()
         self.configs = create_diagram_configs()
         
-        # PlantUML server configuration
-        self.plantuml_server = os.getenv("PLANTUML_SERVER", "http://www.plantuml.com/plantuml")
+        # PlantUML server configuration with fallbacks
+        self.plantuml_servers = [
+            os.getenv("PLANTUML_SERVER", "http://www.plantuml.com/plantuml"),
+            "https://kroki.io/plantuml",  # Alternative reliable server
+            "http://plantuml.com:8080/plantuml"  # Another fallback
+        ]
+        self.current_server_index = 0
         self.use_local_plantuml = os.getenv("USE_LOCAL_PLANTUML", "false").lower() == "true"
         self.plantuml_jar_path = os.getenv("PLANTUML_JAR_PATH", "./plantuml.jar")
         
@@ -65,6 +70,7 @@ class UMLService:
             
             # Generate diagram image
             diagram_url = self._render_plantuml(plantuml_source)
+            print(f"Generated diagram URL: {diagram_url}")
             
             # Generate additional diagram types
             additional_diagrams = {}
@@ -201,8 +207,29 @@ class UMLService:
     
     def _render_server_plantuml(self, plantuml_source: str, cache_file: Path) -> str:
         """Render PlantUML using online server via POST request."""
-        # Use POST request with text data instead of URL encoding
-        url = f"{self.plantuml_server}/png/"
+        
+        # Try different servers if one fails
+        for server in self.plantuml_servers:
+            try:
+                result = self._try_plantuml_server(server, plantuml_source, cache_file)
+                if result:
+                    return result
+            except Exception as e:
+                print(f"Server {server} failed: {e}")
+                continue
+        
+        print("All PlantUML servers failed")
+        return None
+    
+    def _try_plantuml_server(self, server: str, plantuml_source: str, cache_file: Path) -> str:
+        """Try a specific PlantUML server."""
+        # Handle different server formats
+        if "kroki.io" in server:
+            url = f"{server}/png"
+        else:
+            url = f"{server}/png/"
+        
+        print(f"Trying PlantUML server: {server}")
         
         try:
             # Send PlantUML source as text in POST request
@@ -212,52 +239,34 @@ class UMLService:
                 headers={'Content-Type': 'text/plain'},
                 timeout=30
             )
+            print(f"Server {server} response status: {response.status_code}")
+            
             response.raise_for_status()
             
-            # Save to cache
-            with open(cache_file, 'wb') as f:
-                f.write(response.content)
+            # Check if response is actually an image
+            content_type = response.headers.get('content-type', '')
+            print(f"Response content type: {content_type}")
             
-            return f"/api/uml/cache/{cache_file.name}"
-            
-        except requests.RequestException as e:
-            print(f"PlantUML server request failed: {e}")
-            # Try alternative approach with form data
-            try:
+            if 'image' not in content_type.lower() and 'png' not in content_type.lower():
+                print(f"Warning: Response may not be an image. Content: {response.text[:200]}")
+                # Try alternative approach with form data
                 response = requests.post(
                     url,
                     data={'text': plantuml_source},
                     timeout=30
                 )
                 response.raise_for_status()
-                
-                with open(cache_file, 'wb') as f:
-                    f.write(response.content)
-                
-                return f"/api/uml/cache/{cache_file.name}"
-                
-            except requests.RequestException as e2:
-                print(f"Alternative PlantUML request also failed: {e2}")
-                # Final fallback: try SVG format which sometimes works better
-                try:
-                    svg_url = f"{self.plantuml_server}/svg/"
-                    response = requests.post(
-                        svg_url,
-                        data={'text': plantuml_source},
-                        timeout=30
-                    )
-                    response.raise_for_status()
-                    
-                    # Save SVG as text file and return reference
-                    svg_cache_file = cache_file.with_suffix('.svg')
-                    with open(svg_cache_file, 'wb') as f:
-                        f.write(response.content)
-                    
-                    return f"/api/uml/cache/{svg_cache_file.name}"
-                    
-                except requests.RequestException as e3:
-                    print(f"SVG fallback also failed: {e3}")
-                    return None
+            
+            # Save to cache
+            with open(cache_file, 'wb') as f:
+                f.write(response.content)
+            
+            print(f"Successfully saved diagram from {server} to cache: {cache_file}")
+            return f"/api/uml/cache/{cache_file.name}"
+            
+        except requests.RequestException as e:
+            print(f"Server {server} failed: {e}")
+            raise  # Re-raise to try next server
     
     def _render_local_plantuml(self, plantuml_source: str, cache_file: Path) -> str:
         """Render PlantUML using local JAR file."""

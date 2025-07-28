@@ -231,6 +231,7 @@ async def get_uml_configurations():
 async def get_cached_diagram(cache_key: str):
     """Serve cached UML diagram image."""
     from fastapi.responses import FileResponse
+    from fastapi import Response
     
     cached_file = uml_service.get_cached_diagram(cache_key)
     if not cached_file:
@@ -242,8 +243,17 @@ async def get_cached_diagram(cache_key: str):
     else:
         media_type = "image/png"
     
+    # Add CORS headers for image serving
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET",
+        "Access-Control-Allow-Headers": "*",
+        "Cache-Control": "public, max-age=3600"
+    }
+    
     return FileResponse(
         cached_file,
         media_type=media_type,
-        filename=cache_key
+        filename=cache_key,
+        headers=headers
     )
