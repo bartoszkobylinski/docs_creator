@@ -8,7 +8,7 @@ from typing import Dict, List, Set, Tuple, Optional, Any
 from dataclasses import dataclass
 from enum import Enum
 
-from .models import DocumentationItem
+from .models import DocItem
 
 
 class RelationshipType(Enum):
@@ -156,7 +156,7 @@ class UMLAnalyzer:
         self.imports: Dict[str, Set[str]] = {}  # module -> imported modules
         self.type_registry: Dict[str, str] = {}  # type_name -> module
     
-    def analyze_documentation_items(self, items: List[DocumentationItem]) -> Dict[str, Any]:
+    def analyze_documentation_items(self, items: List[DocItem]) -> Dict[str, Any]:
         """Analyze documentation items and extract UML relationships."""
         # Phase 1: Build class registry and basic info
         self._build_class_registry(items)
@@ -177,7 +177,7 @@ class UMLAnalyzer:
             "type_registry": self.type_registry
         }
     
-    def _build_class_registry(self, items: List[DocumentationItem]):
+    def _build_class_registry(self, items: List[DocItem]):
         """Build registry of all classes with their attributes and methods."""
         current_class = None
         
@@ -204,7 +204,7 @@ class UMLAnalyzer:
                 attr = self._create_uml_attribute_from_property(item)
                 current_class.attributes.append(attr)
     
-    def _analyze_inheritance_relationships(self, items: List[DocumentationItem]):
+    def _analyze_inheritance_relationships(self, items: List[DocItem]):
         """Analyze inheritance relationships from class signatures."""
         for item in items:
             if item.method == "class" and "inherits=" in (item.signature or ""):
@@ -218,7 +218,7 @@ class UMLAnalyzer:
                     )
                     self.relationships.append(relationship)
     
-    def _analyze_composition_relationships(self, items: List[DocumentationItem]):
+    def _analyze_composition_relationships(self, items: List[DocItem]):
         """Analyze composition relationships from constructor parameters and field types."""
         for item in items:
             if item.method == "function" and item.qualname.endswith(".__init__"):
@@ -234,7 +234,7 @@ class UMLAnalyzer:
                         )
                         self.relationships.append(relationship)
     
-    def _analyze_dependency_relationships(self, items: List[DocumentationItem]):
+    def _analyze_dependency_relationships(self, items: List[DocItem]):
         """Analyze dependency relationships from FastAPI dependencies and imports."""
         for item in items:
             # FastAPI dependencies
@@ -248,7 +248,7 @@ class UMLAnalyzer:
                     )
                     self.relationships.append(relationship)
     
-    def _analyze_association_relationships(self, items: List[DocumentationItem]):
+    def _analyze_association_relationships(self, items: List[DocItem]):
         """Analyze association relationships from method parameters and return types."""
         for item in items:
             if item.method in ["function", "async_function"]:
@@ -273,7 +273,7 @@ class UMLAnalyzer:
                     )
                     self.relationships.append(relationship)
     
-    def _analyze_fastapi_patterns(self, items: List[DocumentationItem]):
+    def _analyze_fastapi_patterns(self, items: List[DocItem]):
         """Analyze FastAPI-specific patterns for enhanced UML context."""
         # Group endpoints by router
         routers = {}
@@ -295,7 +295,7 @@ class UMLAnalyzer:
                 )
                 self.relationships.append(relationship)
     
-    def _determine_class_stereotype(self, item: DocumentationItem) -> Optional[str]:
+    def _determine_class_stereotype(self, item: DocItem) -> Optional[str]:
         """Determine appropriate stereotype for a class."""
         qualname = item.qualname.lower()
         
@@ -316,11 +316,11 @@ class UMLAnalyzer:
         
         return None
     
-    def _is_abstract_class(self, item: DocumentationItem) -> bool:
+    def _is_abstract_class(self, item: DocItem) -> bool:
         """Check if class is abstract."""
         return "ABC" in (item.signature or "") or "abstract" in (item.docstring or "").lower()
     
-    def _create_uml_method(self, item: DocumentationItem) -> UMLMethod:
+    def _create_uml_method(self, item: DocItem) -> UMLMethod:
         """Create UML method from documentation item."""
         method_name = item.qualname.split(".")[-1]
         
@@ -343,7 +343,7 @@ class UMLAnalyzer:
             is_async=item.method == "async_function"
         )
     
-    def _create_uml_attribute_from_property(self, item: DocumentationItem) -> UMLAttribute:
+    def _create_uml_attribute_from_property(self, item: DocItem) -> UMLAttribute:
         """Create UML attribute from property documentation item."""
         attr_name = item.qualname.split(".")[-1]
         visibility = "private" if attr_name.startswith("_") else "public"
@@ -381,7 +381,7 @@ class UMLAnalyzer:
         
         return base_type not in builtin_types
     
-    def _is_composition(self, item: DocumentationItem, param_type: str) -> bool:
+    def _is_composition(self, item: DocItem, param_type: str) -> bool:
         """Check if parameter represents composition (stored as instance variable)."""
         # This would require more sophisticated analysis of the method body
         # For now, assume constructor parameters are composition

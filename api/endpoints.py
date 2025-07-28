@@ -184,11 +184,11 @@ async def generate_uml_diagrams(request: dict):
     if not items_data:
         raise HTTPException(status_code=400, detail="No items provided for UML generation")
     
-    # Convert dictionary items back to DocumentationItem objects
-    from fastdoc.models import DocumentationItem
+    # Convert dictionary items back to DocItem objects
+    from fastdoc.models import DocItem
     items = []
     for item_data in items_data:
-        item = DocumentationItem(**item_data)
+        item = DocItem(**item_data)
         items.append(item)
     
     try:
@@ -207,11 +207,11 @@ async def generate_custom_uml_diagram(request: dict):
     if not items_data:
         raise HTTPException(status_code=400, detail="No items provided for UML generation")
     
-    # Convert dictionary items back to DocumentationItem objects
-    from fastdoc.models import DocumentationItem
+    # Convert dictionary items back to DocItem objects
+    from fastdoc.models import DocItem
     items = []
     for item_data in items_data:
-        item = DocumentationItem(**item_data)
+        item = DocItem(**item_data)
         items.append(item)
     
     try:

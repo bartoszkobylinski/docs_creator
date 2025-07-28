@@ -15,7 +15,7 @@ import json
 
 from fastdoc.uml_analyzer import UMLAnalyzer
 from fastdoc.plantuml_generator import PlantUMLGenerator, DiagramConfig, DiagramType, create_diagram_configs
-from fastdoc.models import DocumentationItem
+from fastdoc.models import DocItem
 from core.config import settings
 
 
@@ -36,7 +36,7 @@ class UMLService:
         self.cache_dir = Path(settings.REPORTS_DIR) / "uml_cache"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
     
-    def generate_uml_diagrams(self, items: List[DocumentationItem], 
+    def generate_uml_diagrams(self, items: List[DocItem], 
                             config_name: str = "overview") -> Dict[str, Any]:
         """Generate UML diagrams from documentation items."""
         try:
@@ -96,7 +96,7 @@ class UMLService:
                 "available_configs": list(self.configs.keys())
             }
     
-    def generate_custom_diagram(self, items: List[DocumentationItem], 
+    def generate_custom_diagram(self, items: List[DocItem], 
                               custom_config: Dict[str, Any]) -> Dict[str, Any]:
         """Generate UML diagram with custom configuration."""
         try:
