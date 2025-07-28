@@ -6,3 +6,6 @@ __pycache__/
 .coverage
 .pytest_cache/
 htmlcov/
+.env
+.mutmut-cache/
+*.log

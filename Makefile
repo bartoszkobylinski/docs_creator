@@ -231,7 +231,7 @@ test-watch:  ## Run tests in watch mode
 
 test-mutation:  ## Run mutation tests
 	@echo "🧬 Running mutation tests..."
-	poetry run mutmut run
+	poetry run mutmut run --paths-to-mutate=fastdoc/,services/,api/,core/
 
 test-mutation-show:  ## Show mutation test results
 	@echo "📋 Showing mutation test results..."

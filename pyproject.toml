@@ -74,6 +74,12 @@ exclude_lines = [
     "if __name__ == .__main__.:"
 ]
 
+[tool.mutmut]
+paths_to_mutate = "fastdoc/,services/,api/,core/"
+backup = false
+runner = "poetry run python -m pytest tests/ -x --tb=no --disable-warnings -q --no-cov"
+tests_dir = "tests/"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
