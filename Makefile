@@ -97,24 +97,24 @@ frontend:  ## Launch HTML frontend with FastAPI backend (using Docker)
 		-v "$(PWD)/reports:/app/reports" \
 		-v "$(PWD)/backups:/app/backups" \
 		$$(docker build -q .) \
-		uvicorn api:app --host 0.0.0.0 --port 8200 --reload
+		uvicorn main:app --host 0.0.0.0 --port 8200 --reload
 
 frontend-dev:  ## Launch frontend for development (direct host)
 	@echo "Starting frontend in development mode..."
 	@echo "Frontend: http://localhost:8200"
-	uvicorn api:app --host 0.0.0.0 --port 8200 --reload
+	uvicorn main:app --host 0.0.0.0 --port 8200 --reload
 
 run-assistant:  ## Run complete documentation assistant workflow
 	@echo "🎯 Starting FastAPI Documentation Assistant"
-	python run_docs_assistant.py
+	python archive/run_docs_assistant.py
 
 test-scanner:  ## Test scanner on example project
 	@echo "🧪 Testing scanner with example project"
-	python -c "from fastdoc.scanner import scan_file; items = scan_file('example.py'); print(f'Found {len(items)} items in example.py')"
+	python -c "from fastdoc.scanner import scan_file; items = scan_file('archive/example.py'); print(f'Found {len(items)} items in archive/example.py')"
 
 test-patcher:  ## Test patcher functionality
 	@echo "🧪 Testing patcher functionality"
-	python -c "from scripts.patcher import validate_docstring_syntax; result = validate_docstring_syntax('Test docstring.'); print(f'Validation: {result}')"
+	python -c "from services.patcher import validate_docstring_syntax; result = validate_docstring_syntax('Test docstring.'); print(f'Validation: {result}')"
 
 clean:  ## Clean generated files
 	@echo "🧹 Cleaning generated files"
@@ -166,3 +166,36 @@ dev-setup:  ## Complete development setup
 	make install-dev
 	make check-env
 	@echo "🎉 Development environment ready!"
+
+# Confluence integration commands
+confluence-status:  ## Check Confluence integration status
+	@echo "🔗 Checking Confluence status..."
+	PYTHONPATH=$$PWD python fastdoc/cli.py confluence-status
+
+publish-coverage:  ## Publish coverage report to Confluence (usage: make publish-coverage REPORT_FILE=report.json)
+	@if [ -z "$(REPORT_FILE)" ]; then \
+		echo "Error: Please specify REPORT_FILE"; \
+		echo "Usage: make publish-coverage REPORT_FILE=reports/my_report.json"; \
+		exit 1; \
+	fi
+	@echo "📊 Publishing coverage report to Confluence..."
+	PYTHONPATH=$$PWD python fastdoc/cli.py publish-coverage "$(REPORT_FILE)" --to-confluence
+
+publish-endpoints:  ## Publish endpoint docs to Confluence (usage: make publish-endpoints REPORT_FILE=report.json)
+	@if [ -z "$(REPORT_FILE)" ]; then \
+		echo "Error: Please specify REPORT_FILE"; \
+		echo "Usage: make publish-endpoints REPORT_FILE=reports/my_report.json"; \
+		exit 1; \
+	fi
+	@echo "🚀 Publishing endpoints to Confluence..."
+	PYTHONPATH=$$PWD python fastdoc/cli.py publish-endpoints "$(REPORT_FILE)" --to-confluence
+
+publish-all:  ## Publish both coverage report and endpoints (usage: make publish-all REPORT_FILE=report.json)
+	@if [ -z "$(REPORT_FILE)" ]; then \
+		echo "Error: Please specify REPORT_FILE"; \
+		echo "Usage: make publish-all REPORT_FILE=reports/my_report.json"; \
+		exit 1; \
+	fi
+	@echo "📚 Publishing everything to Confluence..."
+	make publish-coverage REPORT_FILE="$(REPORT_FILE)"
+	make publish-endpoints REPORT_FILE="$(REPORT_FILE)"
