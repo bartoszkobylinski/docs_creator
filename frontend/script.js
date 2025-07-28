@@ -2,44 +2,193 @@
 let currentProject = null;
 let currentData = null;
 let currentEditingItem = null;
-let apiBaseUrl = 'http://localhost:8200';
+let apiBaseUrl = 'http://0.0.0.0:8200';
 
-// DOM elements
-const uploadArea = document.getElementById('upload-area');
-const fileInput = document.getElementById('file-input');
-const projectInfo = document.getElementById('project-info');
-const scanningSection = document.getElementById('scanning-section');
-const resultsSection = document.getElementById('results-section');
-const editorSection = document.getElementById('editor-section');
+// Test function to check if script is loaded
+window.testFunction = function() {
+    console.log('Test function works!');
+    alert('Script is loaded and working!');
+};
+
+// Scan local project - defined early to ensure availability
+window.scanLocalProject = async function() {
+    console.log('scanLocalProject function called');
+    
+    const projectPathInput = document.getElementById('project-path-input');
+    if (!projectPathInput) {
+        alert('Project path input not found');
+        return;
+    }
+    
+    const projectPath = projectPathInput.value.trim();
+    console.log('Project path:', projectPath);
+    
+    if (!projectPath) {
+        alert('Please enter a project path');
+        return;
+    }
+    
+    console.log('Starting scan for:', projectPath);
+    
+    // Show scanning section
+    const scanningSection = document.getElementById('scanning-section');
+    if (scanningSection) {
+        scanningSection.style.display = 'block';
+    }
+    
+    try {
+        console.log('Making API request to:', `${apiBaseUrl}/api/scan-local`);
+        
+        const response = await fetch(`${apiBaseUrl}/api/scan-local`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                project_path: projectPath
+            })
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response error:', errorText);
+            throw new Error(`Scan failed: ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Scan result:', data);
+        
+        // Store data globally
+        window.currentData = data;
+        
+        // Hide project section and show results
+        const projectSection = document.getElementById('project-section');
+        if (projectSection) {
+            projectSection.style.display = 'none';
+        }
+        
+        // Try to show results
+        if (window.showResults) {
+            window.showResults();
+        } else {
+            console.log('showResults function not available yet');
+            alert('Scan completed! Check console for results.');
+        }
+        
+    } catch (error) {
+        console.error('Local scan error:', error);
+        alert(`Scan failed: ${error.message}`);
+        
+        const scanningSection = document.getElementById('scanning-section');
+        if (scanningSection) {
+            scanningSection.style.display = 'none';
+        }
+    }
+};
+
+// DOM elements - will be accessed when needed, not during script load
+let uploadArea, fileInput, projectInfo, scanningSection, resultsSection, editorSection;
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing...');
+    
+    // Initialize DOM elements
+    uploadArea = document.getElementById('upload-area');
+    fileInput = document.getElementById('file-input');
+    projectInfo = document.getElementById('project-info');
+    scanningSection = document.getElementById('scanning-section');
+    resultsSection = document.getElementById('results-section');
+    editorSection = document.getElementById('editor-section');
+    
     setupEventListeners();
     checkExistingReport();
 });
 
 // Setup event listeners
 function setupEventListeners() {
-    // File input change
-    fileInput.addEventListener('change', handleFileSelection);
+    console.log('Setting up event listeners...');
     
-    // Drag and drop
-    uploadArea.addEventListener('dragover', handleDragOver);
-    uploadArea.addEventListener('dragleave', handleDragLeave);
-    uploadArea.addEventListener('drop', handleDrop);
-    
-    // Filters
-    document.getElementById('type-filter').addEventListener('change', applyFilters);
-    document.getElementById('doc-filter').addEventListener('change', applyFilters);
-    
-    // Docstring textarea
-    document.getElementById('docstring-textarea').addEventListener('input', updatePreview);
+    try {
+        // JSON file upload
+        const jsonFileInput = document.getElementById('json-file-input');
+        if (jsonFileInput) {
+            jsonFileInput.addEventListener('change', handleJSONFileSelection);
+            console.log('✓ json-file-input event listener added');
+        } else {
+            console.log('✗ json-file-input not found');
+        }
+        
+        // Python files upload
+        const pythonFilesInput = document.getElementById('python-files-input');
+        if (pythonFilesInput) {
+            pythonFilesInput.addEventListener('change', handlePythonFilesSelection);
+            console.log('✓ python-files-input event listener added');
+        } else {
+            console.log('✗ python-files-input not found');
+        }
+        
+        // Drag and drop for JSON reports
+        const jsonUploadArea = document.getElementById('json-upload-area');
+        if (jsonUploadArea) {
+            jsonUploadArea.addEventListener('dragover', handleDragOver);
+            jsonUploadArea.addEventListener('dragleave', handleDragLeave);
+            jsonUploadArea.addEventListener('drop', handleJSONDrop);
+            console.log('✓ json-upload-area event listeners added');
+        } else {
+            console.log('✗ json-upload-area not found');
+        }
+        
+        // Drag and drop for Python files
+        const filesUploadArea = document.getElementById('files-upload-area');
+        if (filesUploadArea) {
+            filesUploadArea.addEventListener('dragover', handleDragOver);
+            filesUploadArea.addEventListener('dragleave', handleDragLeave);
+            filesUploadArea.addEventListener('drop', handlePythonFilesDrop);
+            console.log('✓ files-upload-area event listeners added');
+        } else {
+            console.log('✗ files-upload-area not found');
+        }
+        
+        // Filters (these might not exist initially)
+        const typeFilter = document.getElementById('type-filter');
+        const docFilter = document.getElementById('doc-filter');
+        const docstringTextarea = document.getElementById('docstring-textarea');
+        
+        if (typeFilter) {
+            typeFilter.addEventListener('change', applyFilters);
+            console.log('✓ type-filter event listener added');
+        } else {
+            console.log('✗ type-filter not found (this is normal initially)');
+        }
+        
+        if (docFilter) {
+            docFilter.addEventListener('change', applyFilters);
+            console.log('✓ doc-filter event listener added');
+        } else {
+            console.log('✗ doc-filter not found (this is normal initially)');
+        }
+        
+        if (docstringTextarea) {
+            docstringTextarea.addEventListener('input', updatePreview);
+            console.log('✓ docstring-textarea event listener added');
+        } else {
+            console.log('✗ docstring-textarea not found (this is normal initially)');
+        }
+        
+        console.log('Event listeners setup completed');
+        
+    } catch (error) {
+        console.error('Error setting up event listeners:', error);
+    }
 }
 
 // Check for existing report
 async function checkExistingReport() {
     try {
-        const response = await fetch(`${apiBaseUrl}/report/status`);
+        const response = await fetch(`${apiBaseUrl}/api/report/status`);
         if (response.ok) {
             const data = await response.json();
             if (data.exists) {
@@ -54,7 +203,7 @@ async function checkExistingReport() {
 // Load existing report
 async function loadExistingReport() {
     try {
-        const response = await fetch(`${apiBaseUrl}/report/data`);
+        const response = await fetch(`${apiBaseUrl}/api/report/data`);
         if (response.ok) {
             const data = await response.json();
             currentData = data;
@@ -65,10 +214,50 @@ async function loadExistingReport() {
     }
 }
 
-// Handle file selection
-function handleFileSelection(event) {
+// Handle JSON file selection
+function handleJSONFileSelection(event) {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/json') {
+        loadJSONReport(file);
+    } else {
+        alert('Please select a valid JSON file.');
+    }
+}
+
+// Handle Python files selection
+function handlePythonFilesSelection(event) {
     const files = Array.from(event.target.files);
-    processFiles(files);
+    processPythonFiles(files);
+}
+
+// Handle JSON drag and drop
+function handleJSONDrop(event) {
+    event.preventDefault();
+    document.getElementById('json-upload-area').classList.remove('drag-over');
+    
+    const files = Array.from(event.dataTransfer.files);
+    const jsonFile = files.find(file => file.type === 'application/json' || file.name.endsWith('.json'));
+    
+    if (jsonFile) {
+        loadJSONReport(jsonFile);
+    } else {
+        alert('Please drop a JSON report file.');
+    }
+}
+
+// Handle Python files drag and drop
+function handlePythonFilesDrop(event) {
+    event.preventDefault();
+    document.getElementById('files-upload-area').classList.remove('drag-over');
+    
+    const files = Array.from(event.dataTransfer.files);
+    const pythonFiles = files.filter(file => file.name.endsWith('.py'));
+    
+    if (pythonFiles.length > 0) {
+        processPythonFiles(pythonFiles);
+    } else {
+        alert('Please drop Python (.py) files.');
+    }
 }
 
 // Handle drag over
@@ -92,34 +281,111 @@ function handleDrop(event) {
     processFiles(files);
 }
 
-// Process selected files
-function processFiles(files) {
-    // Filter Python files
-    const pythonFiles = files.filter(file => file.name.endsWith('.py'));
+// Load JSON report
+async function loadJSONReport(file) {
+    try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        
+        // Validate the data structure
+        if (!Array.isArray(data)) {
+            throw new Error('Invalid report format: expected an array of items');
+        }
+        
+        // Transform data to expected format
+        currentData = {
+            items: data,
+            total_files: new Set(data.map(item => item.file_path || item.module)).size,
+            scan_time: 0
+        };
+        
+        // Hide project section and show results
+        document.getElementById('project-section').style.display = 'none';
+        showResults();
+        
+    } catch (error) {
+        console.error('Error loading JSON report:', error);
+        alert(`Error loading report: ${error.message}`);
+    }
+}
+
+// Scan local project
+window.scanLocalProject = async function scanLocalProject() {
+    console.log('scanLocalProject function called');
     
-    if (pythonFiles.length === 0) {
-        alert('No Python files found. Please select a folder containing Python files.');
+    const projectPath = document.getElementById('project-path-input').value.trim();
+    console.log('Project path:', projectPath);
+    
+    if (!projectPath) {
+        alert('Please enter a project path');
         return;
     }
     
-    // Extract project path from first file
-    const firstFile = pythonFiles[0];
-    const projectPath = firstFile.webkitRelativePath ? 
-        firstFile.webkitRelativePath.split('/')[0] : 
-        'Selected Files';
+    console.log('Starting scan for:', projectPath);
+    
+    // Show scanning section
+    scanningSection.style.display = 'block';
+    updateProgress(10, 'Starting scan...');
+    
+    try {
+        console.log('Making API request to:', `${apiBaseUrl}/api/scan-local`);
+        
+        const response = await fetch(`${apiBaseUrl}/api/scan-local`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                project_path: projectPath
+            })
+        });
+        
+        console.log('Response status:', response.status);
+        updateProgress(50, 'Processing files...');
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response error:', errorText);
+            throw new Error(`Scan failed: ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Scan result:', data);
+        currentData = data;
+        
+        updateProgress(100, 'Scan completed successfully');
+        
+        setTimeout(() => {
+            document.getElementById('project-section').style.display = 'none';
+            showResults();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Local scan error:', error);
+        alert(`Scan failed: ${error.message}`);
+        scanningSection.style.display = 'none';
+    }
+}
+
+// Process Python files (for individual file upload)
+function processPythonFiles(files) {
+    if (files.length === 0) {
+        alert('No Python files found.');
+        return;
+    }
     
     // Check for FastAPI indicators
-    const fastApiDetected = checkForFastAPI(pythonFiles);
+    const fastApiDetected = checkForFastAPI(files);
     
     // Update UI
-    document.getElementById('project-path').textContent = projectPath;
-    document.getElementById('file-count').textContent = pythonFiles.length;
+    document.getElementById('project-path').textContent = 'Uploaded Files';
+    document.getElementById('file-count').textContent = files.length;
     document.getElementById('fastapi-status').textContent = fastApiDetected ? 'Yes' : 'No';
     
     // Store files
     currentProject = {
-        path: projectPath,
-        files: pythonFiles,
+        path: 'uploaded_files',
+        files: files,
         fastApiDetected: fastApiDetected
     };
     
@@ -139,7 +405,7 @@ function checkForFastAPI(files) {
 }
 
 // Scan project
-async function scanProject() {
+window.scanProject = async function scanProject() {
     if (!currentProject) {
         alert('Please select a project first.');
         return;
@@ -165,7 +431,7 @@ async function scanProject() {
         updateProgress(10, 'Uploading files...');
         
         // Start scanning
-        const response = await fetch(`${apiBaseUrl}/scan`, {
+        const response = await fetch(`${apiBaseUrl}/api/scan`, {
             method: 'POST',
             body: formData
         });
@@ -247,6 +513,16 @@ function populateTable(items) {
         const coverage = item.coverage_score || 0;
         const quality = item.quality_score || 0;
         
+        // Find the original index in currentData.items
+        let originalIndex = index;
+        if (currentData && currentData.items) {
+            originalIndex = currentData.items.findIndex(originalItem => 
+                originalItem.qualname === item.qualname && 
+                originalItem.module === item.module && 
+                originalItem.lineno === item.lineno
+            );
+        }
+        
         row.innerHTML = `
             <td>${item.module || 'N/A'}</td>
             <td>${item.qualname || 'N/A'}</td>
@@ -265,7 +541,7 @@ function populateTable(items) {
                 ${quality}%
             </td>
             <td>
-                <button class="btn btn-primary" onclick="editItem(${index})">Edit</button>
+                <button class="btn btn-primary" onclick="editItem(${originalIndex})">Edit</button>
             </td>
         `;
         
@@ -299,7 +575,7 @@ function applyFilters() {
 }
 
 // Edit item
-function editItem(index) {
+window.editItem = function editItem(index) {
     if (!currentData || !currentData.items[index]) {
         alert('Item not found');
         return;
@@ -344,7 +620,7 @@ function updatePreview() {
 }
 
 // Save docstring
-async function saveDocstring() {
+window.saveDocstring = async function saveDocstring() {
     if (!currentEditingItem) {
         alert('No item selected for editing');
         return;
@@ -353,7 +629,7 @@ async function saveDocstring() {
     const docstring = document.getElementById('docstring-textarea').value;
     
     try {
-        const response = await fetch(`${apiBaseUrl}/docstring/save`, {
+        const response = await fetch(`${apiBaseUrl}/api/docstring/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -387,7 +663,7 @@ async function saveDocstring() {
 }
 
 // Generate AI docstring
-async function generateAI() {
+window.generateAI = async function generateAI() {
     if (!currentEditingItem) {
         alert('No item selected for editing');
         return;
@@ -406,7 +682,7 @@ async function generateAI() {
     aiBtn.disabled = true;
     
     try {
-        const response = await fetch(`${apiBaseUrl}/docstring/generate`, {
+        const response = await fetch(`${apiBaseUrl}/api/docstring/generate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -434,15 +710,15 @@ async function generateAI() {
 }
 
 // Reset docstring
-function resetDocstring() {
+window.resetDocstring = function resetDocstring() {
     if (currentEditingItem) {
         document.getElementById('docstring-textarea').value = currentEditingItem.docstring || '';
         updatePreview();
     }
 }
 
-// Close editor
-function closeEditor() {
+// Close editor  
+window.closeEditor = function closeEditor() {
     editorSection.style.display = 'none';
     currentEditingItem = null;
 }
@@ -453,12 +729,12 @@ function showOpenAIModal() {
 }
 
 // Close modal
-function closeModal() {
+window.closeModal = function closeModal() {
     document.getElementById('openai-modal').style.display = 'none';
 }
 
 // Save OpenAI key
-function saveOpenAIKey() {
+window.saveOpenAIKey = function saveOpenAIKey() {
     const key = document.getElementById('openai-key').value;
     if (key.trim()) {
         localStorage.setItem('openai_key', key.trim());
