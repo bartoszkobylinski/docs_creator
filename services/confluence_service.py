@@ -3,6 +3,8 @@ Confluence integration service for publishing documentation.
 """
 
 import json
+import os
+from pathlib import Path
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
@@ -136,7 +138,7 @@ class ConfluenceService:
         title_suffix: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Publish UML diagram to Confluence.
+        Publish UML diagram to Confluence with image attachments.
         
         Args:
             diagram_data: UML diagram information containing source and URLs
@@ -152,9 +154,91 @@ class ConfluenceService:
         else:
             title += f" - {datetime.now().strftime('%Y-%m-%d')}"
         
-        content = self._render_uml_template(diagram_data)
+        # First create the page with basic content
+        initial_content = self._render_uml_template(diagram_data, include_images=False)
+        page_result = self.create_or_update_page(title, initial_content)
+        page_id = page_result.get('id')
         
-        return self.create_or_update_page(title, content)
+        if not page_id:
+            return page_result
+        
+        # Upload images as attachments
+        attachments = self._upload_diagram_attachments(page_id, diagram_data)
+        
+        # Update page content with image references
+        final_content = self._render_uml_template(diagram_data, include_images=True, attachments=attachments)
+        self.confluence.update_page(
+            page_id=page_id,
+            title=title,
+            body=final_content
+        )
+        
+        return page_result
+    
+    def _upload_diagram_attachments(self, page_id: str, diagram_data: Dict[str, Any]) -> Dict[str, str]:
+        """
+        Upload UML diagram images as attachments to Confluence page.
+        
+        Args:
+            page_id: Confluence page ID
+            diagram_data: UML diagram information
+            
+        Returns:
+            Dict mapping diagram types to attachment filenames
+        """
+        attachments = {}
+        
+        # Upload main diagram
+        main_diagram = diagram_data.get('main_diagram', {})
+        if main_diagram and main_diagram.get('url'):
+            main_file_path = self._get_local_file_path(main_diagram['url'])
+            if main_file_path and main_file_path.exists():
+                config_name = diagram_data.get('config_name', 'diagram')
+                filename = f"uml_{config_name}_main.png"
+                
+                try:
+                    self.confluence.attach_file(
+                        filename=str(main_file_path),
+                        name=filename,
+                        content_type="image/png",
+                        page_id=page_id
+                    )
+                    attachments['main'] = filename
+                    print(f"Uploaded main diagram as {filename}")
+                except Exception as e:
+                    print(f"Failed to upload main diagram: {e}")
+        
+        # Upload additional diagrams
+        additional_diagrams = diagram_data.get('additional_diagrams', {})
+        for diagram_type, diagram_info in additional_diagrams.items():
+            if diagram_info and diagram_info.get('url'):
+                file_path = self._get_local_file_path(diagram_info['url'])
+                if file_path and file_path.exists():
+                    config_name = diagram_data.get('config_name', 'diagram')
+                    filename = f"uml_{config_name}_{diagram_type}.png"
+                    
+                    try:
+                        self.confluence.attach_file(
+                            filename=str(file_path),
+                            name=filename,
+                            content_type="image/png",
+                            page_id=page_id
+                        )
+                        attachments[diagram_type] = filename
+                        print(f"Uploaded {diagram_type} diagram as {filename}")
+                    except Exception as e:
+                        print(f"Failed to upload {diagram_type} diagram: {e}")
+        
+        return attachments
+    
+    def _get_local_file_path(self, url: str) -> Optional[Path]:
+        """Convert API URL to local file path."""
+        if '/api/uml/cache/' in url:
+            # Extract filename from URL like /api/uml/cache/abc123.png
+            filename = url.split('/api/uml/cache/')[-1]
+            cache_dir = Path("reports/uml_cache")
+            return cache_dir / filename
+        return None
     
     def _render_endpoint_template(self, endpoint: Dict[str, Any]) -> str:
         """Render endpoint documentation in Confluence storage format."""
@@ -406,7 +490,7 @@ class ConfluenceService:
         
         return sections
     
-    def _render_uml_template(self, diagram_data: Dict[str, Any]) -> str:
+    def _render_uml_template(self, diagram_data: Dict[str, Any], include_images: bool = True, attachments: Optional[Dict[str, str]] = None) -> str:
         """Render UML diagram in Confluence storage format."""
         config_name = diagram_data.get('config_name', 'diagram')
         main_diagram = diagram_data.get('main_diagram', {})
@@ -437,13 +521,25 @@ class ConfluenceService:
         # Add main diagram if available
         if main_diagram and main_diagram.get('url'):
             diagram_type = main_diagram.get('type', 'Main').title()
-            # Note: In real implementation, you'd need to upload the image as attachment
-            # For now, we'll include the PlantUML source
             content += f"""
             <h2>{diagram_type} Diagram</h2>
-            <p><em>Note: The diagram image should be uploaded as an attachment and referenced here.</em></p>
-            <p><strong>Diagram URL:</strong> <code>{main_diagram.get('url')}</code></p>
             """
+            
+            # Add image if attachments are available
+            if include_images and attachments and 'main' in attachments:
+                content += f"""
+                <ac:image ac:alt="{diagram_type} Diagram">
+                    <ri:attachment ri:filename="{attachments['main']}" />
+                </ac:image>
+                <p><em>Diagram automatically uploaded and displayed above.</em></p>
+                """
+            elif not include_images:
+                content += "<p><em>Image will be uploaded as attachment after page creation.</em></p>"
+            else:
+                content += f"""
+                <p><em>Note: The diagram image should be uploaded as an attachment.</em></p>
+                <p><strong>Source URL:</strong> <code>{main_diagram.get('url')}</code></p>
+                """
             
             # Include PlantUML source
             if main_diagram.get('source'):
@@ -465,24 +561,45 @@ class ConfluenceService:
                 if diagram_info.get('url'):
                     content += f"""
                     <h3>{diagram_type.title()} Diagram</h3>
-                    <p><strong>Diagram URL:</strong> <code>{diagram_info.get('url')}</code></p>
                     """
+                    
+                    # Add image if attachments are available
+                    if include_images and attachments and diagram_type in attachments:
+                        content += f"""
+                        <ac:image ac:alt="{diagram_type.title()} Diagram">
+                            <ri:attachment ri:filename="{attachments[diagram_type]}" />
+                        </ac:image>
+                        <p><em>Diagram automatically uploaded and displayed above.</em></p>
+                        """
+                    elif not include_images:
+                        content += "<p><em>Image will be uploaded as attachment after page creation.</em></p>"
+                    else:
+                        content += f"""
+                        <p><strong>Source URL:</strong> <code>{diagram_info.get('url')}</code></p>
+                        """
         
         # Add usage instructions
-        content += """
-        <h2>Usage Instructions</h2>
-        <ac:structured-macro ac:name="info" ac:schema-version="1">
-            <ac:rich-text-body>
-                <p>This UML diagram was automatically generated from the codebase structure. 
-                To view the actual diagrams:</p>
-                <ol>
-                    <li>Access the documentation system at the provided URLs</li>
-                    <li>Use the diagram URLs above to download the images</li>
-                    <li>Upload the images as attachments to this page and reference them</li>
-                </ol>
-            </ac:rich-text-body>
-        </ac:structured-macro>
-        """
+        if include_images and attachments:
+            content += """
+            <h2>About This Diagram</h2>
+            <ac:structured-macro ac:name="info" ac:schema-version="1">
+                <ac:rich-text-body>
+                    <p>This UML diagram was automatically generated from the codebase structure and uploaded to this page. 
+                    The diagrams show the relationships between classes, methods, and modules in your project.</p>
+                    <p>You can regenerate these diagrams at any time using the documentation system.</p>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            """
+        else:
+            content += """
+            <h2>Usage Instructions</h2>
+            <ac:structured-macro ac:name="info" ac:schema-version="1">
+                <ac:rich-text-body>
+                    <p>This UML diagram was automatically generated from the codebase structure. 
+                    The diagram images will be uploaded as attachments to this page.</p>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            """
         
         return content
 
