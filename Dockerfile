@@ -45,5 +45,5 @@ ENV BACKUPS_DIR=/app/backups
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8200/health || exit 1
 
-# Default command - run the FastAPI frontend
-CMD ["python", "-m", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8200"]
+# Default command - run the FastAPI application
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8200"]

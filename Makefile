@@ -102,19 +102,19 @@ frontend:  ## Launch HTML frontend with FastAPI backend (using Docker)
 frontend-dev:  ## Launch frontend for development (direct host)
 	@echo "Starting frontend in development mode..."
 	@echo "Frontend: http://localhost:8200"
-	uvicorn main:app --host 0.0.0.0 --port 8200 --reload
+	poetry run uvicorn main:app --host 0.0.0.0 --port 8200 --reload
 
 run-assistant:  ## Run complete documentation assistant workflow
 	@echo "🎯 Starting FastAPI Documentation Assistant"
-	python archive/run_docs_assistant.py
+	poetry run python archive/run_docs_assistant.py
 
 test-scanner:  ## Test scanner on example project
 	@echo "🧪 Testing scanner with example project"
-	python -c "from fastdoc.scanner import scan_file; items = scan_file('archive/example.py'); print(f'Found {len(items)} items in archive/example.py')"
+	poetry run python -c "from fastdoc.scanner import scan_file; items = scan_file('archive/example.py'); print(f'Found {len(items)} items in archive/example.py')"
 
 test-patcher:  ## Test patcher functionality
 	@echo "🧪 Testing patcher functionality"
-	python -c "from services.patcher import validate_docstring_syntax; result = validate_docstring_syntax('Test docstring.'); print(f'Validation: {result}')"
+	poetry run python -c "from services.patcher import validate_docstring_syntax; result = validate_docstring_syntax('Test docstring.'); print(f'Validation: {result}')"
 
 clean:  ## Clean generated files
 	@echo "🧹 Cleaning generated files"
@@ -149,18 +149,18 @@ docker-compose-down:  ## Stop docker-compose services (alias)
 # Environment setup
 check-env:  ## Check environment setup
 	@echo "🔍 Checking environment"
-	@python -c "import sys; print(f'Python: {sys.version}'); import fastapi; print(f'FastAPI: {fastapi.__version__}'); import uvicorn; print(f'Uvicorn: {uvicorn.__version__}'); import pandas; print(f'Pandas: {pandas.__version__}')"
+	@poetry run python -c "import sys; print(f'Python: {sys.version}'); import fastapi; print(f'FastAPI: {fastapi.__version__}'); import uvicorn; print(f'Uvicorn: {uvicorn.__version__}'); import pandas; print(f'Pandas: {pandas.__version__}')"
 	@if [ -n "$$OPENAI_API_KEY" ]; then echo "✅ OPENAI_API_KEY is set"; else echo "⚠️  OPENAI_API_KEY not set (optional)"; fi
 
 # Development commands
 format:  ## Format code with black
-	black fastdoc/ scripts/ *.py
+	poetry run black fastdoc/ scripts/ *.py
 
 lint:  ## Lint code with flake8
-	flake8 fastdoc/ scripts/ *.py
+	poetry run flake8 fastdoc/ scripts/ *.py
 
 type-check:  ## Type check with mypy
-	mypy fastdoc/ scripts/
+	poetry run mypy fastdoc/ scripts/
 
 dev-setup:  ## Complete development setup
 	make install-dev
@@ -170,7 +170,7 @@ dev-setup:  ## Complete development setup
 # Confluence integration commands
 confluence-status:  ## Check Confluence integration status
 	@echo "🔗 Checking Confluence status..."
-	PYTHONPATH=$$PWD python fastdoc/cli.py confluence-status
+	poetry run python fastdoc/cli.py confluence-status
 
 publish-coverage:  ## Publish coverage report to Confluence (usage: make publish-coverage REPORT_FILE=report.json)
 	@if [ -z "$(REPORT_FILE)" ]; then \
@@ -179,7 +179,7 @@ publish-coverage:  ## Publish coverage report to Confluence (usage: make publish
 		exit 1; \
 	fi
 	@echo "📊 Publishing coverage report to Confluence..."
-	PYTHONPATH=$$PWD python fastdoc/cli.py publish-coverage "$(REPORT_FILE)" --to-confluence
+	poetry run python fastdoc/cli.py publish-coverage "$(REPORT_FILE)" --to-confluence
 
 publish-endpoints:  ## Publish endpoint docs to Confluence (usage: make publish-endpoints REPORT_FILE=report.json)
 	@if [ -z "$(REPORT_FILE)" ]; then \
@@ -188,7 +188,7 @@ publish-endpoints:  ## Publish endpoint docs to Confluence (usage: make publish-
 		exit 1; \
 	fi
 	@echo "🚀 Publishing endpoints to Confluence..."
-	PYTHONPATH=$$PWD python fastdoc/cli.py publish-endpoints "$(REPORT_FILE)" --to-confluence
+	poetry run python fastdoc/cli.py publish-endpoints "$(REPORT_FILE)" --to-confluence
 
 publish-all:  ## Publish both coverage report and endpoints (usage: make publish-all REPORT_FILE=report.json)
 	@if [ -z "$(REPORT_FILE)" ]; then \
@@ -199,3 +199,66 @@ publish-all:  ## Publish both coverage report and endpoints (usage: make publish
 	@echo "📚 Publishing everything to Confluence..."
 	make publish-coverage REPORT_FILE="$(REPORT_FILE)"
 	make publish-endpoints REPORT_FILE="$(REPORT_FILE)"
+
+# Testing commands
+test:  ## Run all tests
+	@echo "🧪 Running all tests..."
+	poetry run pytest
+
+test-unit:  ## Run unit tests only
+	@echo "🔬 Running unit tests..."
+	poetry run pytest tests/unit/ -v
+
+test-integration:  ## Run integration tests only
+	@echo "🔗 Running integration tests..."
+	poetry run pytest tests/integration/ -v
+
+test-regression:  ## Run regression tests only
+	@echo "🔄 Running regression tests..."
+	poetry run pytest tests/regression/ -v
+
+test-fast:  ## Run tests excluding slow ones
+	@echo "⚡ Running fast tests..."
+	poetry run pytest -m "not slow" -v
+
+test-coverage:  ## Run tests with coverage report
+	@echo "📊 Running tests with coverage..."
+	poetry run pytest --cov=fastdoc --cov=services --cov=api --cov=core --cov-report=html --cov-report=term-missing
+
+test-watch:  ## Run tests in watch mode
+	@echo "👀 Running tests in watch mode..."
+	poetry run pytest-watch
+
+test-mutation:  ## Run mutation tests
+	@echo "🧬 Running mutation tests..."
+	poetry run mutmut run
+
+test-mutation-show:  ## Show mutation test results
+	@echo "📋 Showing mutation test results..."
+	poetry run mutmut show
+
+test-mutation-html:  ## Generate HTML report for mutation tests
+	@echo "📄 Generating HTML report for mutation tests..."
+	poetry run mutmut html
+
+test-all:  ## Run complete test suite including mutation tests
+	@echo "🎯 Running complete test suite..."
+	make test-coverage
+	make test-mutation
+	@echo "✅ Complete test suite finished!"
+
+# Test data and fixtures
+test-setup:  ## Set up test data and fixtures
+	@echo "🔧 Setting up test environment..."
+	@mkdir -p tests/fixtures/sample_projects
+	@mkdir -p tests/fixtures/reports
+	@echo "✅ Test environment ready"
+
+test-clean:  ## Clean test artifacts
+	@echo "🧹 Cleaning test artifacts..."
+	@rm -rf .pytest_cache
+	@rm -rf htmlcov
+	@rm -rf .coverage
+	@rm -rf .mutmut-cache
+	@rm -rf tests/fixtures/temp_*
+	@echo "✅ Test artifacts cleaned"
