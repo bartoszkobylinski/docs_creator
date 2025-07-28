@@ -228,6 +228,7 @@ async def get_uml_configurations():
 
 
 @router.get("/uml/cache/{cache_key}")
+@router.head("/uml/cache/{cache_key}")
 async def get_cached_diagram(cache_key: str):
     """Serve cached UML diagram image."""
     from fastapi.responses import FileResponse
