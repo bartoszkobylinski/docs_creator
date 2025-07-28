@@ -967,6 +967,7 @@ window.generateUMLDiagram = async function() {
         
         if (response.ok) {
             const result = await response.json();
+            console.log('UML Generation Response:', result);
             displayUMLResults(result);
         } else {
             const error = await response.text();
@@ -1021,6 +1022,7 @@ window.generateCustomUML = async function() {
         
         if (response.ok) {
             const result = await response.json();
+            console.log('Custom UML Generation Response:', result);
             displayUMLResults(result);
             closeCustomUMLModal();
         } else {
@@ -1035,10 +1037,19 @@ window.generateCustomUML = async function() {
 
 // Display UML generation results
 function displayUMLResults(result) {
+    console.log('Displaying UML results:', result);
+    
     const resultsDiv = document.getElementById('uml-results');
     const mainContainer = document.getElementById('main-diagram-container');
     const additionalContainer = document.getElementById('additional-diagrams-container');
     const sourceContainer = document.getElementById('plantuml-source');
+    
+    console.log('Found DOM elements:', {
+        resultsDiv: !!resultsDiv,
+        mainContainer: !!mainContainer, 
+        additionalContainer: !!additionalContainer,
+        sourceContainer: !!sourceContainer
+    });
     
     // Clear previous results
     mainContainer.innerHTML = '';
@@ -1048,16 +1059,21 @@ function displayUMLResults(result) {
     if (result.success) {
         // Display main diagram
         if (result.main_diagram && result.main_diagram.url) {
+            console.log('Main diagram URL:', result.main_diagram.url);
             const mainDiagram = document.createElement('div');
             mainDiagram.className = 'diagram-item';
             mainDiagram.innerHTML = `
                 <h5>${result.main_diagram.type.charAt(0).toUpperCase() + result.main_diagram.type.slice(1)} Diagram</h5>
-                <img src="${result.main_diagram.url}" alt="Main UML Diagram" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;">
+                <img src="${result.main_diagram.url}" alt="Main UML Diagram" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;" 
+                     onerror="console.error('Image failed to load:', '${result.main_diagram.url}'); this.style.border='2px solid red';"
+                     onload="console.log('Image loaded successfully:', '${result.main_diagram.url}');">
             `;
             mainContainer.appendChild(mainDiagram);
             
             // Show source code
             sourceContainer.textContent = result.main_diagram.source;
+        } else {
+            console.log('No main diagram or URL found:', result.main_diagram);
         }
         
         // Display additional diagrams
