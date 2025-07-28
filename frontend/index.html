@@ -153,6 +153,19 @@
                     </a>
                 </div>
 
+                <!-- LaTeX Documentation Panel -->
+                <div class="latex-panel" id="latex-panel" style="display: none;">
+                    <h3>LaTeX Documentation</h3>
+                    <p>Generate professional PDF documentation for your project.</p>
+                    <div class="latex-controls">
+                        <input type="text" id="project-name" placeholder="Project Name" value="API Documentation" style="margin-right: 10px; padding: 8px;">
+                        <button onclick="generateLatexDoc()" class="btn btn-primary" id="latex-btn">
+                            📄 Generate PDF Documentation
+                        </button>
+                    </div>
+                    <div id="latex-status" style="margin-top: 10px;"></div>
+                </div>
+
                 <div class="filters">
                     <select id="type-filter">
                         <option value="">All Types</option>

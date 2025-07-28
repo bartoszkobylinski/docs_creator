@@ -503,10 +503,12 @@ function showResults() {
     // Check Confluence status and show panel if enabled
     checkConfluenceStatus();
     
-    // Show UML panel if data is available
+    // Show UML and LaTeX panels if data is available
     const umlPanel = document.getElementById('uml-panel');
+    const latexPanel = document.getElementById('latex-panel');
     if (currentData && currentData.items && currentData.items.length > 0) {
         umlPanel.style.display = 'block';
+        latexPanel.style.display = 'block';
     }
 }
 
@@ -931,6 +933,69 @@ window.publishSingleItem = async function(index) {
     } catch (error) {
         console.error('Publish error:', error);
         alert(`Failed to publish endpoint: ${error.message}`);
+    }
+};
+
+// LaTeX Documentation Generation
+
+// Generate LaTeX documentation
+window.generateLatexDoc = async function() {
+    if (!currentData || !currentData.items) {
+        alert('No data available for LaTeX generation');
+        return;
+    }
+    
+    const button = document.getElementById('latex-btn');
+    const status = document.getElementById('latex-status');
+    const projectName = document.getElementById('project-name').value || 'API Documentation';
+    
+    const originalText = button.textContent;
+    button.textContent = 'Generating...';
+    button.disabled = true;
+    status.innerHTML = '';
+    
+    try {
+        const response = await fetch(`${apiBaseUrl}/api/docs/latex`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                project_name: projectName,
+                include_uml: true
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('LaTeX Generation Response:', result);
+            
+            if (result.success) {
+                const latexFile = result.latex_file.split('/').pop();
+                const pdfFile = result.pdf_file ? result.pdf_file.split('/').pop() : null;
+                
+                let statusHTML = '<div style="color: green;">✅ Documentation generated successfully!</div>';
+                statusHTML += `<div style="margin-top: 10px;">`;
+                statusHTML += `<a href="${apiBaseUrl}/api/docs/latex/download/${latexFile}" target="_blank" class="btn btn-secondary" style="margin-right: 10px;">Download LaTeX Source</a>`;
+                if (pdfFile) {
+                    statusHTML += `<a href="${apiBaseUrl}/api/docs/latex/download/${pdfFile}" target="_blank" class="btn btn-success">📄 Download PDF</a>`;
+                }
+                statusHTML += `</div>`;
+                
+                status.innerHTML = statusHTML;
+            } else {
+                throw new Error(result.error || 'Unknown error');
+            }
+        } else {
+            const error = await response.text();
+            throw new Error(error);
+        }
+    } catch (error) {
+        console.error('LaTeX generation error:', error);
+        status.innerHTML = `<div style="color: red;">❌ Failed to generate documentation: ${error.message}</div>`;
+    } finally {
+        button.textContent = originalText;
+        button.disabled = false;
     }
 };
 
