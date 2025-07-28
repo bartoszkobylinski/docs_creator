@@ -12,6 +12,7 @@ from models.responses import (
     ReportStatus, ScanResult, DocstringSaveResult, 
     GenerateResult, ProjectFilesResult
 )
+from core.config import settings
 from services.scanner_service import scanner_service
 from services.docstring_service import docstring_service
 from services.report_service import report_service
