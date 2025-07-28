@@ -242,16 +242,11 @@ class UMLService:
         url = f"{server}/png"
         
         try:
-            # Kroki expects JSON with diagram and output format
-            payload = {
-                "diagram_source": plantuml_source,
-                "output_format": "png"
-            }
-            
+            # Kroki expects the PlantUML source as plain text in POST body
             response = requests.post(
                 url,
-                json=payload,
-                headers={'Content-Type': 'application/json'},
+                data=plantuml_source,
+                headers={'Content-Type': 'text/plain'},
                 timeout=30
             )
             
@@ -293,7 +288,7 @@ class UMLService:
             print(f"PlantUML response content type: {content_type}")
             
             # Validate that we got an image
-            if 'image' in content_type.lower() or 'png' in content_type.lower():
+            if ('image' in content_type.lower() or 'png' in content_type.lower()) and not response.text.startswith('<html'):
                 with open(cache_file, 'wb') as f:
                     f.write(response.content)
                 print(f"Successfully saved diagram from PlantUML to cache: {cache_file}")
