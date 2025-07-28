@@ -148,6 +148,29 @@ async def publish_coverage_to_confluence(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")
 
+
+@router.post("/confluence/publish-uml")
+async def publish_uml_to_confluence(request: dict):
+    """Publish UML diagram to Confluence."""
+    if not confluence_service.is_enabled():
+        raise HTTPException(status_code=400, detail="Confluence integration is not configured")
+    
+    diagram_data = request.get("diagram_data", {})
+    title_suffix = request.get("title_suffix")
+    
+    if not diagram_data:
+        raise HTTPException(status_code=400, detail="No diagram data provided")
+    
+    try:
+        result = confluence_service.publish_uml_diagram(diagram_data, title_suffix)
+        return {
+            "success": True,
+            "page_id": result.get('id'),
+            "page_url": f"{settings.CONFLUENCE_URL}/wiki/spaces/{settings.CONFLUENCE_SPACE_KEY}/pages/{result.get('id')}"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")
+
 @router.get("/coverage/history")
 async def get_coverage_history(
     project_path: Optional[str] = None,

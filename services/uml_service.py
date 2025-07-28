@@ -95,6 +95,7 @@ class UMLService:
             
             return {
                 "success": True,
+                "config_name": config_name,
                 "main_diagram": {
                     "type": config_name,
                     "source": plantuml_source,

@@ -141,6 +141,17 @@
                 </form>
             </div>
             
+            {% if result and result.success %}
+                <div class="config-form">
+                    <h3>Publish to Confluence</h3>
+                    <p>Share this UML diagram with your team on Confluence.</p>
+                    <button onclick="publishToConfluence()" class="btn btn-secondary" id="publish-uml-btn">
+                        📄 Publish to Confluence
+                    </button>
+                    <div id="publish-status" style="margin-top: 10px;"></div>
+                </div>
+            {% endif %}
+            
             {% if result %}
                 {% if result.success %}
                     {% if result.analysis %}
@@ -229,6 +240,48 @@
                 closeZoom();
             }
         });
+        
+        // Publish to Confluence
+        async function publishToConfluence() {
+            const button = document.getElementById('publish-uml-btn');
+            const status = document.getElementById('publish-status');
+            
+            if (!button || !status) return;
+            
+            const originalText = button.textContent;
+            button.textContent = 'Publishing...';
+            button.disabled = true;
+            status.innerHTML = '';
+            
+            try {
+                const diagramData = {{ result | tojson }};
+                
+                const response = await fetch('/api/confluence/publish-uml', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        diagram_data: diagramData,
+                        title_suffix: new Date().toLocaleDateString()
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    status.innerHTML = `<div style="color: green;">✅ Published successfully! <a href="${result.page_url}" target="_blank">View on Confluence</a></div>`;
+                } else {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Publish error:', error);
+                status.innerHTML = `<div style="color: red;">❌ Failed to publish: ${error.message}</div>`;
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>

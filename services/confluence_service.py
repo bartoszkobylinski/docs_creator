@@ -130,6 +130,32 @@ class ConfluenceService:
         
         return self.create_or_update_page(title, content)
     
+    def publish_uml_diagram(
+        self, 
+        diagram_data: Dict[str, Any], 
+        title_suffix: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Publish UML diagram to Confluence.
+        
+        Args:
+            diagram_data: UML diagram information containing source and URLs
+            title_suffix: Optional suffix for the title
+            
+        Returns:
+            Page information dict
+        """
+        config_name = diagram_data.get('config_name', 'diagram')
+        title = f"UML {config_name.title()} Diagram"
+        if title_suffix:
+            title += f" - {title_suffix}"
+        else:
+            title += f" - {datetime.now().strftime('%Y-%m-%d')}"
+        
+        content = self._render_uml_template(diagram_data)
+        
+        return self.create_or_update_page(title, content)
+    
     def _render_endpoint_template(self, endpoint: Dict[str, Any]) -> str:
         """Render endpoint documentation in Confluence storage format."""
         method = endpoint.get('method', 'GET')
@@ -379,6 +405,86 @@ class ConfluenceService:
                     })
         
         return sections
+    
+    def _render_uml_template(self, diagram_data: Dict[str, Any]) -> str:
+        """Render UML diagram in Confluence storage format."""
+        config_name = diagram_data.get('config_name', 'diagram')
+        main_diagram = diagram_data.get('main_diagram', {})
+        additional_diagrams = diagram_data.get('additional_diagrams', {})
+        analysis = diagram_data.get('analysis', {})
+        
+        content = f"""
+        <h1>UML {config_name.title()} Diagram</h1>
+        <p>Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+        """
+        
+        # Add analysis summary if available
+        if analysis:
+            content += f"""
+            <h2>Analysis Summary</h2>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1">
+                <ac:parameter ac:name="bgColor">#deebff</ac:parameter>
+                <ac:rich-text-body>
+                    <ul>
+                        <li><strong>Classes found:</strong> {analysis.get('classes_found', 'N/A')}</li>
+                        <li><strong>Relationships found:</strong> {analysis.get('relationships_found', 'N/A')}</li>
+                        <li><strong>Packages:</strong> {', '.join(analysis.get('packages', []))}</li>
+                    </ul>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            """
+        
+        # Add main diagram if available
+        if main_diagram and main_diagram.get('url'):
+            diagram_type = main_diagram.get('type', 'Main').title()
+            # Note: In real implementation, you'd need to upload the image as attachment
+            # For now, we'll include the PlantUML source
+            content += f"""
+            <h2>{diagram_type} Diagram</h2>
+            <p><em>Note: The diagram image should be uploaded as an attachment and referenced here.</em></p>
+            <p><strong>Diagram URL:</strong> <code>{main_diagram.get('url')}</code></p>
+            """
+            
+            # Include PlantUML source
+            if main_diagram.get('source'):
+                content += f"""
+                <h3>PlantUML Source</h3>
+                <ac:structured-macro ac:name="code" ac:schema-version="1">
+                    <ac:parameter ac:name="language">plantuml</ac:parameter>
+                    <ac:parameter ac:name="theme">Midnight</ac:parameter>
+                    <ac:rich-text-body>
+                        <![CDATA[{main_diagram.get('source')}]]>
+                    </ac:rich-text-body>
+                </ac:structured-macro>
+                """
+        
+        # Add additional diagrams
+        if additional_diagrams:
+            content += "<h2>Additional Diagrams</h2>"
+            for diagram_type, diagram_info in additional_diagrams.items():
+                if diagram_info.get('url'):
+                    content += f"""
+                    <h3>{diagram_type.title()} Diagram</h3>
+                    <p><strong>Diagram URL:</strong> <code>{diagram_info.get('url')}</code></p>
+                    """
+        
+        # Add usage instructions
+        content += """
+        <h2>Usage Instructions</h2>
+        <ac:structured-macro ac:name="info" ac:schema-version="1">
+            <ac:rich-text-body>
+                <p>This UML diagram was automatically generated from the codebase structure. 
+                To view the actual diagrams:</p>
+                <ol>
+                    <li>Access the documentation system at the provided URLs</li>
+                    <li>Use the diagram URLs above to download the images</li>
+                    <li>Upload the images as attachments to this page and reference them</li>
+                </ol>
+            </ac:rich-text-body>
+        </ac:structured-macro>
+        """
+        
+        return content
 
 
 # Global confluence service instance
