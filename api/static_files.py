@@ -3,7 +3,7 @@ Static file serving routes for the frontend.
 """
 
 from fastapi import APIRouter
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 from core.config import settings
 
@@ -13,7 +13,12 @@ router = APIRouter()
 
 @router.get("/")
 async def serve_frontend():
-    """Serve the main frontend HTML file."""
+    """Redirect to modern dashboard."""
+    return RedirectResponse(url="/dashboard", status_code=302)
+
+@router.get("/legacy")
+async def serve_legacy_frontend():
+    """Serve the legacy frontend HTML file."""
     return FileResponse(f"{settings.FRONTEND_DIR}/index.html")
 
 
@@ -27,3 +32,13 @@ async def serve_css():
 async def serve_js():
     """Serve the JavaScript file."""
     return FileResponse(f"{settings.FRONTEND_DIR}/script.js")
+
+@router.get("/styles_new.css")
+async def serve_new_css():
+    """Serve the new modern CSS file."""
+    return FileResponse(f"{settings.FRONTEND_DIR}/styles_new.css")
+
+@router.get("/script_new.js")
+async def serve_new_js():
+    """Serve the new modern JavaScript file."""
+    return FileResponse(f"{settings.FRONTEND_DIR}/script_new.js")

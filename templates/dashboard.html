@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs Creator - Modern Dashboard</title>
+    <link rel="stylesheet" href="/static/styles_new.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="brand">
+                    <h1>📚 Docs Creator</h1>
+                    <span class="tagline">Professional Documentation Assistant</span>
+                </div>
+                <div class="header-actions">
+                    <div class="status-indicator" id="data-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">No Data</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard" id="dashboard">
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-content">
+                    <div class="empty-icon">📄</div>
+                    <h2>Welcome to Docs Creator</h2>
+                    <p>Get started by loading your project documentation or scanning a new project.</p>
+                    
+                    <div class="start-options">
+                        <div class="option-card primary">
+                            <h3>🚀 Quick Start</h3>
+                            <p>Scan a local project directory</p>
+                            <div class="input-group">
+                                <input type="text" id="project-path-input" placeholder="/path/to/your/project" class="path-input">
+                                <button onclick="scanLocalProject()" class="btn btn-primary">Scan Project</button>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card">
+                            <h3>📁 Load Report</h3>
+                            <p>Upload an existing JSON report</p>
+                            <div class="file-drop" id="json-drop-zone">
+                                <input type="file" id="json-file-input" accept=".json" style="display: none;">
+                                <div class="drop-content">
+                                    <span class="drop-icon">📄</span>
+                                    <span>Drop JSON file or click to browse</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loading-state" style="display: none;">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <h3>Processing Your Project</h3>
+                    <p id="loading-message">Scanning files...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Grid -->
+            <div class="dashboard-grid" id="main-dashboard" style="display: none;">
+                <!-- Overview Card -->
+                <div class="card overview-card">
+                    <div class="card-header">
+                        <h3>Project Overview</h3>
+                        <div class="card-actions">
+                            <button class="btn-icon" onclick="refreshData()" title="Refresh">
+                                <span>🔄</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="total-items">-</div>
+                                <div class="stat-label">Total Items</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="documented-items">-</div>
+                                <div class="stat-label">Documented</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="coverage-percent">-</div>
+                                <div class="stat-label">Coverage</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="missing-docs">-</div>
+                                <div class="stat-label">Missing Docs</div>
+                            </div>
+                        </div>
+                        
+                        <div class="coverage-visual">
+                            <div class="coverage-bar-container">
+                                <div class="coverage-bar" id="coverage-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Card -->
+                <div class="card actions-card">
+                    <div class="card-header">
+                        <h3>Documentation Tools</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="action-buttons">
+                            <button onclick="generateUMLDashboard()" class="action-btn uml-btn">
+                                <span class="btn-icon">🔗</span>
+                                <div class="btn-content">
+                                    <div class="btn-title">UML Diagrams</div>
+                                    <div class="btn-subtitle">Visual system architecture</div>
+                                </div>
+                            </button>
+                            
+                            <button onclick="generateLatexDashboard()" class="action-btn latex-btn">
+                                <span class="btn-icon">📄</span>
+                                <div class="btn-content">
+                                    <div class="btn-title">PDF Documentation</div>
+                                    <div class="btn-subtitle">Professional LaTeX output</div>
+                                </div>
+                            </button>
+                            
+                            <button onclick="openConfluenceDashboard()" class="action-btn confluence-btn" id="confluence-action">
+                                <span class="btn-icon">🌐</span>
+                                <div class="btn-content">
+                                    <div class="btn-title">Confluence</div>
+                                    <div class="btn-subtitle">Team collaboration</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Table Card -->
+                <div class="card table-card">
+                    <div class="card-header">
+                        <h3>Documentation Items</h3>
+                        <div class="card-actions">
+                            <div class="filters">
+                                <select id="type-filter" class="filter-select">
+                                    <option value="">All Types</option>
+                                    <option value="FUNCTION">Functions</option>
+                                    <option value="CLASS">Classes</option>
+                                    <option value="ENDPOINT">Endpoints</option>
+                                    <option value="MODULE">Modules</option>
+                                </select>
+                                
+                                <select id="doc-filter" class="filter-select">
+                                    <option value="">All Items</option>
+                                    <option value="missing">Missing Documentation</option>
+                                    <option value="documented">Has Documentation</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Documented</th>
+                                        <th>Coverage</th>
+                                        <th>Quality</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="docs-table-body">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Action Modals -->
+        <div class="modal" id="uml-modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Generate UML Diagrams</h3>
+                    <button class="modal-close" onclick="closeModal('uml-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Choose the type of UML diagram to generate:</p>
+                    <div class="diagram-options">
+                        <button onclick="generateUMLType('overview')" class="option-btn">Overview</button>
+                        <button onclick="generateUMLType('detailed')" class="option-btn">Detailed</button>
+                        <button onclick="generateUMLType('inheritance')" class="option-btn">Inheritance</button>
+                        <button onclick="generateUMLType('composition')" class="option-btn">Composition</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="latex-modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Generate PDF Documentation</h3>
+                    <button class="modal-close" onclick="closeModal('latex-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="pdf-project-name">Project Name:</label>
+                        <input type="text" id="pdf-project-name" value="API Documentation" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="include-uml-pdf" checked> Include UML Diagrams
+                        </label>
+                    </div>
+                    <button onclick="generatePDF()" class="btn btn-primary full-width">Generate PDF</button>
+                    <div id="pdf-status" class="status-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor Panel (slide-in from right) -->
+        <div class="editor-panel" id="editor-panel" style="display: none;">
+            <div class="editor-header">
+                <h3 id="editor-title">Edit Documentation</h3>
+                <button class="editor-close" onclick="closeEditor()">&times;</button>
+            </div>
+            <div class="editor-content">
+                <div class="editor-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Module:</label>
+                            <span id="edit-module"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Name:</label>
+                            <span id="edit-name"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Type:</label>
+                            <span id="edit-type"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>File:</label>
+                            <span id="edit-file"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="editor-source">
+                    <h4>Source Code</h4>
+                    <pre id="source-code" class="source-preview"></pre>
+                </div>
+                
+                <div class="editor-docstring">
+                    <div class="docstring-header">
+                        <h4>Documentation</h4>
+                        <div class="docstring-actions">
+                            <button onclick="generateAI()" class="btn btn-secondary" id="ai-btn">✨ AI Generate</button>
+                            <button onclick="resetDocstring()" class="btn btn-outline">Reset</button>
+                        </div>
+                    </div>
+                    <textarea id="docstring-textarea" placeholder="Enter documentation..." class="docstring-input"></textarea>
+                    <div class="preview-section">
+                        <h5>Preview</h5>
+                        <pre id="docstring-preview" class="docstring-preview"></pre>
+                    </div>
+                    <button onclick="saveDocstring()" class="btn btn-primary full-width">Save Documentation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OpenAI Modal -->
+        <div class="modal" id="openai-modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>OpenAI Configuration</h3>
+                    <button class="modal-close" onclick="closeModal('openai-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="openai-key">API Key:</label>
+                        <input type="password" id="openai-key" placeholder="sk-..." class="form-input">
+                    </div>
+                    <button onclick="saveOpenAIKey()" class="btn btn-primary full-width">Save Key</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script_new.js"></script>
+</body>
+</html>
