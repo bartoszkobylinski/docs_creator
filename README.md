@@ -140,6 +140,75 @@ When `OPENAI_API_KEY` is configured:
 3. **Style Consistent**: Follows PEP-257 and your project's style
 4. **Review Workflow**: Suggestions are reviewable before applying
 
+## 🔗 Confluence Integration
+
+Publish your documentation directly to Confluence for better team collaboration:
+
+### **Features:**
+- **📄 Endpoint Documentation**: Auto-generate beautiful API docs from docstrings
+- **📊 Coverage Reports**: Visual reports with color-coded metrics and trends
+- **📈 Progress Tracking**: Monitor documentation improvements over time
+- **👥 Team Visibility**: Share documentation with non-technical stakeholders
+
+### **Setup:**
+```bash
+# Add to your .env file
+CONFLUENCE_URL=https://yourcompany.atlassian.net
+CONFLUENCE_USERNAME=your.email@company.com
+CONFLUENCE_API_TOKEN=your-confluence-api-token
+CONFLUENCE_SPACE_KEY=APIDEV
+```
+
+### **Usage:**
+```bash
+# Check Confluence status
+make confluence-status
+
+# Publish coverage report
+make publish-coverage REPORT_FILE=reports/my_report.json
+
+# Publish all endpoints
+make publish-endpoints REPORT_FILE=reports/my_report.json
+
+# Publish everything
+make publish-all REPORT_FILE=reports/my_report.json
+```
+
+### **Web Interface:**
+- **Confluence Panel**: Shows connection status and publishing options
+- **Bulk Publishing**: Publish all endpoints or coverage reports with one click
+- **Individual Publishing**: Publish specific endpoints directly from the table
+- **Progress Feedback**: Real-time status updates during publishing
+
+## 📈 Coverage Tracking & Analytics
+
+Monitor your documentation progress over time with comprehensive analytics:
+
+### **Features:**
+- **📊 Historical Tracking**: Automatic recording of coverage statistics over time
+- **📈 Trend Analysis**: See if your documentation is improving or declining
+- **🎯 Smart Recommendations**: Get actionable advice based on your coverage data
+- **📋 Progress Reports**: Comprehensive reports with module-level breakdowns
+- **🔍 Detailed Insights**: Coverage by type (endpoints, classes, functions)
+
+### **API Endpoints:**
+```bash
+# View coverage history
+GET /api/coverage/history?project_path=/path/to/project&limit=10
+
+# Get trends analysis
+GET /api/coverage/trends?project_path=/path/to/project&days=30
+
+# Generate progress report
+GET /api/coverage/progress-report?project_path=/path/to/project
+```
+
+### **Automatic Tracking:**
+- Every scan automatically records coverage statistics
+- Historical data stored locally with metadata
+- Trends calculated automatically
+- Recommendations generated based on patterns
+
 ## 🔒 Safety Features
 
 - **Automatic Backups**: Every change creates timestamped backups
