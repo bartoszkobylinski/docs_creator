@@ -240,6 +240,8 @@ async def get_cached_diagram(cache_key: str):
     # Determine media type based on file extension
     if cache_key.endswith('.svg'):
         media_type = "image/svg+xml"
+    elif cache_key.endswith('.txt'):
+        media_type = "text/plain"
     else:
         media_type = "image/png"
     
