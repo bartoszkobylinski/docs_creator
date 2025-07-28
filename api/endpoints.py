@@ -236,8 +236,14 @@ async def get_cached_diagram(cache_key: str):
     if not cached_file:
         raise HTTPException(status_code=404, detail="Diagram not found in cache")
     
+    # Determine media type based on file extension
+    if cache_key.endswith('.svg'):
+        media_type = "image/svg+xml"
+    else:
+        media_type = "image/png"
+    
     return FileResponse(
         cached_file,
-        media_type="image/png",
+        media_type=media_type,
         filename=cache_key
     )

@@ -186,15 +186,18 @@ class UMLService:
             return None
     
     def _render_server_plantuml(self, plantuml_source: str, cache_file: Path) -> str:
-        """Render PlantUML using online server."""
-        # Encode PlantUML source
-        encoded = self._encode_plantuml(plantuml_source)
-        
-        # Request image from server
-        url = f"{self.plantuml_server}/png/{encoded}"
+        """Render PlantUML using online server via POST request."""
+        # Use POST request with text data instead of URL encoding
+        url = f"{self.plantuml_server}/png/"
         
         try:
-            response = requests.get(url, timeout=30)
+            # Send PlantUML source as text in POST request
+            response = requests.post(
+                url, 
+                data=plantuml_source.encode('utf-8'),
+                headers={'Content-Type': 'text/plain'},
+                timeout=30
+            )
             response.raise_for_status()
             
             # Save to cache
@@ -205,8 +208,42 @@ class UMLService:
             
         except requests.RequestException as e:
             print(f"PlantUML server request failed: {e}")
-            # Return PlantUML server direct URL as fallback
-            return url
+            # Try alternative approach with form data
+            try:
+                response = requests.post(
+                    url,
+                    data={'text': plantuml_source},
+                    timeout=30
+                )
+                response.raise_for_status()
+                
+                with open(cache_file, 'wb') as f:
+                    f.write(response.content)
+                
+                return f"/api/uml/cache/{cache_file.name}"
+                
+            except requests.RequestException as e2:
+                print(f"Alternative PlantUML request also failed: {e2}")
+                # Final fallback: try SVG format which sometimes works better
+                try:
+                    svg_url = f"{self.plantuml_server}/svg/"
+                    response = requests.post(
+                        svg_url,
+                        data={'text': plantuml_source},
+                        timeout=30
+                    )
+                    response.raise_for_status()
+                    
+                    # Save SVG as text file and return reference
+                    svg_cache_file = cache_file.with_suffix('.svg')
+                    with open(svg_cache_file, 'wb') as f:
+                        f.write(response.content)
+                    
+                    return f"/api/uml/cache/{svg_cache_file.name}"
+                    
+                except requests.RequestException as e3:
+                    print(f"SVG fallback also failed: {e3}")
+                    return None
     
     def _render_local_plantuml(self, plantuml_source: str, cache_file: Path) -> str:
         """Render PlantUML using local JAR file."""
@@ -241,23 +278,6 @@ class UMLService:
         finally:
             # Cleanup
             os.unlink(temp_file_path)
-    
-    def _encode_plantuml(self, plantuml_source: str) -> str:
-        """Encode PlantUML source for URL transmission."""
-        import zlib
-        
-        # Compress and encode
-        compressed = zlib.compress(plantuml_source.encode('utf-8'))
-        encoded = base64.b64encode(compressed).decode('ascii')
-        
-        # PlantUML URL encoding
-        plantuml_alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
-        base64_alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-        
-        # Simple character replacement for PlantUML encoding
-        encoded = encoded.translate(str.maketrans(base64_alphabet, plantuml_alphabet))
-        
-        return encoded
     
     def get_cached_diagram(self, cache_key: str) -> Optional[Path]:
         """Get cached diagram file."""
