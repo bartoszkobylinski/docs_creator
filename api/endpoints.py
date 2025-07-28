@@ -15,6 +15,7 @@ from models.responses import (
 from services.scanner_service import scanner_service
 from services.docstring_service import docstring_service
 from services.report_service import report_service
+from services.confluence_service import confluence_service
 
 # Create API router
 router = APIRouter()
@@ -96,3 +97,50 @@ async def scan_local_project(request: dict):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Scan failed: {str(e)}")
+
+
+@router.get("/confluence/status")
+async def get_confluence_status():
+    """Check if Confluence integration is enabled and configured."""
+    return {
+        "enabled": confluence_service.is_enabled(),
+        "url": settings.CONFLUENCE_URL if confluence_service.is_enabled() else None,
+        "space_key": settings.CONFLUENCE_SPACE_KEY if confluence_service.is_enabled() else None
+    }
+
+
+@router.post("/confluence/publish-endpoint")
+async def publish_endpoint_to_confluence(endpoint_data: dict):
+    """Publish a single endpoint documentation to Confluence."""
+    if not confluence_service.is_enabled():
+        raise HTTPException(status_code=400, detail="Confluence integration is not configured")
+    
+    try:
+        result = confluence_service.publish_endpoint_doc(endpoint_data)
+        return {
+            "success": True,
+            "page_id": result.get('id'),
+            "page_url": f"{settings.CONFLUENCE_URL}/wiki/spaces/{settings.CONFLUENCE_SPACE_KEY}/pages/{result.get('id')}"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")
+
+
+@router.post("/confluence/publish-coverage")
+async def publish_coverage_to_confluence(request: dict):
+    """Publish coverage report to Confluence."""
+    if not confluence_service.is_enabled():
+        raise HTTPException(status_code=400, detail="Confluence integration is not configured")
+    
+    items = request.get("items", [])
+    title_suffix = request.get("title_suffix")
+    
+    try:
+        result = confluence_service.publish_coverage_report(items, title_suffix)
+        return {
+            "success": True,
+            "page_id": result.get('id'),
+            "page_url": f"{settings.CONFLUENCE_URL}/wiki/spaces/{settings.CONFLUENCE_SPACE_KEY}/pages/{result.get('id')}"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")

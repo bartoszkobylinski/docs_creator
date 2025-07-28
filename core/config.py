@@ -38,6 +38,13 @@ class Settings:
     # OpenAI settings (optional)
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
     
+    # Confluence settings (optional)
+    CONFLUENCE_URL: Optional[str] = os.getenv("CONFLUENCE_URL")
+    CONFLUENCE_USERNAME: Optional[str] = os.getenv("CONFLUENCE_USERNAME")
+    CONFLUENCE_API_TOKEN: Optional[str] = os.getenv("CONFLUENCE_API_TOKEN")
+    CONFLUENCE_SPACE_KEY: Optional[str] = os.getenv("CONFLUENCE_SPACE_KEY", "APIDEV")
+    CONFLUENCE_PARENT_PAGE_ID: Optional[str] = os.getenv("CONFLUENCE_PARENT_PAGE_ID")
+    
     # File scanning settings
     MAX_FILE_SIZE: int = int(os.getenv("MAX_FILE_SIZE", "10485760"))  # 10MB
     ALLOWED_EXTENSIONS: list = [".py"]
