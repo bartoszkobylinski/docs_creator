@@ -69,7 +69,7 @@ class UMLService:
             plantuml_source = self.generator.generate_diagram(analysis_result, config)
             
             # Generate diagram image
-            diagram_url = self._render_plantuml(plantuml_source)
+            diagram_url = self._render_plantuml(plantuml_source, config_name)
             print(f"Generated diagram URL: {diagram_url}")
             
             # Generate additional diagram types
@@ -83,14 +83,14 @@ class UMLService:
                 )
                 additional_diagrams["sequence"] = {
                     "source": sequence_source,
-                    "url": self._render_plantuml(sequence_source)
+                    "url": self._render_plantuml(sequence_source, f"{config_name}_sequence")
                 }
             
             # Component diagram
             component_source = self.generator.generate_component_diagram(analysis_result)
             additional_diagrams["component"] = {
                 "source": component_source,
-                "url": self._render_plantuml(component_source)
+                "url": self._render_plantuml(component_source, f"{config_name}_component")
             }
             
             return {
@@ -139,7 +139,7 @@ class UMLService:
             # Analyze and generate
             analysis_result = self.analyzer.analyze_documentation_items(items)
             plantuml_source = self.generator.generate_diagram(analysis_result, config)
-            diagram_url = self._render_plantuml(plantuml_source)
+            diagram_url = self._render_plantuml(plantuml_source, config_name)
             
             return {
                 "success": True,
@@ -186,10 +186,11 @@ class UMLService:
             }
         }
     
-    def _render_plantuml(self, plantuml_source: str) -> str:
+    def _render_plantuml(self, plantuml_source: str, config_name: str = "default") -> str:
         """Render PlantUML source to image URL."""
-        # Create cache key
-        cache_key = hashlib.md5(plantuml_source.encode()).hexdigest()
+        # Create cache key including config name to avoid collisions
+        source_with_config = f"{config_name}:{plantuml_source}"
+        cache_key = hashlib.md5(source_with_config.encode()).hexdigest()
         cache_file = self.cache_dir / f"{cache_key}.png"
         
         # Return cached version if exists

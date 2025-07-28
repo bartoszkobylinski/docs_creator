@@ -24,9 +24,36 @@
         }
         .diagram-image {
             max-width: 100%;
+            min-width: 600px;
             border: 1px solid #ccc;
             margin: 10px 0;
             background: white;
+            cursor: zoom-in;
+        }
+        .diagram-image:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+        .diagram-image.zoomed {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.5);
+            z-index: 1000;
+            max-width: 90vw;
+            max-height: 90vh;
+            cursor: zoom-out;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+        .diagram-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 999;
+            display: none;
         }
         .source-section {
             margin-top: 20px;
@@ -86,6 +113,7 @@
     </style>
 </head>
 <body>
+    <div class="diagram-overlay" id="diagram-overlay" onclick="closeZoom()"></div>
     <div class="uml-container">
         <a href="/" class="back-link">&larr; Back to Main</a>
         
@@ -131,7 +159,8 @@
                             <h3>{{ result.main_diagram.type|title }} Diagram</h3>
                             <img src="{{ result.main_diagram.url }}" 
                                  alt="Main UML Diagram" 
-                                 class="diagram-image">
+                                 class="diagram-image"
+                                 onclick="toggleZoom(this)">
                             
                             {% if show_source and result.main_diagram.source %}
                                 <div class="source-section">
@@ -149,7 +178,8 @@
                                     <h3>{{ type|title }} Diagram</h3>
                                     <img src="{{ diagram.url }}" 
                                          alt="{{ type|title }} UML Diagram" 
-                                         class="diagram-image">
+                                         class="diagram-image"
+                                         onclick="toggleZoom(this)">
                                 </div>
                             {% endif %}
                         {% endfor %}
@@ -168,5 +198,37 @@
             </div>
         {% endif %}
     </div>
+    
+    <script>
+        function toggleZoom(img) {
+            const overlay = document.getElementById('diagram-overlay');
+            
+            if (img.classList.contains('zoomed')) {
+                closeZoom();
+            } else {
+                img.classList.add('zoomed');
+                overlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeZoom() {
+            const zoomedImg = document.querySelector('.diagram-image.zoomed');
+            const overlay = document.getElementById('diagram-overlay');
+            
+            if (zoomedImg) {
+                zoomedImg.classList.remove('zoomed');
+                overlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Close zoom on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeZoom();
+            }
+        });
+    </script>
 </body>
 </html>
