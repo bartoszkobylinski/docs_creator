@@ -128,6 +128,22 @@
                     </div>
                 </div>
 
+                <!-- Confluence Integration Panel -->
+                <div class="confluence-panel" id="confluence-panel" style="display: none;">
+                    <h3>Confluence Integration</h3>
+                    <div class="confluence-status" id="confluence-status">
+                        <span id="confluence-status-text">Checking...</span>
+                    </div>
+                    <div class="confluence-actions">
+                        <button class="btn btn-primary" onclick="publishCoverageReport()" id="publish-coverage-btn" disabled>
+                            Publish Coverage Report
+                        </button>
+                        <button class="btn btn-secondary" onclick="publishAllEndpoints()" id="publish-endpoints-btn" disabled>
+                            Publish All Endpoints
+                        </button>
+                    </div>
+                </div>
+
                 <div class="filters">
                     <select id="type-filter">
                         <option value="">All Types</option>

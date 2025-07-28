@@ -499,6 +499,9 @@ function showResults() {
     
     // Show results section
     resultsSection.style.display = 'block';
+    
+    // Check Confluence status and show panel if enabled
+    checkConfluenceStatus();
 }
 
 // Populate table
@@ -542,6 +545,9 @@ function populateTable(items) {
             </td>
             <td>
                 <button class="btn btn-primary" onclick="editItem(${originalIndex})">Edit</button>
+                <button class="btn btn-secondary confluence-publish-btn" onclick="publishSingleItem(${originalIndex})" style="display: none; margin-left: 5px;" title="Publish to Confluence">
+                    📄
+                </button>
             </td>
         `;
         
@@ -744,3 +750,180 @@ window.saveOpenAIKey = function saveOpenAIKey() {
         alert('Please enter a valid API key');
     }
 }
+
+// Confluence Integration Functions
+
+// Check Confluence status
+async function checkConfluenceStatus() {
+    try {
+        const response = await fetch(`${apiBaseUrl}/api/confluence/status`);
+        if (response.ok) {
+            const data = await response.json();
+            updateConfluenceUI(data);
+        }
+    } catch (error) {
+        console.log('Confluence status check failed:', error);
+    }
+}
+
+// Update Confluence UI based on status
+function updateConfluenceUI(status) {
+    const panel = document.getElementById('confluence-panel');
+    const statusElement = document.getElementById('confluence-status');
+    const statusText = document.getElementById('confluence-status-text');
+    const coverageBtn = document.getElementById('publish-coverage-btn');
+    const endpointsBtn = document.getElementById('publish-endpoints-btn');
+    const publishBtns = document.querySelectorAll('.confluence-publish-btn');
+    
+    if (status.enabled) {
+        panel.style.display = 'block';
+        statusElement.className = 'confluence-status enabled';
+        statusText.textContent = `Connected to ${status.url} (Space: ${status.space_key})`;
+        
+        // Enable buttons
+        coverageBtn.disabled = false;
+        endpointsBtn.disabled = false;
+        publishBtns.forEach(btn => btn.style.display = 'inline-block');
+    } else {
+        panel.style.display = 'block';
+        statusElement.className = 'confluence-status disabled';
+        statusText.textContent = 'Not configured. Set CONFLUENCE_URL, CONFLUENCE_USERNAME, CONFLUENCE_API_TOKEN, and CONFLUENCE_SPACE_KEY environment variables.';
+        
+        // Keep buttons disabled
+        coverageBtn.disabled = true;
+        endpointsBtn.disabled = true;
+        publishBtns.forEach(btn => btn.style.display = 'none');
+    }
+}
+
+// Publish coverage report to Confluence
+window.publishCoverageReport = async function() {
+    if (!currentData || !currentData.items) {
+        alert('No data to publish');
+        return;
+    }
+    
+    const button = document.getElementById('publish-coverage-btn');
+    const originalText = button.textContent;
+    button.textContent = 'Publishing...';
+    button.disabled = true;
+    
+    try {
+        const response = await fetch(`${apiBaseUrl}/api/confluence/publish-coverage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                items: currentData.items,
+                title_suffix: new Date().toLocaleDateString()
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            alert(`Coverage report published successfully!\nPage URL: ${result.page_url}`);
+        } else {
+            const error = await response.text();
+            throw new Error(error);
+        }
+    } catch (error) {
+        console.error('Publish error:', error);
+        alert(`Failed to publish coverage report: ${error.message}`);
+    } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+    }
+};
+
+// Publish all endpoints to Confluence
+window.publishAllEndpoints = async function() {
+    if (!currentData || !currentData.items) {
+        alert('No data to publish');
+        return;
+    }
+    
+    // Filter for endpoints only
+    const endpoints = currentData.items.filter(item => 
+        item.method && ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(item.method)
+    );
+    
+    if (endpoints.length === 0) {
+        alert('No endpoints found to publish');
+        return;
+    }
+    
+    const button = document.getElementById('publish-endpoints-btn');
+    const originalText = button.textContent;
+    button.disabled = true;
+    
+    let publishedCount = 0;
+    let failedCount = 0;
+    
+    for (let i = 0; i < endpoints.length; i++) {
+        const endpoint = endpoints[i];
+        button.textContent = `Publishing ${i + 1}/${endpoints.length}...`;
+        
+        try {
+            const response = await fetch(`${apiBaseUrl}/api/confluence/publish-endpoint`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(endpoint)
+            });
+            
+            if (response.ok) {
+                publishedCount++;
+            } else {
+                failedCount++;
+                console.error(`Failed to publish ${endpoint.method} ${endpoint.path}`);
+            }
+        } catch (error) {
+            failedCount++;
+            console.error(`Error publishing ${endpoint.method} ${endpoint.path}:`, error);
+        }
+    }
+    
+    alert(`Endpoint publishing complete!\nPublished: ${publishedCount}\nFailed: ${failedCount}`);
+    
+    button.textContent = originalText;
+    button.disabled = false;
+};
+
+// Publish single item to Confluence
+window.publishSingleItem = async function(index) {
+    if (!currentData || !currentData.items[index]) {
+        alert('Item not found');
+        return;
+    }
+    
+    const item = currentData.items[index];
+    
+    // Check if it's an endpoint
+    if (!item.method || !['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(item.method)) {
+        alert('Only endpoints can be published to Confluence');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${apiBaseUrl}/api/confluence/publish-endpoint`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(item)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            alert(`Endpoint published successfully!\nPage URL: ${result.page_url}`);
+        } else {
+            const error = await response.text();
+            throw new Error(error);
+        }
+    } catch (error) {
+        console.error('Publish error:', error);
+        alert(`Failed to publish endpoint: ${error.message}`);
+    }
+};
