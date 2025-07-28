@@ -147,68 +147,10 @@
                 <!-- UML Generation Panel -->
                 <div class="uml-panel" id="uml-panel" style="display: none;">
                     <h3>UML Diagram Generation</h3>
-                    <div class="uml-controls">
-                        <div class="control-group">
-                            <label for="uml-config">Diagram Type:</label>
-                            <select id="uml-config">
-                                <option value="overview">Class Overview</option>
-                                <option value="detailed">Detailed Classes</option>
-                                <option value="services">Service Layer</option>
-                                <option value="models">Data Models</option>
-                                <option value="fastapi">FastAPI Architecture</option>
-                            </select>
-                        </div>
-                        <button onclick="generateUMLDiagram()" class="btn btn-success">
-                            Generate UML Diagram
-                        </button>
-                        <button onclick="showCustomUMLConfig()" class="btn btn-secondary" style="margin-left: 10px;">
-                            Custom Configuration
-                        </button>
-                    </div>
-                    
-                    <div class="uml-results" id="uml-results" style="display: none;">
-                        <div class="diagram-container">
-                            <h4>Generated Diagrams</h4>
-                            <div id="main-diagram-container"></div>
-                            <div id="additional-diagrams-container"></div>
-                        </div>
-                        <div class="diagram-source" style="margin-top: 20px;">
-                            <details>
-                                <summary>PlantUML Source Code</summary>
-                                <pre id="plantuml-source"></pre>
-                            </details>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Custom UML Configuration Modal -->
-                <div class="modal" id="custom-uml-modal" style="display: none;">
-                    <div class="modal-content">
-                        <h3>Custom UML Configuration</h3>
-                        <div class="config-grid">
-                            <div class="config-group">
-                                <label><input type="checkbox" id="include-methods" checked> Include Methods</label>
-                                <label><input type="checkbox" id="include-attributes" checked> Include Attributes</label>
-                                <label><input type="checkbox" id="include-private"> Include Private Members</label>
-                                <label><input type="checkbox" id="show-stereotypes" checked> Show Stereotypes</label>
-                                <label><input type="checkbox" id="color-by-type" checked> Color by Type</label>
-                                <label><input type="checkbox" id="group-by-package" checked> Group by Package</label>
-                            </div>
-                            <div class="config-group">
-                                <label for="max-classes">Max Classes: <input type="number" id="max-classes" value="20" min="1" max="50"></label>
-                                <label for="layout-direction">Layout Direction:
-                                    <select id="layout-direction">
-                                        <option value="top to bottom direction">Top to Bottom</option>
-                                        <option value="left to right direction">Left to Right</option>
-                                    </select>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="modal-actions">
-                            <button onclick="generateCustomUML()" class="btn btn-primary">Generate</button>
-                            <button onclick="closeCustomUMLModal()" class="btn btn-secondary">Cancel</button>
-                        </div>
-                    </div>
+                    <p>Generate visual UML diagrams from your code structure.</p>
+                    <a href="/uml" class="btn btn-success" target="_blank">
+                        Open UML Diagrams Page
+                    </a>
                 </div>
 
                 <div class="filters">

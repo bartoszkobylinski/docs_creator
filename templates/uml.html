@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UML Diagrams - Docs Creator</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .uml-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .diagram-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .diagram-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .diagram-image {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            background: white;
+        }
+        .source-section {
+            margin-top: 20px;
+        }
+        .source-code {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .analysis-summary {
+            background: #e8f4f8;
+            border: 1px solid #b3d9e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .analysis-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .config-form {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        .config-form select, .config-form button {
+            margin: 10px 5px;
+            padding: 8px 12px;
+        }
+        .error-message {
+            background: #ffe6e6;
+            border: 1px solid #ff9999;
+            border-radius: 4px;
+            padding: 15px;
+            color: #cc0000;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-link:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="uml-container">
+        <a href="/" class="back-link">&larr; Back to Main</a>
+        
+        <h1>UML Diagrams</h1>
+        
+        {% if not has_data %}
+            <div class="error-message">
+                <h3>No Data Available</h3>
+                <p>Please scan a project first to generate UML diagrams.</p>
+                <a href="/">Go back to scan a project</a>
+            </div>
+        {% else %}
+            <div class="config-form">
+                <h3>Generate UML Diagram</h3>
+                <form method="post" action="/uml">
+                    <label for="config">Select Configuration:</label>
+                    <select name="config" id="config">
+                        <option value="overview" {% if selected_config == 'overview' %}selected{% endif %}>Overview</option>
+                        <option value="detailed" {% if selected_config == 'detailed' %}selected{% endif %}>Detailed</option>
+                        <option value="inheritance" {% if selected_config == 'inheritance' %}selected{% endif %}>Inheritance</option>
+                        <option value="composition" {% if selected_config == 'composition' %}selected{% endif %}>Composition</option>
+                        <option value="sequence" {% if selected_config == 'sequence' %}selected{% endif %}>Sequence</option>
+                    </select>
+                    <button type="submit">Generate Diagram</button>
+                </form>
+            </div>
+            
+            {% if result %}
+                {% if result.success %}
+                    {% if result.analysis %}
+                        <div class="analysis-summary">
+                            <h4>Analysis Summary</h4>
+                            <ul>
+                                <li>Classes found: {{ result.analysis.classes_found }}</li>
+                                <li>Relationships found: {{ result.analysis.relationships_found }}</li>
+                                <li>Packages: {{ result.analysis.packages|join(', ') }}</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                    
+                    {% if result.main_diagram %}
+                        <div class="diagram-section">
+                            <h3>{{ result.main_diagram.type|title }} Diagram</h3>
+                            <img src="{{ result.main_diagram.url }}" 
+                                 alt="Main UML Diagram" 
+                                 class="diagram-image">
+                            
+                            {% if show_source and result.main_diagram.source %}
+                                <div class="source-section">
+                                    <h4>PlantUML Source</h4>
+                                    <div class="source-code">{{ result.main_diagram.source }}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    
+                    {% if result.additional_diagrams %}
+                        {% for type, diagram in result.additional_diagrams.items() %}
+                            {% if diagram.url %}
+                                <div class="diagram-section">
+                                    <h3>{{ type|title }} Diagram</h3>
+                                    <img src="{{ diagram.url }}" 
+                                         alt="{{ type|title }} UML Diagram" 
+                                         class="diagram-image">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% else %}
+                    <div class="error-message">
+                        <h3>UML Generation Failed</h3>
+                        <p>{{ result.error }}</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+            
+            <div style="margin-top: 30px;">
+                <a href="/uml?show_source=true" style="margin-right: 10px;">Show PlantUML Source</a>
+                <a href="/uml">Hide PlantUML Source</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
