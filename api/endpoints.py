@@ -233,9 +233,17 @@ async def get_cached_diagram(cache_key: str):
     from fastapi.responses import FileResponse
     from fastapi import Response
     
+    print(f"Cache request for: {cache_key}")
+    
     cached_file = uml_service.get_cached_diagram(cache_key)
+    print(f"Cache file path: {cached_file}")
+    
     if not cached_file:
+        print(f"Cache file not found for key: {cache_key}")
         raise HTTPException(status_code=404, detail="Diagram not found in cache")
+    
+    print(f"Cache file exists: {cached_file.exists()}")
+    print(f"Cache file size: {cached_file.stat().st_size if cached_file.exists() else 'N/A'}")
     
     # Determine media type based on file extension
     if cache_key.endswith('.svg'):
@@ -244,6 +252,8 @@ async def get_cached_diagram(cache_key: str):
         media_type = "text/plain"
     else:
         media_type = "image/png"
+    
+    print(f"Serving with media type: {media_type}")
     
     # Add CORS headers for image serving
     headers = {
