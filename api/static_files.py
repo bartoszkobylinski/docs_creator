@@ -13,8 +13,13 @@ router = APIRouter()
 
 @router.get("/")
 async def serve_frontend():
-    """Redirect to modern dashboard."""
-    return RedirectResponse(url="/dashboard", status_code=302)
+    """Serve the modern dashboard interface."""
+    return FileResponse(f"{settings.FRONTEND_DIR}/index_new.html")
+
+@router.get("/dashboard")
+async def serve_dashboard():
+    """Serve the modern dashboard interface."""
+    return FileResponse(f"{settings.FRONTEND_DIR}/index_new.html")
 
 @router.get("/legacy")
 async def serve_legacy_frontend():
