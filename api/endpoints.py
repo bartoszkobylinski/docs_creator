@@ -3,6 +3,7 @@ API endpoints for the FastAPI Documentation Assistant.
 """
 
 import os
+from pathlib import Path
 from typing import List, Optional
 
 from fastapi import APIRouter, File, UploadFile, HTTPException, Form
@@ -19,6 +20,7 @@ from services.report_service import report_service
 from services.confluence_service import confluence_service
 from services.coverage_tracker import coverage_tracker
 from services.uml_service import uml_service
+from services.latex_service import latex_service
 
 # Create API router
 router = APIRouter()
@@ -170,6 +172,82 @@ async def publish_uml_to_confluence(request: dict):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")
+
+
+@router.post("/docs/latex")
+async def generate_latex_documentation(request: dict):
+    """Generate LaTeX documentation from current data."""
+    try:
+        # Get current report data
+        data = report_service.get_report_data()
+        if not data or not data.get("items"):
+            raise HTTPException(status_code=400, detail="No documentation data available. Please scan a project first.")
+        
+        # Convert dictionary items back to DocItem objects
+        from fastdoc.models import DocItem
+        items = []
+        for item_data in data["items"]:
+            item = DocItem(**item_data)
+            items.append(item)
+        
+        # Get optional parameters
+        project_name = request.get("project_name", "API Documentation")
+        include_uml = request.get("include_uml", False)
+        
+        # Get UML diagrams if requested
+        uml_diagrams = None
+        if include_uml:
+            try:
+                uml_result = uml_service.generate_uml_diagrams(items, "overview")
+                if uml_result.get("success"):
+                    uml_diagrams = uml_result
+            except Exception as e:
+                print(f"UML generation failed: {e}")
+        
+        # Generate LaTeX documentation
+        result = latex_service.generate_complete_documentation(
+            doc_items=items,
+            project_name=project_name,
+            uml_diagrams=uml_diagrams
+        )
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LaTeX generation failed: {str(e)}")
+
+
+@router.get("/docs/latex/download/{filename}")
+async def download_latex_file(filename: str):
+    """Download generated LaTeX or PDF file."""
+    from fastapi.responses import FileResponse
+    import os
+    
+    # Security check - only allow files from latex output directory
+    if not filename.replace('.', '').replace('_', '').replace('-', '').isalnum():
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    
+    latex_dir = Path("reports/latex")
+    file_path = latex_dir / filename
+    
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Determine media type
+    if filename.endswith('.pdf'):
+        media_type = "application/pdf"
+    elif filename.endswith('.tex'):
+        media_type = "text/plain"
+    else:
+        media_type = "application/octet-stream"
+    
+    return FileResponse(
+        path=str(file_path),
+        media_type=media_type,
+        filename=filename
+    )
 
 @router.get("/coverage/history")
 async def get_coverage_history(
