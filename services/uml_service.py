@@ -40,8 +40,22 @@ class UMLService:
                             config_name: str = "overview") -> Dict[str, Any]:
         """Generate UML diagrams from documentation items."""
         try:
+            # Debug: Print input items
+            print(f"UML Generation received {len(items)} items:")
+            method_counts = {}
+            for item in items[:10]:  # Show first 10 items
+                method_counts[item.method] = method_counts.get(item.method, 0) + 1
+                print(f"  - {item.qualname} (method: {item.method}, module: {item.module})")
+            print(f"Method counts: {method_counts}")
+            
             # Analyze relationships
             analysis_result = self.analyzer.analyze_documentation_items(items)
+            
+            # Debug: Print analysis results
+            print(f"UML Analysis found {len(analysis_result['classes'])} classes:")
+            for name, cls in analysis_result['classes'].items():
+                print(f"  - {name} (stereotype: {cls.stereotype})")
+            print(f"Found {len(analysis_result['relationships'])} relationships")
             
             # Get configuration
             config = self.configs.get(config_name, self.configs["overview"])

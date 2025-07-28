@@ -182,7 +182,7 @@ class UMLAnalyzer:
         current_class = None
         
         for item in items:
-            if item.method == "class":
+            if item.method in ["CLASS", "PYDANTIC_MODEL"]:
                 # Create new UML class
                 stereotype = self._determine_class_stereotype(item)
                 uml_class = UMLClass(
@@ -194,12 +194,12 @@ class UMLAnalyzer:
                 self.classes[item.qualname] = uml_class
                 current_class = uml_class
                 
-            elif item.method in ["function", "async_function"] and current_class:
+            elif item.method in ["FUNCTION", "ASYNC_FUNCTION"] and current_class:
                 # Add method to current class
                 method = self._create_uml_method(item)
                 current_class.methods.append(method)
                 
-            elif item.method == "property" and current_class:
+            elif item.method == "PROPERTY" and current_class:
                 # Add property as attribute
                 attr = self._create_uml_attribute_from_property(item)
                 current_class.attributes.append(attr)
@@ -207,7 +207,7 @@ class UMLAnalyzer:
     def _analyze_inheritance_relationships(self, items: List[DocItem]):
         """Analyze inheritance relationships from class signatures."""
         for item in items:
-            if item.method == "class" and "inherits=" in (item.signature or ""):
+            if item.method in ["CLASS", "PYDANTIC_MODEL"] and "inherits=" in (item.signature or ""):
                 # Extract base classes from signature
                 base_classes = self._extract_base_classes(item.signature)
                 for base_class in base_classes:
@@ -221,7 +221,7 @@ class UMLAnalyzer:
     def _analyze_composition_relationships(self, items: List[DocItem]):
         """Analyze composition relationships from constructor parameters and field types."""
         for item in items:
-            if item.method == "function" and item.qualname.endswith(".__init__"):
+            if item.method == "FUNCTION" and item.qualname.endswith(".__init__"):
                 # Analyze constructor parameters for composition
                 class_name = item.qualname[:-9]  # Remove .__init__
                 for param_name, param_type in (item.param_types or {}).items():
@@ -251,7 +251,7 @@ class UMLAnalyzer:
     def _analyze_association_relationships(self, items: List[DocItem]):
         """Analyze association relationships from method parameters and return types."""
         for item in items:
-            if item.method in ["function", "async_function"]:
+            if item.method in ["FUNCTION", "ASYNC_FUNCTION"]:
                 # Check parameter types for associations
                 for param_name, param_type in (item.param_types or {}).items():
                     if self._is_custom_type(param_type) and not self._is_composition(item, param_type):
@@ -340,7 +340,7 @@ class UMLAnalyzer:
             return_type=item.return_type,
             visibility=visibility,
             is_static="staticmethod" in (item.signature or ""),
-            is_async=item.method == "async_function"
+            is_async=item.method == "ASYNC_FUNCTION"
         )
     
     def _create_uml_attribute_from_property(self, item: DocItem) -> UMLAttribute:
