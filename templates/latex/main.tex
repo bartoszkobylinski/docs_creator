@@ -109,7 +109,7 @@ This document provides comprehensive documentation for \textbf{\VAR{project_name
 
 \begin{itemize}
 \BLOCK{for module in modules}
-    \item \texttt{\VAR{module}}
+    \item \texttt{\VAR{latex_escape(module)}}
 \BLOCK{endfor}
 \end{itemize}
 
@@ -121,18 +121,18 @@ This section contains detailed documentation for all code elements found in the 
 \subsection{\VAR{item_type.replace('_', ' ').title()}}
 
 \BLOCK{for item in items}
-\subsubsection{\texttt{\VAR{item.qualname|replace('_', '\\_')}}}
+\subsubsection{\texttt{\VAR{latex_escape(item.qualname)}}}
 
 \begin{itemize}
-    \item \textbf{Module:} \texttt{\VAR{item.module|replace('_', '\\_')}}
-    \item \textbf{File:} \texttt{\VAR{item.file_path|replace('_', '\\_') if item.file_path else 'N/A'}}
+    \item \textbf{Module:} \texttt{\VAR{latex_escape(item.module)}}
+    \item \textbf{File:} \texttt{\VAR{latex_escape(item.file_path) if item.file_path else 'N/A'}}
     \item \textbf{Line:} \VAR{item.lineno if item.lineno else 'N/A'}
 \end{itemize}
 
 \BLOCK{if item.docstring}
 \paragraph{Documentation:}
 \begin{quote}
-\VAR{item.docstring|replace('_', '\\_')|replace('#', '\\#')|replace('&', '\\&')|replace('%', '\\%')}
+\VAR{latex_escape(item.docstring)}
 \end{quote}
 \BLOCK{else}
 \paragraph{Documentation:} \textit{No documentation available}
@@ -160,7 +160,7 @@ This section contains UML diagrams that visualize the project structure and rela
 \begin{itemize}
     \item \textbf{Classes Found:} \VAR{uml_diagrams.analysis.get('classes_found', 'N/A')}
     \item \textbf{Relationships Found:} \VAR{uml_diagrams.analysis.get('relationships_found', 'N/A')}
-    \item \textbf{Packages:} \VAR{', '.join(uml_diagrams.analysis.get('packages', []))|replace('_', '\\_')}
+    \item \textbf{Packages:} \VAR{latex_escape(', '.join(uml_diagrams.analysis.get('packages', [])))}
 \end{itemize}
 \BLOCK{endif}
 

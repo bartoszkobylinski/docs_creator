@@ -129,6 +129,28 @@ class LaTeXService:
     
     def _generate_latex_source(self, template_data: Dict[str, Any]) -> str:
         """Generate LaTeX source from template."""
+        # Add LaTeX escape function to template data
+        def latex_escape(text):
+            """Escape special LaTeX characters."""
+            if not text:
+                return text
+            replacements = [
+                ('\\', '\\textbackslash{}'),
+                ('{', '\\{'),
+                ('}', '\\}'),
+                ('$', '\\$'),
+                ('&', '\\&'),
+                ('%', '\\%'),
+                ('#', '\\#'),
+                ('^', '\\textasciicircum{}'),
+                ('_', '\\_'),
+                ('~', '\\textasciitilde{}'),
+            ]
+            for old, new in replacements:
+                text = text.replace(old, new)
+            return text
+        
+        template_data['latex_escape'] = latex_escape
         template = self.jinja_env.get_template("main.tex")
         return template.render(**template_data)
     
