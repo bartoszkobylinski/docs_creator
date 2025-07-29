@@ -156,16 +156,41 @@ def create_app() -> Flask:
                 publish_confluence = request.form.get('publish_confluence') == 'on'
                 
                 try:
-                    result = markdown_service.generate_markdown_documentation(
-                        items,
-                        project_name=project_name,
-                        include_uml=include_uml
-                    )
+                    # Generate UML data if requested
+                    uml_data = None
+                    if include_uml:
+                        try:
+                            from fastdoc.models import DocItem
+                            doc_items = []
+                            for item_data in items:
+                                item = DocItem(**item_data)
+                                doc_items.append(item)
+                            uml_result = uml_service.generate_uml_diagrams(doc_items, "overview")
+                            if uml_result.get("success"):
+                                uml_data = uml_result
+                        except Exception as e:
+                            print(f"UML generation failed: {e}")
                     
-                    if result.get('success'):
-                        if publish_confluence:
+                    # Convert items to DocItem objects
+                    from fastdoc.models import DocItem
+                    doc_items = []
+                    for item_data in items:
+                        item = DocItem(**item_data)
+                        doc_items.append(item)
+                    
+                    if publish_confluence:
+                        # For Confluence, just generate content without ZIP
+                        result = markdown_service.generate_documentation(
+                            items=doc_items,
+                            project_name=project_name,
+                            include_uml=include_uml,
+                            uml_data=uml_data
+                        )
+                        
+                        if result.get('success'):
+                            confluence_content = result.get('files', {}).get('confluence_master', '')
                             confluence_result = confluence_service.publish_markdown_to_confluence(
-                                result.get('master_content', ''),
+                                confluence_content,
                                 project_name
                             )
                             if confluence_result.get('success'):
@@ -173,18 +198,25 @@ def create_app() -> Flask:
                             else:
                                 flash('Markdown generated but Confluence publishing failed', 'warning')
                         else:
-                            flash('Markdown documentation generated successfully!', 'success')
-                            # Trigger ZIP download
-                            zip_path = markdown_service.create_markdown_zip(project_name)
-                            if zip_path:
-                                return send_file(
-                                    zip_path,
-                                    mimetype='application/zip',
-                                    as_attachment=True,
-                                    download_name=os.path.basename(zip_path)
-                                )
+                            flash(f"Markdown generation failed: {result.get('error', 'Unknown error')}", 'error')
                     else:
-                        flash(f"Markdown generation failed: {result.get('error', 'Unknown error')}", 'error')
+                        # For regular download, create ZIP file
+                        result = markdown_service.create_documentation_zip(
+                            items=doc_items,
+                            project_name=project_name,
+                            include_uml=include_uml,
+                            uml_data=uml_data
+                        )
+                        
+                        if result.get('success') and result.get('zip_path'):
+                            return send_file(
+                                result['zip_path'],
+                                mimetype='application/zip',
+                                as_attachment=True,
+                                download_name=result.get('zip_filename', f"{project_name}_docs.zip")
+                            )
+                        else:
+                            flash(f"Markdown generation failed: {result.get('error', 'Unknown error')}", 'error')
                 except Exception as e:
                     flash(f"Markdown generation failed: {str(e)}", 'error')
         

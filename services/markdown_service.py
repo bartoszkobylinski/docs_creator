@@ -4,6 +4,8 @@ Generates structured Markdown files for Sphinx and Confluence.
 """
 
 import os
+import zipfile
+import tempfile
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any, Optional
@@ -100,6 +102,99 @@ class MarkdownService:
             
         except Exception as e:
             print(f"Error generating Markdown documentation: {e}")
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
+    def create_documentation_zip(
+        self,
+        items: List[DocItem],
+        project_name: str = "API Documentation",
+        include_uml: bool = True,
+        uml_data: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Generate Markdown documentation and return as ZIP file.
+        
+        Args:
+            items: List of documentation items
+            project_name: Name of the project
+            include_uml: Whether to include UML diagrams
+            uml_data: Pre-generated UML diagram data
+            
+        Returns:
+            Dictionary with ZIP file path and metadata
+        """
+        try:
+            # Generate the documentation content
+            result = self.generate_documentation(items, project_name, include_uml, uml_data)
+            
+            if not result.get('success'):
+                return result
+            
+            # Create a temporary ZIP file
+            temp_dir = Path(tempfile.mkdtemp())
+            zip_filename = f"{project_name.replace(' ', '_')}_markdown_docs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+            zip_path = temp_dir / zip_filename
+            
+            # Create ZIP file with all generated content
+            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                generated_files = result.get('files', {})
+                
+                # Define file mapping (internal name -> filename in ZIP)
+                file_mapping = {
+                    'index': 'README.md',
+                    'overview': 'docs/overview.md',
+                    'getting_started': 'docs/getting_started.md',
+                    'code_structure': 'docs/code_structure.md',
+                    'docstring_report': 'docs/docstring_report.md',
+                    'uml_diagrams': 'docs/uml_diagrams.md',
+                    'api_reference': 'docs/api_reference.md',
+                    'faq': 'docs/faq.md',
+                    'changelog': 'docs/CHANGELOG.md',
+                    'confluence_master': 'confluence/master_document.md'
+                }
+                
+                # Add each generated file to the ZIP
+                for internal_name, content in generated_files.items():
+                    if internal_name in file_mapping and content:
+                        zip_filename_inner = file_mapping[internal_name]
+                        zipf.writestr(zip_filename_inner, content)
+                
+                # Add a project info file
+                project_info = f"""# {project_name} Documentation
+
+Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+Total items documented: {len(items)}
+Includes UML diagrams: {include_uml}
+
+## Files in this package:
+
+- README.md - Main documentation index
+- docs/ - Detailed documentation pages
+- confluence/ - Confluence-ready master document
+
+## Usage:
+
+1. Extract this ZIP file
+2. Open README.md to start browsing the documentation
+3. Use confluence/master_document.md for Confluence publishing
+"""
+                zipf.writestr('PROJECT_INFO.txt', project_info)
+            
+            print(f"Created ZIP file: {zip_path}")
+            
+            return {
+                "success": True,
+                "zip_path": str(zip_path),
+                "zip_filename": zip_filename,
+                "file_count": len(result.get('files', {})),
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            print(f"Error creating documentation ZIP: {e}")
             return {
                 "success": False,
                 "error": str(e)
