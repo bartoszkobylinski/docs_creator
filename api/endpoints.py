@@ -40,6 +40,12 @@ async def get_report_data():
     return report_service.get_report_data()
 
 
+@router.get("/current-data")
+async def get_current_data():
+    """Return current scan data for dashboard."""
+    return report_service.get_report_data()
+
+
 @router.post("/scan", response_model=ScanResult)
 async def scan_project(
     project_path: str = Form(...),

@@ -1,0 +1,1794 @@
+[
+  {
+    "timestamp": "2025-07-29T11:12:26.784412",
+    "project_path": "/Users/bartoszkobylinski/Programming/Python/eppop_fast_api",
+    "total_items": 145,
+    "documented_items": 16,
+    "coverage_percent": 11.03,
+    "coverage_by_type": {
+      "FUNCTION": {
+        "total": 67,
+        "documented": 15,
+        "coverage": 22.388059701492537
+      },
+      "CLASS": {
+        "total": 15,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ASYNC_FUNCTION": {
+        "total": 16,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "GET": {
+        "total": 8,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "POST": {
+        "total": 7,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "DELETE": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "MIDDLEWARE": {
+        "total": 2,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ROUTER_INCLUSION": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "PYDANTIC_MODEL": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "CLASSMETHOD": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "METADATA": {
+        "total": 1,
+        "documented": 1,
+        "coverage": 100.0
+      }
+    },
+    "coverage_by_module": {
+      "logger_config": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "api_updater": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "test_routers": {
+        "total": 17,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "main": {
+        "total": 7,
+        "documented": 1,
+        "coverage": 14.285714285714285
+      },
+      "pydantic_models": {
+        "total": 12,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "routers": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "manager": {
+        "total": 13,
+        "documented": 5,
+        "coverage": 38.46153846153847
+      },
+      "match_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_base": {
+        "total": 4,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "funkcja": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournaments": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "roboczy": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "router": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "tests_models": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "env": {
+        "total": 2,
+        "documented": 2,
+        "coverage": 100.0
+      }
+    },
+    "metadata": {
+      "scan_type": "local_project",
+      "total_files": 62,
+      "scan_time": 0.31
+    }
+  },
+  {
+    "timestamp": "2025-07-29T11:12:42.253454",
+    "project_path": "/Users/bartoszkobylinski/Programming/Python/eppop_fast_api",
+    "total_items": 145,
+    "documented_items": 16,
+    "coverage_percent": 11.03,
+    "coverage_by_type": {
+      "FUNCTION": {
+        "total": 67,
+        "documented": 15,
+        "coverage": 22.388059701492537
+      },
+      "CLASS": {
+        "total": 15,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ASYNC_FUNCTION": {
+        "total": 16,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "GET": {
+        "total": 8,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "POST": {
+        "total": 7,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "DELETE": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "MIDDLEWARE": {
+        "total": 2,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ROUTER_INCLUSION": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "PYDANTIC_MODEL": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "CLASSMETHOD": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "METADATA": {
+        "total": 1,
+        "documented": 1,
+        "coverage": 100.0
+      }
+    },
+    "coverage_by_module": {
+      "logger_config": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "api_updater": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "test_routers": {
+        "total": 17,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "main": {
+        "total": 7,
+        "documented": 1,
+        "coverage": 14.285714285714285
+      },
+      "pydantic_models": {
+        "total": 12,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "routers": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "manager": {
+        "total": 13,
+        "documented": 5,
+        "coverage": 38.46153846153847
+      },
+      "match_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_base": {
+        "total": 4,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "funkcja": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournaments": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "roboczy": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "router": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "tests_models": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "env": {
+        "total": 2,
+        "documented": 2,
+        "coverage": 100.0
+      }
+    },
+    "metadata": {
+      "scan_type": "local_project",
+      "total_files": 62,
+      "scan_time": 0.3
+    }
+  },
+  {
+    "timestamp": "2025-07-29T11:13:38.159633",
+    "project_path": "/Users/bartoszkobylinski/Programming/Python/eppop_fast_api",
+    "total_items": 145,
+    "documented_items": 16,
+    "coverage_percent": 11.03,
+    "coverage_by_type": {
+      "FUNCTION": {
+        "total": 67,
+        "documented": 15,
+        "coverage": 22.388059701492537
+      },
+      "CLASS": {
+        "total": 15,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ASYNC_FUNCTION": {
+        "total": 16,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "GET": {
+        "total": 8,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "POST": {
+        "total": 7,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "DELETE": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "MIDDLEWARE": {
+        "total": 2,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ROUTER_INCLUSION": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "PYDANTIC_MODEL": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "CLASSMETHOD": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "METADATA": {
+        "total": 1,
+        "documented": 1,
+        "coverage": 100.0
+      }
+    },
+    "coverage_by_module": {
+      "logger_config": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "api_updater": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "test_routers": {
+        "total": 17,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "main": {
+        "total": 7,
+        "documented": 1,
+        "coverage": 14.285714285714285
+      },
+      "pydantic_models": {
+        "total": 12,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "routers": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "manager": {
+        "total": 13,
+        "documented": 5,
+        "coverage": 38.46153846153847
+      },
+      "match_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_base": {
+        "total": 4,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "funkcja": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournaments": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "roboczy": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "router": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "tests_models": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "env": {
+        "total": 2,
+        "documented": 2,
+        "coverage": 100.0
+      }
+    },
+    "metadata": {
+      "scan_type": "local_project",
+      "total_files": 62,
+      "scan_time": 0.29
+    }
+  },
+  {
+    "timestamp": "2025-07-29T11:27:59.878854",
+    "project_path": "/Users/bartoszkobylinski/Programming/Python/eppop_fast_api",
+    "total_items": 145,
+    "documented_items": 16,
+    "coverage_percent": 11.03,
+    "coverage_by_type": {
+      "FUNCTION": {
+        "total": 67,
+        "documented": 15,
+        "coverage": 22.388059701492537
+      },
+      "CLASS": {
+        "total": 15,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ASYNC_FUNCTION": {
+        "total": 16,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "GET": {
+        "total": 8,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "POST": {
+        "total": 7,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "DELETE": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "MIDDLEWARE": {
+        "total": 2,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ROUTER_INCLUSION": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "PYDANTIC_MODEL": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "CLASSMETHOD": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "METADATA": {
+        "total": 1,
+        "documented": 1,
+        "coverage": 100.0
+      }
+    },
+    "coverage_by_module": {
+      "logger_config": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "api_updater": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "test_routers": {
+        "total": 17,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "main": {
+        "total": 7,
+        "documented": 1,
+        "coverage": 14.285714285714285
+      },
+      "pydantic_models": {
+        "total": 12,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "routers": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "manager": {
+        "total": 13,
+        "documented": 5,
+        "coverage": 38.46153846153847
+      },
+      "match_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_base": {
+        "total": 4,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "funkcja": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournaments": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "roboczy": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "router": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "tests_models": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "env": {
+        "total": 2,
+        "documented": 2,
+        "coverage": 100.0
+      }
+    },
+    "metadata": {
+      "scan_type": "local_project",
+      "total_files": 62,
+      "scan_time": 0.29
+    }
+  },
+  {
+    "timestamp": "2025-07-29T11:28:27.764140",
+    "project_path": "/Users/bartoszkobylinski/Programming/Python/eppop_fast_api",
+    "total_items": 145,
+    "documented_items": 16,
+    "coverage_percent": 11.03,
+    "coverage_by_type": {
+      "FUNCTION": {
+        "total": 67,
+        "documented": 15,
+        "coverage": 22.388059701492537
+      },
+      "CLASS": {
+        "total": 15,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ASYNC_FUNCTION": {
+        "total": 16,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "GET": {
+        "total": 8,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "POST": {
+        "total": 7,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "DELETE": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "MIDDLEWARE": {
+        "total": 2,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ROUTER_INCLUSION": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "PYDANTIC_MODEL": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "CLASSMETHOD": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "METADATA": {
+        "total": 1,
+        "documented": 1,
+        "coverage": 100.0
+      }
+    },
+    "coverage_by_module": {
+      "logger_config": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "api_updater": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "test_routers": {
+        "total": 17,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "main": {
+        "total": 7,
+        "documented": 1,
+        "coverage": 14.285714285714285
+      },
+      "pydantic_models": {
+        "total": 12,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "routers": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "manager": {
+        "total": 13,
+        "documented": 5,
+        "coverage": 38.46153846153847
+      },
+      "match_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_base": {
+        "total": 4,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "funkcja": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournaments": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "roboczy": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "router": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "tests_models": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "env": {
+        "total": 2,
+        "documented": 2,
+        "coverage": 100.0
+      }
+    },
+    "metadata": {
+      "scan_type": "local_project",
+      "total_files": 62,
+      "scan_time": 0.29
+    }
+  },
+  {
+    "timestamp": "2025-07-29T11:39:10.040781",
+    "project_path": "/Users/bartoszkobylinski/Programming/Python/eppop_fast_api",
+    "total_items": 145,
+    "documented_items": 16,
+    "coverage_percent": 11.03,
+    "coverage_by_type": {
+      "FUNCTION": {
+        "total": 67,
+        "documented": 15,
+        "coverage": 22.388059701492537
+      },
+      "CLASS": {
+        "total": 15,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ASYNC_FUNCTION": {
+        "total": 16,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "GET": {
+        "total": 8,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "POST": {
+        "total": 7,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "DELETE": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "MIDDLEWARE": {
+        "total": 2,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ROUTER_INCLUSION": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "PYDANTIC_MODEL": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "CLASSMETHOD": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "METADATA": {
+        "total": 1,
+        "documented": 1,
+        "coverage": 100.0
+      }
+    },
+    "coverage_by_module": {
+      "logger_config": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "api_updater": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "test_routers": {
+        "total": 17,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "main": {
+        "total": 7,
+        "documented": 1,
+        "coverage": 14.285714285714285
+      },
+      "pydantic_models": {
+        "total": 12,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "routers": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "manager": {
+        "total": 13,
+        "documented": 5,
+        "coverage": 38.46153846153847
+      },
+      "match_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_base": {
+        "total": 4,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "funkcja": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournaments": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "roboczy": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "router": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "tests_models": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "env": {
+        "total": 2,
+        "documented": 2,
+        "coverage": 100.0
+      }
+    },
+    "metadata": {
+      "scan_type": "local_project",
+      "total_files": 62,
+      "scan_time": 0.32
+    }
+  },
+  {
+    "timestamp": "2025-07-29T13:41:27.846164",
+    "project_path": "/Users/bartoszkobylinski/Programming/Python/eppop_fast_api",
+    "total_items": 145,
+    "documented_items": 16,
+    "coverage_percent": 11.03,
+    "coverage_by_type": {
+      "FUNCTION": {
+        "total": 67,
+        "documented": 15,
+        "coverage": 22.388059701492537
+      },
+      "CLASS": {
+        "total": 15,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ASYNC_FUNCTION": {
+        "total": 16,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "GET": {
+        "total": 8,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "POST": {
+        "total": 7,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "DELETE": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "MIDDLEWARE": {
+        "total": 2,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "ROUTER_INCLUSION": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "PYDANTIC_MODEL": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "CLASSMETHOD": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "METADATA": {
+        "total": 1,
+        "documented": 1,
+        "coverage": 100.0
+      }
+    },
+    "coverage_by_module": {
+      "logger_config": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "api_updater": {
+        "total": 24,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "test_routers": {
+        "total": 17,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "main": {
+        "total": 7,
+        "documented": 1,
+        "coverage": 14.285714285714285
+      },
+      "pydantic_models": {
+        "total": 12,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "routers": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "manager": {
+        "total": 13,
+        "documented": 5,
+        "coverage": 38.46153846153847
+      },
+      "match_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_base": {
+        "total": 4,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "stream_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "round_score_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_result_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "match_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "league_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "team_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "game_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournament_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "player_stats_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "serie_base": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "funkcja": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "tournaments": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "roboczy": {
+        "total": 1,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "router": {
+        "total": 17,
+        "documented": 4,
+        "coverage": 23.52941176470588
+      },
+      "tests_models": {
+        "total": 3,
+        "documented": 0,
+        "coverage": 0.0
+      },
+      "env": {
+        "total": 2,
+        "documented": 2,
+        "coverage": 100.0
+      }
+    },
+    "metadata": {
+      "scan_type": "local_project",
+      "total_files": 62,
+      "scan_time": 0.3
+    }
+  }
+]

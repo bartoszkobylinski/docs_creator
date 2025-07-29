@@ -27,3 +27,27 @@ async def serve_css():
 async def serve_js():
     """Serve the JavaScript file."""
     return FileResponse(f"{settings.FRONTEND_DIR}/script.js")
+
+
+@router.get("/dashboard")
+async def serve_dashboard():
+    """Serve the dashboard interface."""
+    return FileResponse("templates/dashboard.html")
+
+
+@router.get("/static/styles.css")
+async def serve_dashboard_css():
+    """Serve CSS for dashboard."""
+    return FileResponse(f"{settings.FRONTEND_DIR}/styles.css")
+
+
+@router.get("/static/script.js")
+async def serve_dashboard_js():
+    """Serve JavaScript for dashboard."""
+    return FileResponse("static/dashboard.js")
+
+
+@router.get("/dashboard/static/script.js")
+async def serve_dashboard_specific_js():
+    """Serve JavaScript specifically for dashboard route."""
+    return FileResponse("static/dashboard.js")
