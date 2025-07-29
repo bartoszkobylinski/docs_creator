@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Docstring - Docs Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="brand">
+                    <h1>📚 Docs Creator</h1>
+                    <span class="tagline">Edit Docstring</span>
+                </div>
+                <div class="header-actions">
+                    <a href="/dashboard" class="btn btn-outline">← Back to Dashboard</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div style="max-width: 1200px; margin: 0 auto; padding: 1rem;">
+                    {% for category, message in messages %}
+                        <div class="status-message {{ category }}">
+                            {% if category == 'success' %}✅{% elif category == 'error' %}❌{% else %}⚠️{% endif %} {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Main Content -->
+        <main class="main-content" style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+            <div class="section-card">
+                <h2>Edit Docstring</h2>
+                
+                <div class="form-group">
+                    <label><strong>Item:</strong> {{ item.qualname }}</label>
+                    <p><strong>Module:</strong> {{ item.module or 'N/A' }}</p>
+                    <p><strong>Type:</strong> {{ item.type }}</p>
+                    <p><strong>Line:</strong> {{ item.lineno }}</p>
+                    {% if item.signature %}
+                    <p><strong>Signature:</strong> <code>{{ item.signature }}</code></p>
+                    {% endif %}
+                </div>
+
+                <!-- Current Docstring -->
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="docstring">Docstring:</label>
+                        <textarea id="docstring" name="docstring" rows="15" class="form-input" placeholder="Enter docstring here...">{{ item.docstring or '' }}</textarea>
+                    </div>
+                    
+                    <input type="hidden" name="item_index" value="{{ item_index }}">
+                    
+                    <div class="form-actions">
+                        <button type="submit" name="save_docstring" class="btn btn-primary">Save Docstring</button>
+                        <button type="submit" name="generate_ai_docstring" class="btn btn-secondary">Generate AI Suggestion</button>
+                        <a href="/dashboard" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+
+                <!-- AI Generated Suggestion (if available) -->
+                {% if generated_docstring %}
+                <div class="section-card" style="margin-top: 2rem; background: #f0f9ff;">
+                    <h3>AI Generated Suggestion</h3>
+                    <pre style="white-space: pre-wrap; background: white; padding: 1rem; border-radius: 4px; border: 1px solid #e5e7eb;">{{ generated_docstring }}</pre>
+                    <form method="POST" style="margin-top: 1rem;">
+                        <input type="hidden" name="item_index" value="{{ item_index }}">
+                        <input type="hidden" name="docstring" value="{{ generated_docstring }}">
+                        <button type="submit" name="save_docstring" class="btn btn-primary">Use This Docstring</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <style>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--color-gray-700);
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--color-gray-300);
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    textarea.form-input {
+        resize: vertical;
+        font-family: 'Monaco', 'Consolas', 'SF Mono', monospace;
+        font-size: 0.875rem;
+        min-height: 300px;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .section-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--color-gray-200);
+    }
+    
+    .main-content {
+        background: var(--color-gray-50);
+        min-height: calc(100vh - 80px);
+        padding-top: 2rem;
+    }
+    </style>
+</body>
+</html>

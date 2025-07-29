@@ -6,8 +6,6 @@ import os
 import json
 from typing import Dict, Any
 
-from fastapi import HTTPException
-
 from services.patcher import apply_docitem_patch
 from core.config import settings
 from services.scanner_service import scanner_service
@@ -32,7 +30,7 @@ class DocstringService:
             Dictionary with success status and details
             
         Raises:
-            HTTPException: If saving fails
+            Exception: If saving fails
         """
         try:
             # Apply the docstring patch
@@ -53,12 +51,10 @@ class DocstringService:
                     "backup_path": result.get("backup_path")
                 }
             else:
-                raise HTTPException(status_code=500, detail=result["message"])
+                raise Exception(result["message"])
                 
-        except HTTPException:
-            raise
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error saving docstring: {str(e)}")
+            raise Exception(f"Error saving docstring: {str(e)}")
     
     def _update_report_file(self, item: Dict[str, Any], docstring: str) -> None:
         """Update the report file with new docstring."""
@@ -72,6 +68,8 @@ class DocstringService:
                     report_item.get('module') == item.get('module') and
                     report_item.get('lineno') == item.get('lineno')):
                     report_item['docstring'] = docstring
+                    # Update has_docstring flag based on whether docstring exists and is not empty
+                    report_item['has_docstring'] = bool(docstring and docstring.strip())
                     break
             
             # Save updated report

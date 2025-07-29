@@ -5,7 +5,7 @@
     "path": "",
     "method": "FUNCTION",
     "signature": "",
-    "docstring": null,
+    "docstring": "This is some stupid docstring",
     "description": null,
     "first_lines": "    timestamp = time.strftime(\"%Y%m%d-%H%M%S\")\n\n    info_logger = logging.getLogger('info_logger')\n    error_logger = logging.getLogger('error_logger')\n",
     "lineno": 5,

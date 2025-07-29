@@ -14,6 +14,7 @@ from services.report_service import report_service
 from services.latex_service import latex_service
 from services.markdown_service import markdown_service
 from services.confluence_service import confluence_service
+from services.docstring_service import docstring_service
 
 
 def create_app() -> Flask:
@@ -85,7 +86,7 @@ def create_app() -> Flask:
         
         # Calculate statistics
         total_items = len(items)
-        documented_items = len([item for item in items if item.get('has_docstring')])
+        documented_items = len([item for item in items if item.get('docstring') and item.get('docstring').strip()])
         coverage = round((documented_items / total_items * 100) if total_items > 0 else 0, 1)
         missing_docs = total_items - documented_items
         
@@ -117,6 +118,7 @@ def create_app() -> Flask:
                         flash(f"PDF generation failed: {result.get('error', 'Unknown error')}", 'error')
                 except Exception as e:
                     flash(f"PDF generation failed: {str(e)}", 'error')
+            
             
             # Handle Markdown generation
             elif 'generate_markdown' in request.form:
@@ -165,6 +167,49 @@ def create_app() -> Flask:
             missing_docs=missing_docs,
             has_data=total_items > 0,
             project_name="API_Documentation"
+        )
+    
+    @app.route('/edit-docstring/<int:item_index>', methods=['GET', 'POST'])
+    def edit_docstring(item_index):
+        """Edit docstring for a specific item."""
+        # Get current items
+        items = report_service.get_report_data()
+        
+        if item_index < 0 or item_index >= len(items):
+            flash('Invalid item index', 'error')
+            return redirect(url_for('serve_dashboard'))
+        
+        item = items[item_index]
+        generated_docstring = None
+        
+        if request.method == 'POST':
+            # Handle save docstring
+            if 'save_docstring' in request.form:
+                try:
+                    new_docstring = request.form.get('docstring', '').strip()
+                    result = docstring_service.save_docstring(item, new_docstring)
+                    
+                    if result.get('success'):
+                        flash('Docstring saved successfully!', 'success')
+                        return redirect(url_for('serve_dashboard'))
+                    else:
+                        flash(f'Failed to save docstring: {result.get("message")}', 'error')
+                        
+                except Exception as e:
+                    flash(f'Error saving docstring: {str(e)}', 'error')
+            
+            # Handle AI generation
+            elif 'generate_ai_docstring' in request.form:
+                try:
+                    generated_docstring = docstring_service.generate_ai_docstring(item)
+                    flash('AI docstring generated! Review and save if you like it.', 'success')
+                except Exception as e:
+                    flash(f'Error generating docstring: {str(e)}', 'error')
+        
+        return render_template('edit_docstring.html',
+            item=item,
+            item_index=item_index,
+            generated_docstring=generated_docstring
         )
     
     # Static files are now handled by Flask's default static handling
