@@ -111,6 +111,12 @@ def create_app() -> FastAPI:
             })
     
     
+    # Modern dashboard endpoint
+    @app.get("/dashboard", response_class=HTMLResponse)
+    async def modern_dashboard(request: Request):
+        """Serve the modern dashboard interface."""
+        return templates.TemplateResponse("dashboard.html", {"request": request})
+    
     # Health check endpoint
     @app.get("/health", response_model=HealthResult, tags=["Health"])
     async def health_check():

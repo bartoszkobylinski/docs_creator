@@ -13,12 +13,7 @@ router = APIRouter()
 
 @router.get("/")
 async def serve_frontend():
-    """Serve the main dashboard interface."""
-    return FileResponse(f"{settings.FRONTEND_DIR}/index.html")
-
-@router.get("/dashboard")
-async def serve_dashboard():
-    """Serve the main dashboard interface."""
+    """Serve the main interface."""
     return FileResponse(f"{settings.FRONTEND_DIR}/index.html")
 
 

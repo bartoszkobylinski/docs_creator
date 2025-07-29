@@ -67,6 +67,119 @@ body {
     overflow-x: hidden;
 }
 
+/* Main Page Styles */
+.main-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--space-4);
+}
+
+.main-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+    padding: var(--space-8) 0;
+}
+
+.main-header h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: var(--color-gray-900);
+    margin-bottom: var(--space-2);
+}
+
+.main-header p {
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-600);
+}
+
+.main-content {
+    flex: 1;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: var(--space-8);
+}
+
+.welcome-section h2 {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin-bottom: var(--space-3);
+}
+
+.welcome-section p {
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-600);
+}
+
+.section-card {
+    background: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+    box-shadow: var(--shadow-sm);
+}
+
+.section-card h3 {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin-bottom: var(--space-4);
+}
+
+.section-card h4 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-gray-800);
+    margin-bottom: var(--space-3);
+}
+
+.input-group {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.settings-group {
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-gray-200);
+}
+
+.settings-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.main-footer {
+    text-align: center;
+    padding: var(--space-6) 0;
+    color: var(--color-gray-500);
+    font-size: var(--font-size-sm);
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-gray-200);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
 /* App Container */
 .app-container {
     min-height: 100vh;
