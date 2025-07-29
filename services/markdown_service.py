@@ -984,7 +984,7 @@ Check:
         
         file_path = self.docs_dir / "confluence_master.md"
         file_path.write_text(content)
-        return str(file_path)
+        return content
 
 
 # Singleton instance
