@@ -1,5 +1,5 @@
 """
-Core configuration settings for FastAPI Documentation Assistant.
+Core configuration settings for Flask Documentation Assistant.
 """
 
 import os
@@ -14,7 +14,7 @@ class Settings:
     """Application settings configuration."""
     
     # Application info
-    APP_NAME: str = "FastAPI Documentation Assistant"
+    APP_NAME: str = "Flask Documentation Assistant"
     VERSION: str = "1.0.0"
     DESCRIPTION: str = "API for scanning projects and managing docstrings"
     

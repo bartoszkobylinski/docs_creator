@@ -5,8 +5,8 @@ EXTERNAL_PROJECT_DIR ?=
 .PHONY: help install scan scan-verbose scan-external frontend frontend-dev run-assistant test clean docker-build docker-up docker-down
 
 help:  ## Show this help message
-	@echo "FastAPI Documentation Assistant"
-	@echo "==============================="
+	@echo "Flask Documentation Assistant"
+	@echo "============================="
 	@echo ""
 	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -15,10 +15,10 @@ install:  ## Install dependencies with Poetry (fallback to pip if Poetry fails)
 	@echo "Installing dependencies..."
 	@if command -v poetry >/dev/null 2>&1; then \
 		echo "Using Poetry..."; \
-		poetry install || (echo "Poetry failed, falling back to pip..."; pip install typer fastapi uvicorn); \
+		poetry install || (echo "Poetry failed, falling back to pip..."; pip install typer flask flask-cors); \
 	else \
 		echo "Poetry not found, using pip..."; \
-		pip install typer fastapi uvicorn; \
+		pip install typer flask flask-cors; \
 	fi
 	@echo "Dependencies installed"
 
@@ -33,10 +33,10 @@ install-dev:  ## Install development dependencies
 
 install-pip:  ## Install using pip only
 	@echo "Installing with pip..."
-	pip install typer fastapi uvicorn
+	pip install typer flask flask-cors
 	@echo "Dependencies installed via pip"
 
-scan:  ## Scan FastAPI project for documentation analysis
+scan:  ## Scan project for documentation analysis
 	@if [ -n "$(EXTERNAL_PROJECT_DIR)" ]; then \
 		echo "Scanning external project: $(EXTERNAL_PROJECT_DIR)"; \
 		docker run --rm -v "$(EXTERNAL_PROJECT_DIR):/app/external_project:ro" -v "$(PWD)/reports:/app/reports" \
@@ -88,24 +88,24 @@ scan-local:  ## Scan project using local Python (no Docker required)
 	@mkdir -p reports
 	PYTHONPATH=$$PWD python fastdoc/cli.py "$(EXTERNAL_PROJECT_DIR)" --out reports/$(REPORT_FILE) --verbose
 
-frontend:  ## Launch HTML frontend with FastAPI backend (using Docker)
-	@echo "Starting FastAPI Documentation Assistant..."
+frontend:  ## Launch HTML frontend with Flask backend (using Docker)
+	@echo "Starting Flask Documentation Assistant..."
 	@echo "Frontend: http://localhost:8200"
-	@echo "API docs: http://localhost:8200/docs"
+	@echo "Dashboard: http://localhost:8200/dashboard"
 	@mkdir -p reports backups
 	docker run --rm -p 8200:8200 \
 		-v "$(PWD)/reports:/app/reports" \
 		-v "$(PWD)/backups:/app/backups" \
 		$$(docker build -q .) \
-		uvicorn main:app --host 0.0.0.0 --port 8200 --reload
+		python main.py
 
 frontend-dev:  ## Launch frontend for development (direct host)
 	@echo "Starting frontend in development mode..."
 	@echo "Frontend: http://localhost:8200"
-	poetry run uvicorn main:app --host 0.0.0.0 --port 8200 --reload
+	poetry run python main.py
 
 run-assistant:  ## Run complete documentation assistant workflow
-	@echo "🎯 Starting FastAPI Documentation Assistant"
+	@echo "🎯 Starting Flask Documentation Assistant"
 	poetry run python archive/run_docs_assistant.py
 
 test-scanner:  ## Test scanner on example project
@@ -125,11 +125,11 @@ clean:  ## Clean generated files
 
 docker-build:  ## Build Docker image
 	@echo "🐳 Building Docker image"
-	docker build -t fastapi-docs-assistant .
+	docker build -t flask-docs-assistant .
 
 docker-run:  ## Run Docker container
 	@echo "Running Docker container"
-	docker run -p 8200:8200 -v $(PWD):/workspace fastapi-docs-assistant
+	docker run -p 8200:8200 -v $(PWD):/workspace flask-docs-assistant
 
 docker-up:  ## Start services with docker-compose
 	@echo "Starting services with docker-compose"
@@ -149,7 +149,7 @@ docker-compose-down:  ## Stop docker-compose services (alias)
 # Environment setup
 check-env:  ## Check environment setup
 	@echo "🔍 Checking environment"
-	@poetry run python -c "import sys; print(f'Python: {sys.version}'); import fastapi; print(f'FastAPI: {fastapi.__version__}'); import uvicorn; print(f'Uvicorn: {uvicorn.__version__}'); import pandas; print(f'Pandas: {pandas.__version__}')"
+	@poetry run python -c "import sys; print(f'Python: {sys.version}'); import flask; print(f'Flask: {flask.__version__}'); import pandas; print(f'Pandas: {pandas.__version__}')"
 	@if [ -n "$$OPENAI_API_KEY" ]; then echo "✅ OPENAI_API_KEY is set"; else echo "⚠️  OPENAI_API_KEY not set (optional)"; fi
 
 # Development commands

@@ -1,4 +1,4 @@
-# FastAPI Documentation Assistant Docker Image
+# Flask Documentation Assistant Docker Image
 FROM python:3.11-slim
 
 # Set working directory
@@ -32,8 +32,8 @@ COPY . .
 # Create directory for reports and backups
 RUN mkdir -p /app/reports /app/backups
 
-# Expose ports (8200 for FastAPI, 8501 for Streamlit)
-EXPOSE 8200 8501
+# Expose port for Flask
+EXPOSE 8200
 
 # Set environment variables
 ENV PYTHONPATH=/app
@@ -41,9 +41,9 @@ ENV PROJECT_BASE_PATH=/app/project
 ENV REPORTS_DIR=/app/reports
 ENV BACKUPS_DIR=/app/backups
 
-# Health check for FastAPI
+# Health check for Flask
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8200/health || exit 1
 
-# Default command - run the FastAPI application
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8200"]
+# Default command - run the Flask application
+CMD ["python", "main.py"]

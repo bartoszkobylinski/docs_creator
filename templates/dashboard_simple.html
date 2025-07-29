@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Docs Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="brand">
+                    <h1>📚 Docs Creator</h1>
+                    <span class="tagline">Professional Documentation Assistant</span>
+                </div>
+                <div class="header-actions">
+                    <a href="/" class="btn btn-outline" style="margin-right: 1rem;">← Back to Main</a>
+                    <div class="status-indicator">
+                        <span class="status-dot {% if has_data %}active{% endif %}"></span>
+                        <span class="status-text">{% if has_data %}{{ total_items }} items loaded{% else %}No Data{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div style="max-width: 1400px; margin: 0 auto; padding: 1rem;">
+                    {% for category, message in messages %}
+                        <div class="status-message {{ category }}">
+                            {% if category == 'success' %}✅{% elif category == 'error' %}❌{% else %}⚠️{% endif %} {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Main Dashboard -->
+        <main class="dashboard">
+            {% if not has_data %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-content">
+                    <div class="empty-icon">📄</div>
+                    <h2>No Documentation Data</h2>
+                    <p>Please go back to the main page and scan a project first.</p>
+                    <a href="/" class="btn btn-primary">Go to Main Page</a>
+                </div>
+            </div>
+            {% else %}
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Overview Card -->
+                <div class="card overview-card">
+                    <div class="card-header">
+                        <h3>Project Overview</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">{{ total_items }}</div>
+                                <div class="stat-label">Total Items</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ documented_items }}</div>
+                                <div class="stat-label">Documented</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ coverage }}%</div>
+                                <div class="stat-label">Coverage</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ missing_docs }}</div>
+                                <div class="stat-label">Missing Docs</div>
+                            </div>
+                        </div>
+                        
+                        <div class="coverage-visual">
+                            <div class="coverage-bar-container">
+                                <div class="coverage-bar" style="width: {{ coverage }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Card -->
+                <div class="card actions-card">
+                    <div class="card-header">
+                        <h3>Documentation Tools</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="action-buttons">
+                            <!-- UML Generation -->
+                            <form method="GET" action="/uml" style="display: inline;">
+                                <button type="submit" class="action-btn uml-btn">
+                                    <span class="btn-icon">🔗</span>
+                                    <div class="btn-content">
+                                        <div class="btn-title">UML Diagrams</div>
+                                        <div class="btn-subtitle">Visual system architecture</div>
+                                    </div>
+                                </button>
+                            </form>
+                            
+                            <!-- PDF Generation -->
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="project_name" value="{{ project_name or 'Documentation' }}">
+                                <input type="hidden" name="include_uml" value="on">
+                                <button type="submit" name="generate_pdf" class="action-btn latex-btn">
+                                    <span class="btn-icon">📄</span>
+                                    <div class="btn-content">
+                                        <div class="btn-title">PDF Documentation</div>
+                                        <div class="btn-subtitle">Professional LaTeX output</div>
+                                    </div>
+                                </button>
+                            </form>
+                            
+                            <!-- Markdown Generation -->
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="project_name" value="{{ project_name or 'Documentation' }}">
+                                <input type="hidden" name="include_uml" value="on">
+                                <button type="submit" name="generate_markdown" class="action-btn markdown-btn">
+                                    <span class="btn-icon">📝</span>
+                                    <div class="btn-content">
+                                        <div class="btn-title">Markdown Docs</div>
+                                        <div class="btn-subtitle">For Sphinx & Confluence</div>
+                                    </div>
+                                </button>
+                            </form>
+                            
+                            <!-- Confluence Publishing -->
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="project_name" value="{{ project_name or 'Documentation' }}">
+                                <input type="hidden" name="include_uml" value="on">
+                                <input type="hidden" name="publish_confluence" value="on">
+                                <button type="submit" name="generate_markdown" class="action-btn confluence-btn">
+                                    <span class="btn-icon">🌐</span>
+                                    <div class="btn-content">
+                                        <div class="btn-title">Confluence</div>
+                                        <div class="btn-subtitle">Publish to team workspace</div>
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Table Card -->
+                <div class="card table-card">
+                    <div class="card-header">
+                        <h3>Documentation Items</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Documented</th>
+                                        <th>Coverage</th>
+                                        <th>Quality</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in items[:50] %}
+                                    <tr>
+                                        <td>{{ item.module or 'N/A' }}</td>
+                                        <td><code>{{ item.name }}</code></td>
+                                        <td><span class="badge">{{ item.type }}</span></td>
+                                        <td>
+                                            <span class="status-badge {% if item.has_docstring %}success{% else %}error{% endif %}">
+                                                {% if item.has_docstring %}✓{% else %}✗{% endif %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="mini-progress">
+                                                <div class="mini-progress-fill" style="width: {% if item.has_docstring %}100{% else %}0{% endif %}%"></div>
+                                            </div>
+                                            {% if item.has_docstring %}100{% else %}0{% endif %}%
+                                        </td>
+                                        <td>
+                                            <span class="badge">{% if item.has_docstring %}Good{% else %}Missing{% endif %}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if total_items > 50 %}
+                            <p style="text-align: center; padding: 1rem; color: var(--color-gray-600);">
+                                Showing first 50 items of {{ total_items }} total
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

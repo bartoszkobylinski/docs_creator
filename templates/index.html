@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs Creator - Documentation Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1>📚 Docs Creator</h1>
+                <p>Professional Documentation Assistant</p>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="status-message {{ category }}">
+                        {% if category == 'success' %}✅{% else %}❌{% endif %} {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="welcome-section">
+                <h2>Welcome to Documentation Creator</h2>
+                <p>Scan your Python project to generate comprehensive documentation in multiple formats.</p>
+            </div>
+
+            <!-- Project Scanning Section -->
+            <form method="POST" class="section-card">
+                <h3>🚀 Scan Project</h3>
+                <div class="form-group">
+                    <label for="project_path">Project Path:</label>
+                    <div class="input-group">
+                        <input type="text" name="project_path" id="project_path" 
+                               placeholder="/path/to/your/project" class="form-input" required>
+                        <button type="submit" name="scan_project" class="btn btn-primary">Scan Project</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Settings Section -->
+            <div class="section-card">
+                <h3>⚙️ Settings</h3>
+                
+                <!-- Confluence Settings -->
+                <form method="POST" class="settings-group">
+                    <h4>Confluence Integration</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="confluence_url">Confluence URL:</label>
+                            <input type="text" name="confluence_url" id="confluence_url" 
+                                   placeholder="https://your-domain.atlassian.net" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="confluence_username">Username (Email):</label>
+                            <input type="email" name="confluence_username" id="confluence_username" 
+                                   placeholder="your-email@example.com" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="confluence_token">API Token:</label>
+                            <input type="password" name="confluence_token" id="confluence_token" 
+                                   placeholder="Your Atlassian API token" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="confluence_space">Space Key:</label>
+                            <input type="text" name="confluence_space" id="confluence_space" 
+                                   placeholder="SPACE" class="form-input">
+                        </div>
+                    </div>
+                    <button type="submit" name="save_confluence" class="btn btn-secondary">Save Confluence Settings</button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>Generate professional documentation with UML diagrams, PDF exports, and Confluence integration.</p>
+        </footer>
+    </div>
+</body>
+</html>

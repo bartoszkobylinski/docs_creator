@@ -3,11 +3,11 @@ version: '3.8'
 services:
   docs-assistant:
     build: .
-    container_name: fastapi-docs-assistant
+    container_name: flask-docs-assistant
     ports:
       - "8200:8200"
     volumes:
-      # Mount your FastAPI project directory
+      # Mount your project directory
       - ./project:/app/project:ro
       # Mount directory for generated reports and backups (persistent)
       - ./reports:/app/reports
@@ -33,7 +33,7 @@ services:
   # Optional: Additional service for batch processing
   docs-scanner:
     build: .
-    container_name: fastapi-docs-scanner
+    container_name: flask-docs-scanner
     volumes:
       - ./project:/app/project:ro
       - ./reports:/app/reports
@@ -42,7 +42,7 @@ services:
       - REPORTS_DIR=/app/reports
     command: >
       sh -c "
-        echo 'Starting FastAPI Documentation Scanner...' &&
+        echo 'Starting Documentation Scanner...' &&
         poetry run python fastdoc/cli.py /app/project --out /app/reports/comprehensive_report.json --verbose &&
         echo 'Scanner completed. Report available at /app/reports/comprehensive_report.json'
       "
@@ -57,4 +57,4 @@ volumes:
 
 networks:
   default:
-    name: fastapi-docs-network
+    name: flask-docs-network

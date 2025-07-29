@@ -6,8 +6,6 @@ import os
 import json
 from typing import Dict, List, Any
 
-from fastapi import HTTPException
-
 from core.config import settings
 
 
@@ -39,28 +37,23 @@ class ReportService:
             "item_count": 0
         }
     
-    def get_report_data(self) -> Dict[str, List[Dict[str, Any]]]:
+    def get_report_data(self) -> List[Dict[str, Any]]:
         """
-        Return the full report data.
+        Return the full report data as a list of items.
         
         Returns:
-            Dictionary containing report items
-            
-        Raises:
-            HTTPException: If report not found or cannot be read
+            List of report items, empty list if no report exists
         """
         if not os.path.exists(settings.report_file_path):
-            raise HTTPException(status_code=404, detail="Report not found")
+            return []
         
         try:
             with open(settings.report_file_path, 'r') as f:
                 data = json.load(f)
-            return {"items": data}
+            return data if isinstance(data, list) else []
         except Exception as e:
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error reading report: {str(e)}"
-            )
+            print(f"Error reading report: {str(e)}")
+            return []
 
 
 # Global report service instance

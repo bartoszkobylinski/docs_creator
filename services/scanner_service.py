@@ -9,7 +9,7 @@ import time
 from typing import List, Tuple, Dict, Any
 from pathlib import Path
 
-from fastapi import UploadFile, HTTPException
+from werkzeug.datastructures import FileStorage
 
 from fastdoc.scanner import scan_file
 from core.config import settings
@@ -22,10 +22,10 @@ class ScannerService:
     def __init__(self):
         self.current_project_path: str = None
     
-    async def scan_uploaded_files(
+    def scan_uploaded_files(
         self, 
         project_path: str, 
-        files: List[UploadFile]
+        files: List[FileStorage]
     ) -> Tuple[List[Dict[str, Any]], int, float]:
         """
         Scan uploaded files and return documentation items.
@@ -38,7 +38,7 @@ class ScannerService:
             Tuple of (items_data, total_files, scan_time)
             
         Raises:
-            HTTPException: If scanning fails or no Python files found
+            Exception: If scanning fails or no Python files found
         """
         start_time = time.time()
         
@@ -51,10 +51,10 @@ class ScannerService:
             print(f"Received {len(files)} files")
             
             # Save uploaded files
-            file_paths = await self._save_uploaded_files(files, temp_dir)
+            file_paths = self._save_uploaded_files(files, temp_dir)
             
             if not file_paths:
-                raise HTTPException(status_code=400, detail="No Python files found")
+                raise Exception("No Python files found")
             
             # Scan all Python files
             all_items = []
@@ -87,14 +87,12 @@ class ScannerService:
             
             return items_data, len(file_paths), round(scan_time, 2)
             
-        except HTTPException:
-            raise
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Scanning failed: {str(e)}")
+            raise Exception(f"Scanning failed: {str(e)}")
     
-    async def _save_uploaded_files(
+    def _save_uploaded_files(
         self, 
-        files: List[UploadFile], 
+        files: List[FileStorage], 
         temp_dir: str
     ) -> List[str]:
         """Save uploaded files to temporary directory."""
@@ -121,8 +119,7 @@ class ScannerService:
             
             # Write file content
             with open(file_path, 'wb') as f:
-                content = await file.read()
-                f.write(content)
+                file.save(f)
             
             file_paths.append(file_path)
             print(f"Saved file: {file_path}")
@@ -135,7 +132,7 @@ class ScannerService:
         with open(settings.report_file_path, 'w') as f:
             json.dump(items_data, f, indent=2)
     
-    async def scan_local_project(self, project_path: str) -> Tuple[List[Dict[str, Any]], int, float]:
+    def scan_local_project(self, project_path: str) -> Tuple[List[Dict[str, Any]], int, float]:
         """
         Scan a local project directory using the CLI scanner.
         
@@ -146,7 +143,7 @@ class ScannerService:
             Tuple of (items_data, total_files, scan_time)
             
         Raises:
-            HTTPException: If scanning fails
+            Exception: If scanning fails
         """
         start_time = time.time()
         
@@ -161,7 +158,7 @@ class ScannerService:
                         python_files.append(os.path.join(root, filename))
             
             if not python_files:
-                raise HTTPException(status_code=400, detail=f"No Python files found in {project_path}")
+                raise Exception(f"No Python files found in {project_path}")
             
             # Scan all Python files
             all_items = []
@@ -194,15 +191,13 @@ class ScannerService:
             
             return items_data, len(python_files), round(scan_time, 2)
             
-        except HTTPException:
-            raise
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Local scan failed: {str(e)}")
+            raise Exception(f"Local scan failed: {str(e)}")
     
     def get_project_files(self) -> List[Dict[str, str]]:
         """Get list of Python files in the current project."""
         if not self.current_project_path or not os.path.exists(self.current_project_path):
-            raise HTTPException(status_code=404, detail="No project loaded")
+            raise Exception("No project loaded")
         
         files = []
         for root, _, filenames in os.walk(self.current_project_path):

@@ -1,86 +1,209 @@
 """
-Main application entry point for FastAPI Documentation Assistant.
+Main application entry point for Flask Documentation Assistant.
 """
 
-from fastapi import FastAPI, Request, Form
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from flask import Flask, request, render_template, jsonify, send_from_directory, redirect, url_for, flash, send_file
+from flask_cors import CORS
+import os
 
 from core.config import settings
-from api.endpoints import router as api_router
-from api.static_files import router as static_router
+from api.endpoints import create_api_blueprint
 from models.responses import HealthResult
 from services.uml_service import uml_service
 from services.report_service import report_service
+from services.latex_service import latex_service
+from services.markdown_service import markdown_service
+from services.confluence_service import confluence_service
 
 
-def create_app() -> FastAPI:
-    """Create and configure the FastAPI application."""
+def create_app() -> Flask:
+    """Create and configure the Flask application."""
     
-    # Initialize FastAPI app
-    app = FastAPI(
-        title=settings.APP_NAME,
-        version=settings.VERSION,
-        description=settings.DESCRIPTION,
-        debug=settings.DEBUG
+    # Initialize Flask app with default static folder
+    app = Flask(
+        __name__,
+        template_folder='templates',
+        static_folder='frontend'  # Use frontend as static folder
     )
     
-    # Initialize Jinja2 templates
-    templates = Jinja2Templates(directory="templates")
+    # Configure Flask
+    app.config['DEBUG'] = settings.DEBUG
+    app.config['SECRET_KEY'] = 'dev-secret-key'  # In production, use environment variable
     
     # Add CORS middleware
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    CORS(app, origins=settings.CORS_ORIGINS)
     
-    # Mount static files for frontend assets
-    app.mount("/static", StaticFiles(directory=settings.FRONTEND_DIR), name="static")
+    # Register API blueprint
+    api_bp = create_api_blueprint()
+    app.register_blueprint(api_bp, url_prefix='/api')
     
-    # Include API routes
-    app.include_router(api_router, prefix="/api", tags=["API"])
+    # Frontend routes
+    @app.route('/', methods=['GET', 'POST'])
+    def index():
+        """Serve the main interface with server-side rendering."""
+        if request.method == 'POST':
+            # Handle project scanning
+            if 'scan_project' in request.form:
+                project_path = request.form.get('project_path', '').strip()
+                if project_path:
+                    try:
+                        # Call the scan service directly
+                        from services.scanner_service import scanner_service
+                        items_data, total_files, scan_time = scanner_service.scan_local_project(project_path)
+                        
+                        # Save to session or redirect to dashboard
+                        flash(f'Successfully scanned {total_files} files!', 'success')
+                        return redirect(url_for('serve_dashboard'))
+                    except Exception as e:
+                        flash(f'Scan failed: {str(e)}', 'error')
+                else:
+                    flash('Please enter a project path', 'error')
+            
+            # Handle Confluence settings
+            elif 'save_confluence' in request.form:
+                try:
+                    result = confluence_service.save_and_test_settings(
+                        url=request.form.get('confluence_url'),
+                        username=request.form.get('confluence_username'),
+                        token=request.form.get('confluence_token'),
+                        space_key=request.form.get('confluence_space')
+                    )
+                    if result.get('success'):
+                        flash('Confluence settings saved successfully!', 'success')
+                    else:
+                        flash(f'Failed to save settings: {result.get("error")}', 'error')
+                except Exception as e:
+                    flash(f'Error saving settings: {str(e)}', 'error')
+        
+        return render_template('index.html')
     
-    # Include static file routes (frontend)
-    app.include_router(static_router, tags=["Frontend"])
+    @app.route('/dashboard', methods=['GET', 'POST'])
+    def serve_dashboard():
+        """Serve the dashboard interface with server-side rendering."""
+        # Get report data
+        items = report_service.get_report_data()
+        
+        # Calculate statistics
+        total_items = len(items)
+        documented_items = len([item for item in items if item.get('has_docstring')])
+        coverage = round((documented_items / total_items * 100) if total_items > 0 else 0, 1)
+        missing_docs = total_items - documented_items
+        
+        if request.method == 'POST':
+            # Handle UML generation
+            if 'generate_uml' in request.form:
+                diagram_type = request.form.get('diagram_type', 'overview')
+                return redirect(url_for('generate_uml_endpoint', diagram_type=diagram_type))
+            
+            # Handle PDF generation
+            elif 'generate_pdf' in request.form:
+                project_name = request.form.get('project_name', 'API_Documentation')
+                include_uml = request.form.get('include_uml') == 'on'
+                # Generate PDF and trigger download
+                try:
+                    result = latex_service.generate_pdf_documentation(
+                        items, 
+                        project_name=project_name,
+                        include_uml=include_uml
+                    )
+                    if result.get('success') and result.get('pdf_path'):
+                        return send_file(
+                            result['pdf_path'],
+                            mimetype='application/pdf',
+                            as_attachment=True,
+                            download_name=f"{project_name.replace(' ', '_')}_documentation.pdf"
+                        )
+                    else:
+                        flash(f"PDF generation failed: {result.get('error', 'Unknown error')}", 'error')
+                except Exception as e:
+                    flash(f"PDF generation failed: {str(e)}", 'error')
+            
+            # Handle Markdown generation
+            elif 'generate_markdown' in request.form:
+                project_name = request.form.get('project_name', 'API_Documentation')
+                include_uml = request.form.get('include_uml') == 'on'
+                publish_confluence = request.form.get('publish_confluence') == 'on'
+                
+                try:
+                    result = markdown_service.generate_markdown_documentation(
+                        items,
+                        project_name=project_name,
+                        include_uml=include_uml
+                    )
+                    
+                    if result.get('success'):
+                        if publish_confluence:
+                            confluence_result = confluence_service.publish_markdown_to_confluence(
+                                result.get('master_content', ''),
+                                project_name
+                            )
+                            if confluence_result.get('success'):
+                                flash('Markdown generated and published to Confluence!', 'success')
+                            else:
+                                flash('Markdown generated but Confluence publishing failed', 'warning')
+                        else:
+                            flash('Markdown documentation generated successfully!', 'success')
+                            # Trigger ZIP download
+                            zip_path = markdown_service.create_markdown_zip(project_name)
+                            if zip_path:
+                                return send_file(
+                                    zip_path,
+                                    mimetype='application/zip',
+                                    as_attachment=True,
+                                    download_name=os.path.basename(zip_path)
+                                )
+                    else:
+                        flash(f"Markdown generation failed: {result.get('error', 'Unknown error')}", 'error')
+                except Exception as e:
+                    flash(f"Markdown generation failed: {str(e)}", 'error')
+        
+        return render_template('dashboard_simple.html',
+            items=items,
+            total_items=total_items,
+            documented_items=documented_items,
+            coverage=coverage,
+            missing_docs=missing_docs,
+            has_data=total_items > 0,
+            project_name="API_Documentation"
+        )
+    
+    # Static files are now handled by Flask's default static handling
     
     # UML page endpoints
-    @app.get("/uml", response_class=HTMLResponse)
-    async def uml_page(request: Request, show_source: bool = False):
-        """Render UML diagrams page."""
-        # Check if we have data available
-        try:
-            data = report_service.get_report_data()
-            has_data = data and data.get("items")
-        except:
-            has_data = False
+    @app.route('/uml', methods=['GET', 'POST'])
+    def uml_page():
+        """Render and handle UML diagrams page."""
+        if request.method == 'GET':
+            show_source = request.args.get('show_source', False, type=bool)
+            
+            # Check if we have data available
+            try:
+                data = report_service.get_report_data()
+                has_data = data and data.get("items")
+            except:
+                has_data = False
+            
+            return render_template("uml.html", 
+                has_data=has_data,
+                show_source=show_source,
+                selected_config="overview",
+                result=None
+            )
         
-        return templates.TemplateResponse("uml.html", {
-            "request": request,
-            "has_data": has_data,
-            "show_source": show_source,
-            "selected_config": "overview",
-            "result": None
-        })
-    
-    @app.post("/uml", response_class=HTMLResponse)
-    async def generate_uml(request: Request, config: str = Form("overview"), show_source: bool = Form(False)):
-        """Generate and display UML diagram."""
+        # POST request - generate UML
+        config = request.form.get('config', 'overview')
+        show_source = request.form.get('show_source', False, type=bool)
+        
         try:
             # Get current data
             data = report_service.get_report_data()
             if not data or not data.get("items"):
-                return templates.TemplateResponse("uml.html", {
-                    "request": request,
-                    "has_data": False,
-                    "show_source": show_source,
-                    "selected_config": config,
-                    "result": None
-                })
+                return render_template("uml.html",
+                    has_data=False,
+                    show_source=show_source,
+                    selected_config=config,
+                    result=None
+                )
             
             # Convert dictionary items back to DocItem objects
             from fastdoc.models import DocItem
@@ -92,36 +215,27 @@ def create_app() -> FastAPI:
             # Generate UML diagrams
             result = uml_service.generate_uml_diagrams(items, config)
             
-            return templates.TemplateResponse("uml.html", {
-                "request": request,
-                "has_data": True,
-                "show_source": show_source,
-                "selected_config": config,
-                "result": result
-            })
+            return render_template("uml.html",
+                has_data=True,
+                show_source=show_source,
+                selected_config=config,
+                result=result
+            )
             
         except Exception as e:
             error_result = {"success": False, "error": str(e)}
-            return templates.TemplateResponse("uml.html", {
-                "request": request,
-                "has_data": True,
-                "show_source": show_source,
-                "selected_config": config,
-                "result": error_result
-            })
-    
-    
-    # Modern dashboard endpoint
-    @app.get("/dashboard", response_class=HTMLResponse)
-    async def modern_dashboard(request: Request):
-        """Serve the modern dashboard interface."""
-        return templates.TemplateResponse("dashboard.html", {"request": request})
+            return render_template("uml.html",
+                has_data=True,
+                show_source=show_source,
+                selected_config=config,
+                result=error_result
+            )
     
     # Health check endpoint
-    @app.get("/health", response_model=HealthResult, tags=["Health"])
-    async def health_check():
+    @app.route('/health')
+    def health_check():
         """Health check endpoint."""
-        return HealthResult(status="healthy", version=settings.VERSION)
+        return jsonify({"status": "healthy", "version": settings.VERSION})
     
     return app
 
@@ -131,15 +245,12 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    import uvicorn
-    
     print(f"Starting {settings.APP_NAME}...")
     print(f"Frontend will be available at: http://{settings.HOST}:{settings.PORT}")
-    print(f"API docs will be available at: http://{settings.HOST}:{settings.PORT}/docs")
+    print(f"Dashboard will be available at: http://{settings.HOST}:{settings.PORT}/dashboard")
     
-    uvicorn.run(
-        "main:app",
+    app.run(
         host=settings.HOST,
         port=settings.PORT,
-        reload=settings.DEBUG
+        debug=settings.DEBUG
     )
