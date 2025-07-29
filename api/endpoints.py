@@ -462,3 +462,34 @@ async def publish_markdown_to_confluence(request: dict):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")
+
+
+@router.get("/docs/markdown/download")
+async def download_markdown_documentation():
+    """Download all Markdown documentation files as a ZIP archive."""
+    from fastapi.responses import FileResponse
+    import zipfile
+    import tempfile
+    
+    docs_dir = Path("reports/docs")
+    
+    if not docs_dir.exists() or not any(docs_dir.iterdir()):
+        raise HTTPException(status_code=404, detail="No Markdown documentation found. Please generate it first.")
+    
+    # Create a temporary ZIP file
+    with tempfile.NamedTemporaryFile(mode='w+b', suffix='.zip', delete=False) as tmp_file:
+        zip_path = tmp_file.name
+        
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            # Add all markdown files to the ZIP
+            for md_file in docs_dir.glob("*.md"):
+                zipf.write(md_file, arcname=md_file.name)
+        
+    return FileResponse(
+        path=zip_path,
+        media_type="application/zip",
+        filename="documentation.zip",
+        headers={
+            "Content-Disposition": "attachment; filename=documentation.zip"
+        }
+    )

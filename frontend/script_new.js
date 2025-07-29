@@ -481,6 +481,11 @@ class DocumentationDashboard {
                     
                     statusHTML += '</ul>';
                     
+                    // Add download button
+                    statusHTML += `<div style="margin-top: 10px;">`;
+                    statusHTML += `<a href="${this.apiBaseUrl}/api/docs/markdown/download" class="btn btn-primary btn-sm">📥 Download All Markdown Files</a>`;
+                    statusHTML += `</div>`;
+                    
                     // If publish to Confluence is checked
                     if (publishConfluence && await this.checkConfluenceEnabled()) {
                         statusHTML += '<p>Publishing to Confluence...</p>';

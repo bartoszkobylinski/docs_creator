@@ -9,6 +9,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 
 from atlassian import Confluence
+import re
 from core.config import settings
 
 
@@ -65,6 +66,10 @@ class ConfluenceService:
         if not self.enabled:
             raise Exception("Confluence integration is not enabled")
         
+        # Convert Markdown to Confluence format if it looks like Markdown
+        if content.strip().startswith('#') or '```' in content or '**' in content or '- ' in content:
+            content = self.markdown_to_confluence_storage(content)
+        
         # Check if page exists
         existing_page = self.confluence.get_page_by_title(
             space=self.space_key,
@@ -91,6 +96,82 @@ class ConfluenceService:
             print(f"Created Confluence page: {title}")
         
         return result
+    
+    def markdown_to_confluence_storage(self, markdown_content: str) -> str:
+        """
+        Convert Markdown to Confluence storage format.
+        
+        Args:
+            markdown_content: Markdown formatted text
+            
+        Returns:
+            Confluence storage format XML/HTML
+        """
+        # Start with basic HTML wrapper
+        html = markdown_content
+        
+        # Convert headers
+        html = re.sub(r'^### (.+)$', r'<h3>\1</h3>', html, flags=re.MULTILINE)
+        html = re.sub(r'^## (.+)$', r'<h2>\1</h2>', html, flags=re.MULTILINE)
+        html = re.sub(r'^# (.+)$', r'<h1>\1</h1>', html, flags=re.MULTILINE)
+        
+        # Convert bold and italic
+        html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
+        html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', html)
+        
+        # Convert code blocks
+        html = re.sub(r'```(\w+)?\n(.*?)\n```', lambda m: f'<ac:structured-macro ac:name="code"><ac:parameter ac:name="language">{m.group(1) or "text"}</ac:parameter><ac:plain-text-body><![CDATA[{m.group(2)}]]></ac:plain-text-body></ac:structured-macro>', html, flags=re.DOTALL)
+        
+        # Convert inline code
+        html = re.sub(r'`([^`]+)`', r'<code>\1</code>', html)
+        
+        # Convert links
+        html = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html)
+        
+        # Convert unordered lists
+        lines = html.split('\n')
+        in_list = False
+        new_lines = []
+        
+        for line in lines:
+            if line.strip().startswith('- '):
+                if not in_list:
+                    new_lines.append('<ul>')
+                    in_list = True
+                new_lines.append(f'<li>{line.strip()[2:]}</li>')
+            else:
+                if in_list and not line.strip().startswith('- '):
+                    new_lines.append('</ul>')
+                    in_list = False
+                new_lines.append(line)
+        
+        if in_list:
+            new_lines.append('</ul>')
+        
+        html = '\n'.join(new_lines)
+        
+        # Convert tables
+        html = re.sub(r'\|(.+)\|', lambda m: self._convert_table_row(m.group(0)), html)
+        
+        # Convert line breaks
+        html = re.sub(r'\n\n', '</p><p>', html)
+        html = f'<p>{html}</p>'
+        
+        # Clean up empty paragraphs
+        html = re.sub(r'<p>\s*</p>', '', html)
+        html = re.sub(r'<p>(<h[1-6]>)', r'\1', html)
+        html = re.sub(r'(</h[1-6]>)</p>', r'\1', html)
+        
+        return html
+    
+    def _convert_table_row(self, row: str) -> str:
+        """Convert a markdown table row to HTML."""
+        cells = row.strip('|').split('|')
+        if all('---' in cell for cell in cells):
+            return ''  # Skip separator rows
+        
+        cell_html = ''.join(f'<td>{cell.strip()}</td>' for cell in cells)
+        return f'<tr>{cell_html}</tr>'
     
     def publish_endpoint_doc(self, endpoint_data: Dict[str, Any]) -> Dict[str, Any]:
         """

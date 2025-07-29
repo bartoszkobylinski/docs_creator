@@ -1,0 +1,2949 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Page geometry
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm,
+}
+
+% Colors
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Code listing style
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=pythonstyle}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{API Documentation}
+\lhead{Documentation}
+\rfoot{Page \thepage}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={API Documentation Documentation},
+    pdfauthor={Auto-generated},
+}
+
+% Title formatting
+\titleformat{\section}
+{\Large\bfseries\color{blue}}
+{\thesection}
+{1em}
+{}
+
+\titleformat{\subsection}
+{\large\bfseries\color{blue!80}}
+{\thesubsection}
+{1em}
+{}
+
+\title{API Documentation\\Documentation}
+\author{Auto-generated Documentation}
+\date{2025-07-29 09:52:15}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+This document provides comprehensive documentation for \textbf{API Documentation}. It includes API documentation, code analysis, and coverage statistics.
+
+\subsection{Documentation Statistics}
+
+\begin{itemize}
+    \item \textbf{Total Items:} 145
+    \item \textbf{Documented Items:} 16
+    \item \textbf{Coverage:} 11.0\%
+    \item \textbf{Modules:} 37
+\end{itemize}
+
+\subsection{Project Modules}
+
+\begin{itemize}
+    \item \texttt{api\_updater}
+    \item \texttt{env}
+    \item \texttt{funkcja}
+    \item \texttt{game}
+    \item \texttt{game\_base}
+    \item \texttt{league}
+    \item \texttt{league\_base}
+    \item \texttt{logger\_config}
+    \item \texttt{main}
+    \item \texttt{manager}
+    \item \texttt{match}
+    \item \texttt{match\_base}
+    \item \texttt{match\_result}
+    \item \texttt{match\_result\_base}
+    \item \texttt{player}
+    \item \texttt{player\_base}
+    \item \texttt{player\_result}
+    \item \texttt{player\_result\_base}
+    \item \texttt{player\_stats}
+    \item \texttt{player\_stats\_base}
+    \item \texttt{pydantic\_models}
+    \item \texttt{roboczy}
+    \item \texttt{round\_score}
+    \item \texttt{round\_score\_base}
+    \item \texttt{router}
+    \item \texttt{routers}
+    \item \texttt{serie}
+    \item \texttt{serie\_base}
+    \item \texttt{stream}
+    \item \texttt{stream\_base}
+    \item \texttt{team}
+    \item \texttt{team\_base}
+    \item \texttt{test\_routers}
+    \item \texttt{tests\_models}
+    \item \texttt{tournament}
+    \item \texttt{tournament\_base}
+    \item \texttt{tournaments}
+\end{itemize}
+
+\section{Code Documentation}
+
+This section contains detailed documentation for all code elements found in the project.
+
+\subsection{Function}
+
+\subsubsection{\texttt{setup\_loggers}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{logger\_config}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/logger\_config.py}
+    \item \textbf{Line:} 5
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+
+    info_logger = logging.getLogger('info_logger')
+    error_logger = logging.getLogger('error_logger')
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.\_\_init\_\_}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 32
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        self.headers = {
+            "Accept": "application/json",
+            "Authorization": f"Bearer {api_token}"
+        }
+        self.database_manager = DatabaseManager(user=user, password=password, host=host, port=port, db_name=db_name)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.make\_request}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 40
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        response = requests.get(url=url, headers=self.headers, params=params, timeout=10)
+        time.sleep(0.4)
+        PlayerUpdater.REQUEST_COUNTER += 1
+        response.raise_for_status()
+        info_logger.info(f"Total requests made to Pandascore API: {PlayerUpdater.REQUEST_COUNTER}. I've hit url: {url}")
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.get\_upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 48
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        params = {
+            "filter[future]": "true",
+            "sort": "begin_at",
+            "per_page": 100,
+            "page": 1
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.get\_particular\_team\_url}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 70
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        return f'https://api.pandascore.co/teams/{team_id}'
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.get\_particular\_player\_stats\_url}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 73
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        return f"https://api.pandascore.co/csgo/players/{player_id}/stats"
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.get\_particular\_game\_stats\_url}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 76
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        return f'https://api.pandascore.co/csgo/games/{game_id}'
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.get\_required\_matches\_for\_particular\_player}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 79
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        return f"https://api.pandascore.co/players/{player_id}/matches?per_page{required_amount_of_matches}&sort=-modified_at"
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.compare\_and\_update}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 82
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        updated = False
+        for key, value in new_data.items():
+            if getattr(existing_data, key) != value:
+                setattr(existing_data, key, value)
+                updated = True
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.fetch\_last\_games}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 90
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        games_collected: List[int] = []
+        page = 1
+
+        while len(games_collected) < total_games:
+            matches_url = self.get_required_matches_for_particular_player(player_id,
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_leagues}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 142
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+
+        league_id: int = league_data.get('id')
+        is_created = False
+
+        try:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_series}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 189
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        serie_id: int = series_data.get('id')
+        is_created = False
+
+        try:
+            serie = session.query(Serie).filter_by(serie_id=serie_id).one_or_none()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_tournament}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 242
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        tournament_id: int = match_data.get('tournament').get('id')
+        tournament_data = match_data.get('tournament')
+        is_created = False
+
+        try:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_team}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 319
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        team_id = team_data.get('id')
+        print(f"players: {team_data}")
+
+        is_created = False
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_player}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 392
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        player_id = player_data.get('id')
+        is_created = False
+
+        try:
+            player = session.query(Player).filter_by(player_id=player_id).one_or_none()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_match}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 450
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        match_id = match_data.get('id')
+        is_created = False
+
+        try:
+            match = session.query(Match).filter_by(match_id=match_id).one_or_none()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_game}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 554
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        game_id = game_data.get('id')
+        is_created = False
+
+        try:
+            game = session.query(Game).filter_by(game_id=game_id).one_or_none()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_match\_result}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 608
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        match_result_id = match_result_data.get('id')
+        is_created = False
+
+        try:
+            match_result = session.query(MatchResult).filter_by(id=match_result_id).one_or_none()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_round\_score}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 647
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        if not game_id:
+            error_logger.error("No game_id provided for round scores.")
+            return
+
+        try:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_player\_result}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 712
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        if not game_id:
+            error_logger.error("No game_id provided for player results.")
+            return
+
+        for player_data in players_result_data:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_player\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 787
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        try:
+            player_stats_data = self.make_request(url=self.get_particular_player_stats_url(player_id=player_id))
+            player_stats_data = player_stats_data.json()
+
+            # Map player_stats_data to the PlayerStats model
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.populate\_stream}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 862
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        stream_id: int = stream_data.get('id')
+        is_created = False
+
+        try:
+            stream = session.query(Stream).filter_by(id=stream_id).one_or_none()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerUpdater.main\_population}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 908
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        with self.database_manager.get_session() as session:
+            teams_ids = set()
+            processed_tournaments = set()
+            processed_matches = set()
+            processed_teams = set()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{run\_api\_updater}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 1056
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    start = time.time()
+    info_logger.info(f"API Updater start: {start}")
+    try:
+        player_updater = PlayerUpdater(api_token=pandascore_api_token, user=db_user, password=db_password, host=db_host, port=db_port, db_name=db_name)
+        upcoming_matches = player_updater.get_upcoming_matches()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{get\_roster\_url}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 82
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    return f"https://api.pandascore.co/tournaments/{tournament_id}/rosters"
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{fetch\_rosters}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 86
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    response = requests.get(get_roster_url(tournament_id), headers=HEADERS)
+    response.raise_for_status()
+    return response.json()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{get\_player\_avg\_kills\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 91
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    player_stats = (db.query(PlayerResult)
+                    .filter_by(player_id=player_id)
+                    .order_by(PlayerResult.game_id.desc())
+                    .limit(x_maps)
+                    .all()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{fetch\_match\_info}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 138
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    match_info = {
+        "match_id": match.match_id,
+        "teams": []
+    }
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{get\_margin}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 23
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    margin_str = data.get("margin", None)
+    margin_error = None
+
+    if margin_str is None:
+        margin_error = "Margin value is missing."
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{calculate\_odds\_kill}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 39
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    absolute_kills_value = int(kills)
+    threshold_kills = absolute_kills_value + 0.5
+    poisson_distribution = poisson.cdf(absolute_kills_value, kills)
+    survival_probability = 1 - poisson_distribution
+    odds1 = 1 / (
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{poisson\_probabilities}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 62
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Pre-compute Poisson probabilities for the range of kills using numpy for efficiency.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Pre-compute Poisson probabilities for the range of kills using numpy for efficiency."""
+    return poisson.pmf(np.arange(MAX_KILLS + 1), lam)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{create\_probability\_matrix}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 67
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Use numpy to efficiently create a probability matrix for two players.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Use numpy to efficiently create a probability matrix for two players."""
+    return np.outer(player_a_probs, player_b_probs)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{calculate\_total\_probabilities}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 72
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Calculate total probabilities for A wins, draw, and B wins using numpy.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Calculate total probabilities for A wins, draw, and B wins using numpy."""
+    prob_b_wins = np.sum(np.triu(prob_matrix, 1))
+    prob_draw = np.sum(np.diag(prob_matrix))
+    prob_a_wins = np.sum(np.tril(prob_matrix, -1))
+    return prob_a_wins, prob_draw, prob_b_wins
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{calculate\_odds\_h2h}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 80
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Convert probabilities to odds.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Convert probabilities to odds."""
+    if prob_draw is None:
+        a_prob_without_draw = prob_a / (prob_a + prob_b)
+        b_prob_without_draw = prob_b / (prob_b + prob_a)
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{fetch\_upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 103
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    global REQUEST_COUNT
+    params = initial_params.copy() if initial_params else {}
+    page = 1
+    aggregated_results = []
+    while True:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.\_\_init\_\_}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 20
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        self.database_url = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+        self.engine = create_engine(self.database_url)
+        self.Session = sessionmaker(bind=self.engine)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.create\_tables}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 25
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        Base.metadata.create_all(self.engine)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.check\_all\_table\_exists}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 28
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        inspector = inspect(self.engine)
+        insp = reflection.Inspector.from_engine(self.engine)
+        print("Tables in the database: ", insp.get_table_names())
+        existing_tables = inspector.get_table_names()
+        missing_tables = set(required_tables) - set(existing_tables)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.get\_session}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 39
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        return self.Session()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.add}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 42
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Save an instance of a model to the database
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        """
+        Save an instance of a model to the database
+        """
+        with self.get_session() as session:
+            session.add(instance)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.get}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 52
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Fetch a single instance of a model by its ID.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        """
+        Fetch a single instance of a model by its ID.
+        """
+        with self.get_session() as session:
+            try:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.get\_all}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 62
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Fetch all instances of a model
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        """
+        Fetch all instances of a model
+        """
+        with self.get_session() as session:
+            return session.query(model_class).all()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.update}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 69
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Update a single instance of a model by its ID
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        """
+        Update a single instance of a model by its ID
+        """
+        with self.get_session() as session:
+            object = session.query(model_class).filter(model_class.id == object_id).one()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.delete}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 80
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Delete a single instance of a model by its ID
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        """
+        Delete a single instance of a model by its ID
+        """
+        with self.get_session() as session:
+            try:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.clear\_all\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 93
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        with self.get_session() as session:
+            meta = MetaData()
+            meta.reflect(bind=self.engine)
+            for table in reversed(meta.sorted_tables):
+                session.execute(table.delete())
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager.get\_session}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 102
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        session = self.Session()
+        try:
+            yield session
+            session.commit()
+        except:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{get\_db}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 117
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    with database_manager.get_session() as db:
+        yield db
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerBase.serialize\_birthday}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/player\_base.py}
+    \item \textbf{Line:} 22
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        if birthday is not None:
+            return birthday.strftime('%Y-%m-%d')
+        return None
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerBase.serialize\_modified\_at}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/player\_base.py}
+    \item \textbf{Line:} 28
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        if modified_at is not None:
+            return modified_at.isoformat()
+        return None
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{pp}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{funkcja}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/temporary/funkcja.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    return (srednia ** k / (factorial(k))) * exp(-srednia)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{dp}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{funkcja}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/temporary/funkcja.py}
+    \item \textbf{Line:} 10
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    p = 0
+    for m in range(k + 1, k + 30):
+        p = p + pp(srednia, m)
+    return p
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{wynik}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{funkcja}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/temporary/funkcja.py}
+    \item \textbf{Line:} 17
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    zaw = list(srednie.keys())
+    s = 0
+    for z in zaw:
+        s = s + srednie[z]
+    p = {}
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{roster\_url}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{tournaments}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/temporary/tournaments.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    return f"https://api.pandascore.co/tournaments/{tournament_id}/rosters"
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{fetch\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{roboczy}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/temporary/roboczy.py}
+    \item \textbf{Line:} 10
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    global REQUEST_COUNT
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {api_token}"
+    }
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{initialize\_api}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{main}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/main.py}
+    \item \textbf{Line:} 10
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    app = FastAPI(
+        root_path="/api/v1"
+    )
+
+    app.add_middleware(
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{get\_margin}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 22
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    margin_str = data.get("margin", None)
+    margin_error = None
+
+    if margin_str is None:
+        margin_error = "Margin value is missing."
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{calculate\_odds}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 38
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    absolute_kills_value = int(kills)
+    threshold_kills = absolute_kills_value + 0.5
+    poisson_distribution = poisson.cdf(absolute_kills_value, kills)
+    survival_probability = 1 - poisson_distribution
+    odds1 = 1 / (
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{poisson\_probabilities}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 61
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Pre-compute Poisson probabilities for the range of kills using numpy for efficiency.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Pre-compute Poisson probabilities for the range of kills using numpy for efficiency."""
+    return poisson.pmf(np.arange(MAX_KILLS + 1), lam)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{create\_probability\_matrix}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 66
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Use numpy to efficiently create a probability matrix for two players.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Use numpy to efficiently create a probability matrix for two players."""
+    return np.outer(player_a_probs, player_b_probs)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{calculate\_total\_probabilities}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 71
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Calculate total probabilities for A wins, draw, and B wins using numpy.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Calculate total probabilities for A wins, draw, and B wins using numpy."""
+    prob_b_wins = np.sum(np.triu(prob_matrix, 1))
+    prob_draw = np.sum(np.diag(prob_matrix))
+    prob_a_wins = np.sum(np.tril(prob_matrix, -1))
+    return prob_a_wins, prob_draw, prob_b_wins
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{calculate\_odds}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 79
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Convert probabilities to odds.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Convert probabilities to odds."""
+    if prob_draw is None:
+        a_prob_without_draw = prob_a / (prob_a + prob_b)
+        b_prob_without_draw = prob_b / (prob_b + prob_a)
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{fetch\_upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 102
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    global REQUEST_COUNT
+    params = initial_params.copy() if initial_params else {}
+    page = 1
+    aggregated_results = []
+    while True:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{test\_league\_model}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{tests\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/tests/tests\_models.py}
+    \item \textbf{Line:} 12
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    league_data = {
+        "id": 1,
+        "name": "Test League",
+        "slug": "test-league",
+        "modified_at": datetime.utcnow(),
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{test\_serie\_model}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{tests\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/tests/tests\_models.py}
+    \item \textbf{Line:} 38
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    serie_data = {
+        "id": 1,
+        "begin_at": datetime.utcnow(),
+        "end_at": datetime.utcnow(),
+        "full_name": "Test Serie",
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{test\_team\_model}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{tests\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/tests/tests\_models.py}
+    \item \textbf{Line:} 59
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    team_data = {
+        "id": 1,
+        "name": "Test Team",
+        "slug": "test-team",
+        "modified_at": datetime.utcnow(),
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{run\_migrations\_offline}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{env}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/alembic/env.py}
+    \item \textbf{Line:} 34
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Run migrations in 'offline' mode.
+
+This configures the context with just a URL
+and not an Engine, though an Engine is acceptable
+here as well.  By skipping the Engine creation,
+we don't even need a DBAPI to be available.
+
+Calls to context.execute() here emit the given string to the
+script output.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Run migrations in 'offline' mode.
+
+    This configures the context with just a URL
+    and not an Engine, though an Engine is acceptable
+    here as well.  By skipping the Engine creation,
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{run\_migrations\_online}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{env}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/alembic/env.py}
+    \item \textbf{Line:} 58
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+Run migrations in 'online' mode.
+
+In this scenario, we need to create an Engine
+and associate a connection with the context.
+\end{quote}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    """Run migrations in 'online' mode.
+
+    In this scenario, we need to create an Engine
+    and associate a connection with the context.
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsection{Class}
+
+\subsubsection{\texttt{PlayerUpdater}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{api\_updater}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api\_updater.py}
+    \item \textbf{Line:} 28
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{MatchStatuses}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 18
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{DatabaseManager}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{manager}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/manager.py}
+    \item \textbf{Line:} 19
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{MatchResult}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{match\_result}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/match\_result.py}
+    \item \textbf{Line:} 8
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{Game}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{game}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/game.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{League}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{league}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/league.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerStats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_stats}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/player\_stats.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{Team}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{team}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/team.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{Stream}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{stream}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/stream.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{Player}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/player.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{Serie}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{serie}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/serie.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{RoundScore}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{round\_score}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/round\_score.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerResult}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_result}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/player\_result.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{Tournament}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{tournament}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/tournament.py}
+    \item \textbf{Line:} 9
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{Match}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{match}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/database/models/match.py}
+    \item \textbf{Line:} 8
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsection{Async Function}
+
+\subsubsection{\texttt{upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 32
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    matches = db.query(Match).where(Match.status == MatchStatuses.NOT_STARTED.value).join(Match.tournament).all()
+
+    if not matches:
+        raise HTTPException(status_code=404, detail="No upcoming matches found")
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{all\_players\_list}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 42
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    try:
+        players = db.query(Player).all()
+        if not players:
+            raise HTTPException(status_code=404, detail="No players found")
+        return players
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{add\_player\_to\_team}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 53
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    team = db.query(Team).filter(Team.team_id == team_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if not player:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{remove\_player\_from\_team}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 68
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    team = db.query(Team).filter(Team.team_id == team_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if not player:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{upcoming\_matches\_with\_rosters\_and\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 211
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        match_id: int = None,
+        x_maps: int = Query(..., gt=0, description="Number of recent maps to consider for statistics"),
+        db: Session = Depends(get_db)):
+    if match_id:
+        matches = db.query(Match).filter(Match.match_id == match_id).all()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{match\_players\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 239
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    match = db.query(Match).filter(Match.match_id == id).one_or_none()
+
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 129
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    api_token = os.getenv("PANDASCORE_API_TOKEN")
+    if not api_token:
+        raise HTTPException(status_code=500, detail="API token is missing")
+
+    url = 'https://api.pandascore.co/csgo/matches/upcoming'
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 152
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    start = time.time()
+    global REQUEST_COUNT
+    player_games = defaultdict(list)
+    player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
+    unique_game_ids = set()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{predict\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 312
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    players_data = data.get("players", [])
+    teams_data = data.get("teams", [])
+    sum_kills_team1 = float(data.get("sum_kills_team1", 0))
+    sum_kills_team2 = float(data.get("sum_kills_team2", 0))
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_h2h\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 360
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    margin = data.get("margin", 1.08)  # Default margin
+    players_data = data.get("players")
+    if not players_data or not margin:
+        raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_over\_under\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 393
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    try:
+        data = await request.json()
+        margin, margin_error = get_margin(data)
+        if margin_error:
+            return JSONResponse(content={"margin_error": margin_error}, status_code=400)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 128
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    api_token = os.getenv("PANDASCORE_API_TOKEN")
+    if not api_token:
+        raise HTTPException(status_code=500, detail="API token is missing")
+
+    url = 'https://api.pandascore.co/csgo/matches/upcoming'
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 151
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    start = time.time()
+    global REQUEST_COUNT
+    player_games = defaultdict(list)
+    player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
+    unique_game_ids = set()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{predict\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 311
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    players_data = data.get("players", [])
+    sum_kills_team1 = float(data.get("sum_kills_team1", 0))
+    sum_kills_team2 = float(data.get("sum_kills_team2", 0))
+    predicted_kills_team1_map1 = float(data.get("predicted_kills_team1_map1", 0)) / 2
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_h2h\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 358
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    margin = data.get("margin", 1.08)  # Default margin
+    players_data = data.get("players")
+    if not players_data or not margin:
+        raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_over\_under\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 391
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    try:
+        data = await request.json()
+        margin, margin_error = get_margin(data)
+        if margin_error:
+            return JSONResponse(content={"margin_error": margin_error}, status_code=400)
+\end{lstlisting}
+
+\vspace{1em}
+\subsection{Get}
+
+\subsubsection{\texttt{upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 32
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    matches = db.query(Match).where(Match.status == MatchStatuses.NOT_STARTED.value).join(Match.tournament).all()
+
+    if not matches:
+        raise HTTPException(status_code=404, detail="No upcoming matches found")
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{all\_players\_list}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 42
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    try:
+        players = db.query(Player).all()
+        if not players:
+            raise HTTPException(status_code=404, detail="No players found")
+        return players
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{upcoming\_matches\_with\_rosters\_and\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 211
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        match_id: int = None,
+        x_maps: int = Query(..., gt=0, description="Number of recent maps to consider for statistics"),
+        db: Session = Depends(get_db)):
+    if match_id:
+        matches = db.query(Match).filter(Match.match_id == match_id).all()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{match\_players\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 239
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    match = db.query(Match).filter(Match.match_id == id).one_or_none()
+
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 129
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    api_token = os.getenv("PANDASCORE_API_TOKEN")
+    if not api_token:
+        raise HTTPException(status_code=500, detail="API token is missing")
+
+    url = 'https://api.pandascore.co/csgo/matches/upcoming'
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 152
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    start = time.time()
+    global REQUEST_COUNT
+    player_games = defaultdict(list)
+    player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
+    unique_game_ids = set()
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{upcoming\_matches}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 128
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    api_token = os.getenv("PANDASCORE_API_TOKEN")
+    if not api_token:
+        raise HTTPException(status_code=500, detail="API token is missing")
+
+    url = 'https://api.pandascore.co/csgo/matches/upcoming'
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 151
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    start = time.time()
+    global REQUEST_COUNT
+    player_games = defaultdict(list)
+    player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
+    unique_game_ids = set()
+\end{lstlisting}
+
+\vspace{1em}
+\subsection{Post}
+
+\subsubsection{\texttt{add\_player\_to\_team}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 53
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    team = db.query(Team).filter(Team.team_id == team_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if not player:
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{predict\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 312
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    players_data = data.get("players", [])
+    teams_data = data.get("teams", [])
+    sum_kills_team1 = float(data.get("sum_kills_team1", 0))
+    sum_kills_team2 = float(data.get("sum_kills_team2", 0))
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_h2h\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 360
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    margin = data.get("margin", 1.08)  # Default margin
+    players_data = data.get("players")
+    if not players_data or not margin:
+        raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_over\_under\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/routers.py}
+    \item \textbf{Line:} 393
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    try:
+        data = await request.json()
+        margin, margin_error = get_margin(data)
+        if margin_error:
+            return JSONResponse(content={"margin_error": margin_error}, status_code=400)
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{predict\_stats}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 311
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    players_data = data.get("players", [])
+    sum_kills_team1 = float(data.get("sum_kills_team1", 0))
+    sum_kills_team2 = float(data.get("sum_kills_team2", 0))
+    predicted_kills_team1_map1 = float(data.get("predicted_kills_team1_map1", 0)) / 2
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_h2h\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 358
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    data = await request.json()
+    margin = data.get("margin", 1.08)  # Default margin
+    players_data = data.get("players")
+    if not players_data or not margin:
+        raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
+\end{lstlisting}
+
+\vspace{1em}
+\subsubsection{\texttt{generate\_over\_under\_data}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{router}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/cs2/router.py}
+    \item \textbf{Line:} 391
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    try:
+        data = await request.json()
+        margin, margin_error = get_margin(data)
+        if margin_error:
+            return JSONResponse(content={"margin_error": margin_error}, status_code=400)
+\end{lstlisting}
+
+\vspace{1em}
+\subsection{Delete}
+
+\subsubsection{\texttt{remove\_player\_from\_team}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{test\_routers}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/test\_routers.py}
+    \item \textbf{Line:} 68
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+    team = db.query(Team).filter(Team.team_id == team_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if not player:
+\end{lstlisting}
+
+\vspace{1em}
+\subsection{Middleware}
+
+\subsubsection{\texttt{app.middleware}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{main}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/main.py}
+    \item \textbf{Line:} 13
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{app.middleware}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{main}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/main.py}
+    \item \textbf{Line:} 15
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsection{Router Inclusion}
+
+\subsubsection{\texttt{app.router\_inclusion}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{main}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/main.py}
+    \item \textbf{Line:} 21
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{app.router\_inclusion}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{main}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/main.py}
+    \item \textbf{Line:} 22
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{app.router\_inclusion}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{main}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/main.py}
+    \item \textbf{Line:} 23
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsection{Pydantic Model}
+
+\subsubsection{\texttt{LeagueBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{SerieBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 17
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{GameBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 33
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 49
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerStatsBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 64
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerResultBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 110
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{StreamBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 129
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{RoundScoreBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 140
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{MatchResultBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 150
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{MatchBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 163
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{TeamBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 189
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{TournamentBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{pydantic\_models}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/pydantic\_models.py}
+    \item \textbf{Line:} 202
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{MatchResultBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{match\_result\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/match\_result\_base.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/player\_base.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{StreamBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{stream\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/stream\_base.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{RoundScoreBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{round\_score\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/round\_score\_base.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerResultBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_result\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/player\_result\_base.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{MatchBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{match\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/match\_base.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{LeagueBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{league\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/league\_base.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{TeamBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{team\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/team\_base.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{GameBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{game\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/game\_base.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{TournamentBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{tournament\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/tournament\_base.py}
+    \item \textbf{Line:} 9
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{PlayerStatsBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_stats\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/player\_stats\_base.py}
+    \item \textbf{Line:} 6
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsubsection{\texttt{SerieBase}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{serie\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/serie\_base.py}
+    \item \textbf{Line:} 7
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+
+\vspace{1em}
+\subsection{Classmethod}
+
+\subsubsection{\texttt{PlayerBase.from\_orm}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{player\_base}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/schemas/player\_base.py}
+    \item \textbf{Line:} 34
+\end{itemize}
+
+\paragraph{Documentation:} \textit{No documentation available}
+
+\paragraph{Source Code Preview:}
+\begin{lstlisting}[language=Python]
+        data = super().from_orm(obj)
+        if isinstance(data.modified_at, datetime):
+            data.modified_at = data.modified_at.isoformat()
+        return data
+\end{lstlisting}
+
+\vspace{1em}
+\subsection{Metadata}
+
+\subsubsection{\texttt{app}}
+
+\begin{itemize}
+    \item \textbf{Module:} \texttt{main}
+    \item \textbf{File:} \texttt{/Users/bartoszkobylinski/Programming/Python/eppop\_fast\_api/app/api/main.py}
+    \item \textbf{Line:} 11
+\end{itemize}
+
+\paragraph{Documentation:}
+\begin{quote}
+/api/v1
+\end{quote}
+
+
+\vspace{1em}
+
+\section{UML Diagrams}
+
+This section contains UML diagrams that visualize the project structure and relationships.
+
+\subsection{Diagram Analysis}
+
+\begin{itemize}
+    \item \textbf{Classes Found:} 27
+    \item \textbf{Relationships Found:} 86
+    \item \textbf{Packages:} stream, match\_result\_base, player, test\_routers, player\_stats, serie, stream\_base, game, player\_base, match\_result, match\_base, round\_score\_base, round\_score, player\_result, team, serie\_base, player\_result\_base, tournament, api\_updater, tournament\_base, league\_base, manager, game\_base, match, league, team\_base, player\_stats\_base
+\end{itemize}
+
+\subsection{Main Diagram}
+
+The main UML diagram shows the overall structure of the system.
+
+\paragraph{PlantUML Source:}
+\begin{lstlisting}[language={}]
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+
+skinparam class<<service>>BackgroundColor #E1F5FE
+skinparam class<<service>>BorderColor #2196F3
+skinparam class<<model>>BackgroundColor #E8F5E8
+skinparam class<<model>>BorderColor #4CAF50
+skinparam class<<repository>>BackgroundColor #FFF3E0
+skinparam class<<repository>>BorderColor #FF9800
+skinparam class<<controller>>BackgroundColor #F3E5F5
+skinparam class<<controller>>BorderColor #9C27B0
+skinparam class<<configuration>>BackgroundColor #FFEBEE
+skinparam class<<configuration>>BorderColor #F44336
+skinparam class<<interface>>BackgroundColor #F1F8E9
+skinparam class<<interface>>BorderColor #8BC34A
+
+left to right direction
+
+package api_updater {
+  class PlayerUpdater {
+  }
+}
+
+package test_routers {
+  class MatchStatuses {
+  }
+}
+
+package league_base {
+  class LeagueBase <<model>> {
+  }
+}
+
+package serie_base {
+  class SerieBase <<model>> {
+  }
+}
+
+package game_base {
+  class GameBase <<model>> {
+  }
+}
+
+package player_base {
+  class PlayerBase <<model>> {
+  }
+}
+
+package player_stats_base {
+  class PlayerStatsBase <<model>> {
+  }
+}
+
+package player_result_base {
+  class PlayerResultBase <<model>> {
+  }
+}
+
+package stream_base {
+  class StreamBase <<model>> {
+  }
+}
+
+package round_score_base {
+  class RoundScoreBase <<model>> {
+  }
+}
+
+package match_result_base {
+  class MatchResultBase <<model>> {
+  }
+}
+
+package match_base {
+  class MatchBase <<model>> {
+  }
+}
+
+package team_base {
+  class TeamBase <<model>> {
+  }
+}
+
+package tournament_base {
+  class TournamentBase <<model>> {
+  }
+}
+
+package manager {
+  class DatabaseManager {
+  }
+}
+
+
+@enduml
+\end{lstlisting}
+
+\subsection{Additional Diagrams}
+
+\subsubsection{Sequence Diagram}
+
+\begin{lstlisting}[language={}]
+@startuml
+title upcoming_matches Request Flow
+
+participant Client
+participant Router
+participant Endpoint
+participant Service
+participant Repository
+participant Database
+
+Client -> Router : HTTP Request
+Router -> Endpoint : route()
+Endpoint -> Service : process()
+Service -> Repository : save()
+Repository -> Database : execute()
+Database --> Repository : result
+Repository --> Service : data
+Service --> Endpoint : response
+Endpoint --> Router : HTTP Response
+Router --> Client : JSON Response
+
+@enduml
+\end{lstlisting}
+\subsubsection{Component Diagram}
+
+\begin{lstlisting}[language={}]
+@startuml
+!include <C4/C4_Component>
+
+title FastAPI Application Architecture
+
+Container_Boundary(api, "API Layer") {
+  Component(router, "Routers", "FastAPI", "HTTP endpoint routing")
+  Component(middleware, "Middleware", "FastAPI", "Request/response processing")
+}
+
+Container_Boundary(service, "Service Layer") {
+  Component(services, "Services", "Python", "Business logic")
+  Component(deps, "Dependencies", "FastAPI", "Dependency injection")
+}
+
+Container_Boundary(data, "Data Layer") {
+  Component(models, "Models", "Pydantic", "Data validation")
+  Component(repo, "Repositories", "Python", "Data access")
+}
+
+Container_Boundary(external, "External") {
+  Component(db, "Database", "Database", "Data storage")
+  Component(confluence, "Confluence", "Atlassian", "Documentation")
+}
+
+Rel(router, services, "calls")
+Rel(services, models, "validates")
+Rel(services, repo, "queries")
+Rel(repo, db, "persists")
+Rel(services, confluence, "publishes")
+
+@enduml
+\end{lstlisting}
+
+\section{Coverage Analysis}
+
+\subsection{Function Coverage}
+
+67 total items, 15 documented (22.4\%).
+
+\subsection{Class Coverage}
+
+15 total items, 0 documented (0.0\%).
+
+\subsection{Async Function Coverage}
+
+16 total items, 0 documented (0.0\%).
+
+\subsection{Get Coverage}
+
+8 total items, 0 documented (0.0\%).
+
+\subsection{Post Coverage}
+
+7 total items, 0 documented (0.0\%).
+
+\subsection{Delete Coverage}
+
+1 total items, 0 documented (0.0\%).
+
+\subsection{Middleware Coverage}
+
+2 total items, 0 documented (0.0\%).
+
+\subsection{Router Inclusion Coverage}
+
+3 total items, 0 documented (0.0\%).
+
+\subsection{Pydantic Model Coverage}
+
+24 total items, 0 documented (0.0\%).
+
+\subsection{Classmethod Coverage}
+
+1 total items, 0 documented (0.0\%).
+
+\subsection{Metadata Coverage}
+
+1 total items, 1 documented (100.0\%).
+
+
+\section{Conclusion}
+
+This documentation was automatically generated from the codebase analysis. For the most up-to-date information, please refer to the source code and regenerate this documentation as needed.
+
+\end{document}
