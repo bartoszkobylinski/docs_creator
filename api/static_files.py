@@ -13,17 +13,12 @@ router = APIRouter()
 
 @router.get("/")
 async def serve_frontend():
-    """Serve the modern dashboard interface."""
-    return FileResponse(f"{settings.FRONTEND_DIR}/index_new.html")
+    """Serve the main dashboard interface."""
+    return FileResponse(f"{settings.FRONTEND_DIR}/index.html")
 
 @router.get("/dashboard")
 async def serve_dashboard():
-    """Serve the modern dashboard interface."""
-    return FileResponse(f"{settings.FRONTEND_DIR}/index_new.html")
-
-@router.get("/legacy")
-async def serve_legacy_frontend():
-    """Serve the legacy frontend HTML file."""
+    """Serve the main dashboard interface."""
     return FileResponse(f"{settings.FRONTEND_DIR}/index.html")
 
 
@@ -37,13 +32,3 @@ async def serve_css():
 async def serve_js():
     """Serve the JavaScript file."""
     return FileResponse(f"{settings.FRONTEND_DIR}/script.js")
-
-@router.get("/styles_new.css")
-async def serve_new_css():
-    """Serve the new modern CSS file."""
-    return FileResponse(f"{settings.FRONTEND_DIR}/styles_new.css")
-
-@router.get("/script_new.js")
-async def serve_new_js():
-    """Serve the new modern JavaScript file."""
-    return FileResponse(f"{settings.FRONTEND_DIR}/script_new.js")
