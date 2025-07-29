@@ -62,8 +62,13 @@ class LaTeXService:
             latex_source = self._generate_latex_source(template_data)
             
             # Save LaTeX source file
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            tex_filename = f"documentation_{timestamp}.tex"
+            timestamp = datetime.now().strftime("%d_%m_%Y")
+            # Create filename from project name (sanitized)
+            safe_project_name = "".join(c for c in project_name if c.isalnum() or c in (' ', '-', '_')).strip()
+            safe_project_name = safe_project_name.replace(' ', '_')
+            if not safe_project_name:
+                safe_project_name = "documentation"
+            tex_filename = f"{safe_project_name}_{timestamp}.tex"
             tex_path = self.output_dir / tex_filename
             
             with open(tex_path, 'w', encoding='utf-8') as f:
