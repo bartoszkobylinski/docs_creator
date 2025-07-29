@@ -135,6 +135,14 @@
                                 </div>
                             </button>
                             
+                            <button onclick="generateMarkdownDashboard()" class="action-btn markdown-btn">
+                                <span class="btn-icon">📝</span>
+                                <div class="btn-content">
+                                    <div class="btn-title">Markdown Docs</div>
+                                    <div class="btn-subtitle">For Sphinx & Confluence</div>
+                                </div>
+                            </button>
+                            
                             <button onclick="openConfluenceDashboard()" class="action-btn confluence-btn" id="confluence-action">
                                 <span class="btn-icon">🌐</span>
                                 <div class="btn-content">
@@ -229,6 +237,33 @@
                     </div>
                     <button onclick="generatePDF()" class="btn btn-primary full-width">Generate PDF</button>
                     <div id="pdf-status" class="status-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="markdown-modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Generate Markdown Documentation</h3>
+                    <button class="modal-close" onclick="closeModal('markdown-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="markdown-project-name">Project Name:</label>
+                        <input type="text" id="markdown-project-name" value="API Documentation" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="include-uml-markdown" checked> Include UML Diagrams
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="publish-confluence" checked> Publish to Confluence
+                        </label>
+                    </div>
+                    <button onclick="generateMarkdown()" class="btn btn-primary full-width">Generate Markdown</button>
+                    <div id="markdown-status" class="status-message"></div>
                 </div>
             </div>
         </div>

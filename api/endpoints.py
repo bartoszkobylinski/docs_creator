@@ -21,6 +21,7 @@ from services.confluence_service import confluence_service
 from services.coverage_tracker import coverage_tracker
 from services.uml_service import uml_service
 from services.latex_service import latex_service
+from services.markdown_service import markdown_service
 
 # Create API router
 router = APIRouter()
@@ -371,3 +372,93 @@ async def get_cached_diagram(cache_key: str):
         filename=cache_key,
         headers=headers
     )
+
+
+@router.post("/docs/markdown")
+async def generate_markdown_documentation(request: dict):
+    """Generate Markdown documentation for Sphinx and Confluence."""
+    try:
+        # Get current report data
+        data = report_service.get_report_data()
+        if not data or not data.get("items"):
+            raise HTTPException(status_code=400, detail="No documentation data available. Please scan a project first.")
+        
+        # Convert dictionary items back to DocItem objects
+        from fastdoc.models import DocItem
+        items = []
+        for item_data in data["items"]:
+            item = DocItem(**item_data)
+            items.append(item)
+        
+        # Get optional parameters
+        project_name = request.get("project_name", "API Documentation")
+        include_uml = request.get("include_uml", True)
+        
+        # Get UML diagrams if requested
+        uml_data = None
+        if include_uml:
+            try:
+                uml_result = uml_service.generate_uml_diagrams(items, "overview")
+                if uml_result.get("success"):
+                    uml_data = uml_result
+            except Exception as e:
+                print(f"UML generation for Markdown failed: {e}")
+        
+        # Generate Markdown documentation
+        result = markdown_service.generate_documentation(
+            items=items,
+            project_name=project_name,
+            include_uml=include_uml,
+            uml_data=uml_data
+        )
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Markdown generation failed: {str(e)}")
+
+
+@router.post("/confluence/publish-markdown")
+async def publish_markdown_to_confluence(request: dict):
+    """Publish Markdown documentation to Confluence."""
+    if not confluence_service.is_enabled():
+        raise HTTPException(status_code=400, detail="Confluence integration is not configured")
+    
+    # First generate Markdown documentation
+    markdown_result = await generate_markdown_documentation(request)
+    
+    if not markdown_result.get("success"):
+        raise HTTPException(status_code=500, detail="Failed to generate Markdown documentation")
+    
+    # Get the confluence master document
+    confluence_master_path = Path(markdown_result["files"]["confluence_master"])
+    
+    try:
+        # Read the master document content
+        with open(confluence_master_path, 'r') as f:
+            content = f.read()
+        
+        # Create the page title
+        project_name = request.get("project_name", "API Documentation")
+        title_suffix = request.get("title_suffix", None)
+        title = f"{project_name} - Complete Documentation"
+        if title_suffix:
+            title = f"{title} - {title_suffix}"
+        
+        # Publish to Confluence
+        result = confluence_service.create_or_update_page(
+            title=title,
+            content=content,
+            parent_id=settings.CONFLUENCE_PARENT_PAGE_ID if hasattr(settings, 'CONFLUENCE_PARENT_PAGE_ID') else None
+        )
+        
+        return {
+            "success": True,
+            "page_id": result.get('id'),
+            "page_url": f"{settings.CONFLUENCE_URL}/wiki/spaces/{settings.CONFLUENCE_SPACE_KEY}/pages/{result.get('id')}",
+            "markdown_files": markdown_result["files"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to publish to Confluence: {str(e)}")

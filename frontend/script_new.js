@@ -371,6 +371,14 @@ class DocumentationDashboard {
         this.showModal('latex-modal');
     }
     
+    generateMarkdownDashboard() {
+        if (!this.currentData || !this.currentData.items) {
+            this.showNotification('No data available for Markdown generation', 'error');
+            return;
+        }
+        this.showModal('markdown-modal');
+    }
+    
     openConfluenceDashboard() {
         if (!this.currentData || !this.currentData.items) {
             this.showNotification('No data available for Confluence publishing', 'error');
@@ -436,6 +444,94 @@ class DocumentationDashboard {
         } catch (error) {
             statusDiv.innerHTML = `<div class="status-message error">❌ ${error.message}</div>`;
         }
+    }
+    
+    async generateMarkdown() {
+        const projectName = document.getElementById('markdown-project-name').value || 'API Documentation';
+        const includeUML = document.getElementById('include-uml-markdown').checked;
+        const publishConfluence = document.getElementById('publish-confluence').checked;
+        const statusDiv = document.getElementById('markdown-status');
+        
+        try {
+            statusDiv.innerHTML = '<div class="loading-spinner" style="width: 20px; height: 20px; margin: 0 auto;"></div>';
+            
+            // First generate Markdown
+            const response = await fetch(`${this.apiBaseUrl}/api/docs/markdown`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    project_name: projectName,
+                    include_uml: includeUML
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                
+                if (result.success) {
+                    let statusHTML = '<div class="status-message success">✅ Markdown generated successfully!</div>';
+                    statusHTML += '<div style="margin-top: 10px;">';
+                    statusHTML += `<p><strong>Generated files:</strong></p>`;
+                    statusHTML += '<ul style="margin: 10px 0; text-align: left;">';
+                    
+                    Object.entries(result.files).forEach(([key, path]) => {
+                        const filename = path.split('/').pop();
+                        statusHTML += `<li>${filename}</li>`;
+                    });
+                    
+                    statusHTML += '</ul>';
+                    
+                    // If publish to Confluence is checked
+                    if (publishConfluence && await this.checkConfluenceEnabled()) {
+                        statusHTML += '<p>Publishing to Confluence...</p>';
+                        statusDiv.innerHTML = statusHTML;
+                        
+                        // Publish to Confluence
+                        const confluenceResponse = await fetch(`${this.apiBaseUrl}/api/confluence/publish-markdown`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                project_name: projectName,
+                                include_uml: includeUML
+                            })
+                        });
+                        
+                        if (confluenceResponse.ok) {
+                            const confluenceResult = await confluenceResponse.json();
+                            statusHTML += `<div class="status-message success" style="margin-top: 10px;">`;
+                            statusHTML += `✅ Published to Confluence!<br>`;
+                            statusHTML += `<a href="${confluenceResult.page_url}" target="_blank" class="btn btn-primary btn-sm" style="margin-top: 5px;">View in Confluence</a>`;
+                            statusHTML += `</div>`;
+                        } else {
+                            statusHTML += `<div class="status-message error" style="margin-top: 10px;">❌ Failed to publish to Confluence</div>`;
+                        }
+                    }
+                    
+                    statusHTML += '</div>';
+                    statusDiv.innerHTML = statusHTML;
+                } else {
+                    throw new Error(result.error || 'Unknown error');
+                }
+            } else {
+                const error = await response.text();
+                throw new Error(error);
+            }
+        } catch (error) {
+            statusDiv.innerHTML = `<div class="status-message error">❌ ${error.message}</div>`;
+        }
+    }
+    
+    async checkConfluenceEnabled() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/api/confluence/status`);
+            if (response.ok) {
+                const data = await response.json();
+                return data.enabled;
+            }
+        } catch (error) {
+            console.log('Confluence check failed:', error);
+        }
+        return false;
     }
     
     // ===== EDITOR =====
@@ -643,9 +739,11 @@ const dashboard = new DocumentationDashboard();
 window.scanLocalProject = () => dashboard.scanLocalProject();
 window.generateUMLDashboard = () => dashboard.generateUMLDashboard();
 window.generateLatexDashboard = () => dashboard.generateLatexDashboard();
+window.generateMarkdownDashboard = () => dashboard.generateMarkdownDashboard();
 window.openConfluenceDashboard = () => dashboard.openConfluenceDashboard();
 window.generateUMLType = (type) => dashboard.generateUMLType(type);
 window.generatePDF = () => dashboard.generatePDF();
+window.generateMarkdown = () => dashboard.generateMarkdown();
 window.closeModal = (id) => dashboard.closeModal(id);
 window.editItem = (index) => dashboard.editItem(index);
 window.closeEditor = () => dashboard.closeEditor();
