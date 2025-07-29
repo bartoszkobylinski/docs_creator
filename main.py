@@ -194,9 +194,20 @@ def create_app() -> Flask:
                                 project_name
                             )
                             if confluence_result.get('success'):
-                                flash('Markdown generated and published to Confluence!', 'success')
+                                page_url = confluence_result.get('page_url', '')
+                                if page_url:
+                                    # Create full URL if it's a relative path
+                                    if page_url.startswith('/'):
+                                        full_url = f"{settings.CONFLUENCE_URL}/wiki{page_url}"
+                                    else:
+                                        full_url = page_url
+                                    
+                                    flash(f'Markdown generated and published to Confluence! <a href="{full_url}" target="_blank" style="color: #0066cc; text-decoration: underline;">View page</a>', 'success')
+                                else:
+                                    flash('Markdown generated and published to Confluence!', 'success')
                             else:
-                                flash('Markdown generated but Confluence publishing failed', 'warning')
+                                error_msg = confluence_result.get('error', 'Unknown error')
+                                flash(f'Markdown generated but Confluence publishing failed: {error_msg}', 'warning')
                         else:
                             flash(f"Markdown generation failed: {result.get('error', 'Unknown error')}", 'error')
                     else:
