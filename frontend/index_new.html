@@ -17,6 +17,7 @@
                     <span class="tagline">Professional Documentation Assistant</span>
                 </div>
                 <div class="header-actions">
+                    <a href="/legacy" class="btn btn-outline" style="margin-right: 1rem;">← Back to Main Menu</a>
                     <div class="status-indicator" id="data-status">
                         <span class="status-dot"></span>
                         <span class="status-text">No Data</span>
@@ -264,6 +265,55 @@
                     </div>
                     <button onclick="generateMarkdown()" class="btn btn-primary full-width">Generate Markdown</button>
                     <div id="markdown-status" class="status-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="confluence-modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Confluence Settings & Publishing</h3>
+                    <button class="modal-close" onclick="closeModal('confluence-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <h4>Confluence Configuration</h4>
+                        <div class="form-group">
+                            <label for="confluence-url">Confluence URL:</label>
+                            <input type="text" id="confluence-url" placeholder="https://your-domain.atlassian.net" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="confluence-username">Username (Email):</label>
+                            <input type="email" id="confluence-username" placeholder="your-email@example.com" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="confluence-token">API Token:</label>
+                            <input type="password" id="confluence-token" placeholder="Your Atlassian API token" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="confluence-space">Space Key:</label>
+                            <input type="text" id="confluence-space" placeholder="SPACE" class="form-input">
+                        </div>
+                        <button onclick="saveConfluenceSettings()" class="btn btn-secondary full-width">Save Settings</button>
+                        <div id="confluence-settings-status" class="status-message"></div>
+                    </div>
+                    
+                    <hr style="margin: 20px 0;">
+                    
+                    <div class="form-group">
+                        <h4>Publish Documentation</h4>
+                        <div class="form-group">
+                            <label for="confluence-project-name">Project Name:</label>
+                            <input type="text" id="confluence-project-name" value="API Documentation" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="confluence-include-uml" checked> Include UML Diagrams
+                            </label>
+                        </div>
+                        <button onclick="publishToConfluence()" class="btn btn-primary full-width">Publish to Confluence</button>
+                        <div id="confluence-publish-status" class="status-message"></div>
+                    </div>
                 </div>
             </div>
         </div>

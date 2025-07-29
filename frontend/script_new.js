@@ -384,8 +384,7 @@ class DocumentationDashboard {
             this.showNotification('No data available for Confluence publishing', 'error');
             return;
         }
-        // For now, just show notification - could expand to full Confluence modal
-        this.showNotification('Confluence integration coming soon!', 'info');
+        this.showModal('confluence-modal');
     }
     
     async generateUMLType(type) {
@@ -680,6 +679,86 @@ class DocumentationDashboard {
         }
     }
     
+    async saveConfluenceSettings() {
+        const url = document.getElementById('confluence-url').value.trim();
+        const username = document.getElementById('confluence-username').value.trim();
+        const token = document.getElementById('confluence-token').value.trim();
+        const space = document.getElementById('confluence-space').value.trim();
+        const statusDiv = document.getElementById('confluence-settings-status');
+        
+        if (!url || !username || !token || !space) {
+            statusDiv.innerHTML = '<div class="status-message error">❌ Please fill in all fields</div>';
+            return;
+        }
+        
+        try {
+            statusDiv.innerHTML = '<div class="loading-spinner" style="width: 20px; height: 20px; margin: 0 auto;"></div>';
+            
+            const response = await fetch(`${this.apiBaseUrl}/api/confluence/save-settings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url: url,
+                    username: username,
+                    token: token,
+                    space_key: space
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    statusDiv.innerHTML = '<div class="status-message success">✅ Settings saved and tested successfully!</div>';
+                    // Clear the form for security
+                    document.getElementById('confluence-token').value = '';
+                } else {
+                    throw new Error(result.error || 'Failed to save settings');
+                }
+            } else {
+                throw new Error('Failed to save settings');
+            }
+        } catch (error) {
+            statusDiv.innerHTML = `<div class="status-message error">❌ ${error.message}</div>`;
+        }
+    }
+    
+    async publishToConfluence() {
+        const projectName = document.getElementById('confluence-project-name').value || 'API Documentation';
+        const includeUML = document.getElementById('confluence-include-uml').checked;
+        const statusDiv = document.getElementById('confluence-publish-status');
+        
+        try {
+            statusDiv.innerHTML = '<div class="loading-spinner" style="width: 20px; height: 20px; margin: 0 auto;"></div>';
+            
+            const response = await fetch(`${this.apiBaseUrl}/api/confluence/publish-markdown`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    project_name: projectName,
+                    include_uml: includeUML
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    let successHTML = '<div class="status-message success">✅ Published to Confluence successfully!</div>';
+                    successHTML += `<div style="margin-top: 10px;">`;
+                    successHTML += `<a href="${result.page_url}" target="_blank" class="btn btn-primary btn-sm">View in Confluence</a>`;
+                    successHTML += `</div>`;
+                    statusDiv.innerHTML = successHTML;
+                    statusDiv.scrollTop = statusDiv.scrollHeight;
+                } else {
+                    throw new Error(result.error || 'Publishing failed');
+                }
+            } else {
+                throw new Error('Publishing failed');
+            }
+        } catch (error) {
+            statusDiv.innerHTML = `<div class="status-message error">❌ ${error.message}</div>`;
+        }
+    }
+    
     // ===== UTILITIES =====
     
     showNotification(message, type = 'info') {
@@ -759,6 +838,8 @@ window.saveDocstring = () => dashboard.saveDocstring();
 window.generateAI = () => dashboard.generateAI();
 window.resetDocstring = () => dashboard.resetDocstring();
 window.saveOpenAIKey = () => dashboard.saveOpenAIKey();
+window.saveConfluenceSettings = () => dashboard.saveConfluenceSettings();
+window.publishToConfluence = () => dashboard.publishToConfluence();
 window.refreshData = () => dashboard.refreshData();
 
 // Add docstring textarea event listener

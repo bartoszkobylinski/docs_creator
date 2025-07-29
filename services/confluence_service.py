@@ -46,6 +46,59 @@ class ConfluenceService:
         """Check if Confluence integration is enabled."""
         return self.enabled
     
+    def save_and_test_settings(self, url: str, username: str, token: str, space_key: str) -> Dict[str, Any]:
+        """
+        Save Confluence settings and test the connection.
+        
+        Args:
+            url: Confluence URL
+            username: Username (email)
+            token: API token
+            space_key: Space key
+            
+        Returns:
+            Dictionary with test results
+        """
+        try:
+            # Test the connection first
+            test_confluence = Confluence(
+                url=url,
+                username=username,
+                password=token,
+                cloud=True
+            )
+            
+            # Try to get space info to test connection
+            space_info = test_confluence.get_space(space_key)
+            if not space_info:
+                raise Exception(f"Space '{space_key}' not found or no access")
+            
+            # If test successful, update the current service
+            self.confluence_url = url
+            self.username = username
+            self.token = token
+            self.space_key = space_key
+            self.confluence = test_confluence
+            self.enabled = True
+            
+            # Update environment variables (optional - for persistence)
+            import os
+            os.environ['CONFLUENCE_URL'] = url
+            os.environ['CONFLUENCE_USERNAME'] = username
+            os.environ['CONFLUENCE_API_TOKEN'] = token
+            os.environ['CONFLUENCE_SPACE_KEY'] = space_key
+            
+            print(f"Confluence connection established to {url}")
+            
+            return {
+                "success": True,
+                "space_name": space_info.get('name', 'Unknown'),
+                "space_key": space_key
+            }
+            
+        except Exception as e:
+            raise Exception(f"Connection test failed: {str(e)}")
+    
     def create_or_update_page(
         self, 
         title: str, 

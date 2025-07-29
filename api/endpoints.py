@@ -115,6 +115,25 @@ async def get_confluence_status():
     }
 
 
+@router.post("/confluence/save-settings")
+async def save_confluence_settings(request: dict):
+    """Save Confluence settings and test the connection."""
+    url = request.get("url", "").strip()
+    username = request.get("username", "").strip()
+    token = request.get("token", "").strip()
+    space_key = request.get("space_key", "").strip()
+    
+    if not all([url, username, token, space_key]):
+        raise HTTPException(status_code=400, detail="All fields are required")
+    
+    try:
+        # Test the connection and save settings
+        result = confluence_service.save_and_test_settings(url, username, token, space_key)
+        return {"success": True, "message": "Settings saved and tested successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to save settings: {str(e)}")
+
+
 @router.post("/confluence/publish-endpoint")
 async def publish_endpoint_to_confluence(endpoint_data: dict):
     """Publish a single endpoint documentation to Confluence."""
