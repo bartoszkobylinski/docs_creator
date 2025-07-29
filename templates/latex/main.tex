@@ -52,7 +52,7 @@
 % Header and footer
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{\VAR{project_name}}
+\rhead{\VAR{latex_escape(project_name)}}
 \lhead{Documentation}
 \rfoot{Page \thepage}
 
@@ -62,7 +62,7 @@
     linkcolor=blue,
     filecolor=magenta,      
     urlcolor=cyan,
-    pdftitle={\VAR{project_name} Documentation},
+    pdftitle={\VAR{latex_escape(project_name)} Documentation},
     pdfauthor={Auto-generated},
 }
 
@@ -79,7 +79,7 @@
 {1em}
 {}
 
-\title{\VAR{project_name}\\Documentation}
+\title{\VAR{latex_escape(project_name)}\\Documentation}
 \author{Auto-generated Documentation}
 \date{\VAR{generation_date}}
 
@@ -94,7 +94,7 @@
 
 \section{Overview}
 
-This document provides comprehensive documentation for \textbf{\VAR{project_name}}. It includes API documentation, code analysis, and coverage statistics.
+This document provides comprehensive documentation for \textbf{\VAR{latex_escape(project_name)}}. It includes API documentation, code analysis, and coverage statistics.
 
 \subsection{Documentation Statistics}
 
@@ -140,9 +140,9 @@ This section contains detailed documentation for all code elements found in the 
 
 \BLOCK{if item.first_lines}
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
 \VAR{item.first_lines}
-\end{lstlisting}
+\end{verbatim}
 \BLOCK{endif}
 
 \vspace{1em}
@@ -170,9 +170,9 @@ The main UML diagram shows the overall structure of the system.
 
 \paragraph{PlantUML Source:}
 \BLOCK{if uml_diagrams.main_diagram.get('source')}
-\begin{lstlisting}[language={}]
+\begin{verbatim}
 \VAR{uml_diagrams.main_diagram.source}
-\end{lstlisting}
+\end{verbatim}
 \BLOCK{endif}
 
 \BLOCK{if uml_diagrams.get('additional_diagrams')}
@@ -182,9 +182,9 @@ The main UML diagram shows the overall structure of the system.
 \subsubsection{\VAR{diagram_type.title()} Diagram}
 
 \BLOCK{if diagram_data.get('source')}
-\begin{lstlisting}[language={}]
+\begin{verbatim}
 \VAR{diagram_data.source}
-\end{lstlisting}
+\end{verbatim}
 \BLOCK{endif}
 \BLOCK{endfor}
 \BLOCK{endif}

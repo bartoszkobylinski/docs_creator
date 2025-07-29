@@ -99,20 +99,49 @@ def create_app() -> Flask:
             # Handle PDF generation
             elif 'generate_pdf' in request.form:
                 project_name = request.form.get('project_name', 'API_Documentation')
+                pdf_filename = request.form.get('pdf_filename', f"{project_name}_documentation")
                 include_uml = request.form.get('include_uml') == 'on'
                 # Generate PDF and trigger download
                 try:
-                    result = latex_service.generate_pdf_documentation(
-                        items, 
+                    # Generate UML diagrams if requested
+                    uml_diagrams = None
+                    if include_uml:
+                        try:
+                            from fastdoc.models import DocItem
+                            doc_items = []
+                            for item_data in items:
+                                item = DocItem(**item_data)
+                                doc_items.append(item)
+                            uml_result = uml_service.generate_uml_diagrams(doc_items, "overview")
+                            if uml_result.get("success"):
+                                uml_diagrams = uml_result
+                        except Exception as e:
+                            print(f"UML generation failed: {e}")
+                    
+                    # Convert items to DocItem objects
+                    from fastdoc.models import DocItem
+                    doc_items = []
+                    for item_data in items:
+                        item = DocItem(**item_data)
+                        doc_items.append(item)
+                    
+                    result = latex_service.generate_complete_documentation(
+                        doc_items=doc_items,
                         project_name=project_name,
-                        include_uml=include_uml
+                        uml_diagrams=uml_diagrams
                     )
-                    if result.get('success') and result.get('pdf_path'):
+                    if result.get('success') and result.get('pdf_file'):
+                        # Clean filename to remove special characters
+                        clean_filename = "".join(c for c in pdf_filename if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                        clean_filename = clean_filename.replace(' ', '_')
+                        if not clean_filename:
+                            clean_filename = "documentation"
+                        
                         return send_file(
-                            result['pdf_path'],
+                            result['pdf_file'],
                             mimetype='application/pdf',
                             as_attachment=True,
-                            download_name=f"{project_name.replace(' ', '_')}_documentation.pdf"
+                            download_name=f"{clean_filename}.pdf"
                         )
                     else:
                         flash(f"PDF generation failed: {result.get('error', 'Unknown error')}", 'error')

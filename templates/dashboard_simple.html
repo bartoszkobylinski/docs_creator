@@ -106,17 +106,13 @@
                             </form>
                             
                             <!-- PDF Generation -->
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="project_name" value="{{ project_name or 'Documentation' }}">
-                                <input type="hidden" name="include_uml" value="on">
-                                <button type="submit" name="generate_pdf" class="action-btn latex-btn">
-                                    <span class="btn-icon">📄</span>
-                                    <div class="btn-content">
-                                        <div class="btn-title">PDF Documentation</div>
-                                        <div class="btn-subtitle">Professional LaTeX output</div>
-                                    </div>
-                                </button>
-                            </form>
+                            <button type="button" class="action-btn latex-btn" onclick="showPdfDialog()">
+                                <span class="btn-icon">📄</span>
+                                <div class="btn-content">
+                                    <div class="btn-title">PDF Documentation</div>
+                                    <div class="btn-subtitle">Professional LaTeX output</div>
+                                </div>
+                            </button>
                             
                             <!-- Markdown Generation -->
                             <form method="POST" style="display: inline;">
@@ -256,6 +252,162 @@
         font-size: 0.75rem;
         font-weight: 500;
     }
+    </style>
+    
+    <!-- PDF Generation Dialog -->
+    <div id="pdfDialog" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Generate PDF Documentation</h3>
+                <span class="close" onclick="closePdfDialog()">&times;</span>
+            </div>
+            <form method="POST" id="pdfForm">
+                <div class="form-group">
+                    <label for="pdf_project_name">Project Name:</label>
+                    <input type="text" id="pdf_project_name" name="project_name" value="{{ project_name or 'Documentation' }}" placeholder="Enter project name">
+                </div>
+                <div class="form-group">
+                    <label for="pdf_filename">PDF Filename (without .pdf):</label>
+                    <input type="text" id="pdf_filename" name="pdf_filename" value="{{ project_name or 'Documentation' }}_documentation" placeholder="Enter filename">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="include_uml" checked> Include UML Diagrams
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" name="generate_pdf" class="btn btn-primary">Generate PDF</button>
+                    <button type="button" onclick="closePdfDialog()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function showPdfDialog() {
+            document.getElementById('pdfDialog').style.display = 'block';
+        }
+        
+        function closePdfDialog() {
+            document.getElementById('pdfDialog').style.display = 'none';
+        }
+        
+        // Close dialog when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('pdfDialog');
+            if (event.target == modal) {
+                closePdfDialog();
+            }
+        }
+    </script>
+    
+    <style>
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        
+        .form-group {
+            margin: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+        
+        .form-actions {
+            padding: 1rem;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
     </style>
 </body>
 </html>
