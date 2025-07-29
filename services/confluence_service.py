@@ -129,26 +129,41 @@ class ConfluenceService:
             title=title
         )
         
-        if existing_page:
-            # Update existing page
-            page_id = existing_page['id']
-            result = self.confluence.update_page(
-                page_id=page_id,
-                title=title,
-                body=content
-            )
-            print(f"Updated Confluence page: {title}")
-        else:
-            # Create new page
-            result = self.confluence.create_page(
-                space=self.space_key,
-                title=title,
-                body=content,
-                parent_id=parent_id or settings.CONFLUENCE_PARENT_PAGE_ID
-            )
-            print(f"Created Confluence page: {title}")
-        
-        return result
+        try:
+            if existing_page:
+                # Update existing page
+                page_id = existing_page['id']
+                result = self.confluence.update_page(
+                    page_id=page_id,
+                    title=title,
+                    body=content
+                )
+                print(f"Updated Confluence page: {title}")
+            else:
+                # Create new page
+                result = self.confluence.create_page(
+                    space=self.space_key,
+                    title=title,
+                    body=content,
+                    parent_id=parent_id or settings.CONFLUENCE_PARENT_PAGE_ID
+                )
+                print(f"Created Confluence page: {title}")
+            
+            # Return consistent format
+            return {
+                "success": True,
+                "page_id": result.get('id', ''),
+                "title": result.get('title', title),
+                "url": result.get('_links', {}).get('webui', ''),
+                "raw_result": result
+            }
+            
+        except Exception as e:
+            print(f"Error creating/updating Confluence page: {e}")
+            return {
+                "success": False,
+                "error": str(e)
+            }
     
     def markdown_to_confluence_storage(self, markdown_content: str) -> str:
         """
@@ -736,6 +751,62 @@ class ConfluenceService:
             """
         
         return content
+    
+    def publish_markdown_to_confluence(
+        self,
+        markdown_content: str,
+        project_name: str = "API Documentation",
+        title_suffix: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Publish Markdown content to Confluence.
+        
+        Args:
+            markdown_content: The Markdown content to publish
+            project_name: Name of the project for the page title
+            title_suffix: Optional suffix for the page title
+            
+        Returns:
+            Dictionary with success status and page information
+        """
+        try:
+            if not self.is_enabled():
+                return {
+                    "success": False,
+                    "error": "Confluence integration is not configured"
+                }
+            
+            # Create the page title
+            title = f"{project_name} - Complete Documentation"
+            if title_suffix:
+                title = f"{title} - {title_suffix}"
+            
+            # Publish to Confluence using existing create_or_update_page method
+            result = self.create_or_update_page(
+                title=title,
+                content=markdown_content,
+                parent_id=getattr(settings, 'CONFLUENCE_PARENT_PAGE_ID', None)
+            )
+            
+            if result.get('success'):
+                page_url = f"{settings.CONFLUENCE_URL}/wiki/spaces/{settings.CONFLUENCE_SPACE_KEY}/pages/{result.get('page_id', '')}"
+                return {
+                    "success": True,
+                    "page_id": result.get('page_id'),
+                    "page_url": page_url,
+                    "title": title
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": result.get('error', 'Unknown error during page creation')
+                }
+                
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Failed to publish to Confluence: {str(e)}"
+            }
 
 
 # Global confluence service instance
