@@ -30,6 +30,58 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            {% if has_existing_data %}
+            <!-- Existing Project Section -->
+            <div class="welcome-section">
+                <h2>Continue with Existing Project</h2>
+                <p>You have a previously scanned project with data available.</p>
+            </div>
+
+            <div class="section-card existing-project">
+                <h3>📊 Current Project Status</h3>
+                <div class="project-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ total_items }}</div>
+                        <div class="stat-label">Total Items</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ documented_items }}</div>
+                        <div class="stat-label">Documented</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ coverage }}%</div>
+                        <div class="stat-label">Coverage</div>
+                    </div>
+                </div>
+                
+                {% if project_path %}
+                <p><strong>Project:</strong> <code>{{ project_path }}</code></p>
+                {% endif %}
+                
+                <div class="action-buttons">
+                    <a href="/dashboard" class="btn btn-primary">📋 Continue to Dashboard</a>
+                    <button onclick="showNewScanForm()" class="btn btn-secondary">🔄 Scan New Project</button>
+                </div>
+            </div>
+
+            <!-- Hidden New Scan Form -->
+            <form method="POST" class="section-card" id="newScanForm" style="display: none;">
+                <h3>🚀 Scan New Project</h3>
+                <div class="form-group">
+                    <label for="project_path">Project Path:</label>
+                    <div class="input-group">
+                        <input type="text" name="project_path" id="project_path" 
+                               placeholder="/path/to/your/project" class="form-input" required>
+                        <button type="submit" name="scan_project" class="btn btn-primary">Scan Project</button>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="hideNewScanForm()" class="btn btn-outline">Cancel</button>
+                </div>
+            </form>
+            
+            {% else %}
+            <!-- New Project Section -->
             <div class="welcome-section">
                 <h2>Welcome to Documentation Creator</h2>
                 <p>Scan your Python project to generate comprehensive documentation in multiple formats.</p>
@@ -47,6 +99,7 @@
                     </div>
                 </div>
             </form>
+            {% endif %}
 
             <!-- Settings Section -->
             <div class="section-card">
@@ -89,5 +142,73 @@
             <p>Generate professional documentation with UML diagrams, PDF exports, and Confluence integration.</p>
         </footer>
     </div>
+    
+    <script>
+        function showNewScanForm() {
+            document.getElementById('newScanForm').style.display = 'block';
+            document.querySelector('.existing-project').style.display = 'none';
+        }
+        
+        function hideNewScanForm() {
+            document.getElementById('newScanForm').style.display = 'none';
+            document.querySelector('.existing-project').style.display = 'block';
+        }
+    </script>
+    
+    <style>
+        .existing-project {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+        
+        .project-stats {
+            display: flex;
+            gap: 2rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .form-actions {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #6c757d;
+            color: #6c757d;
+        }
+        
+        .btn-outline:hover {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
 </body>
 </html>

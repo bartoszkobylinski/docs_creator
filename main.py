@@ -76,7 +76,42 @@ def create_app() -> Flask:
                 except Exception as e:
                     flash(f'Error saving settings: {str(e)}', 'error')
         
-        return render_template('index.html')
+        # Check for existing project data
+        existing_data = report_service.get_report_data()
+        has_existing_data = len(existing_data) > 0
+        
+        if has_existing_data:
+            # Calculate basic stats for existing data
+            total_items = len(existing_data)
+            documented_items = len([item for item in existing_data if item.get('docstring') and item.get('docstring').strip()])
+            coverage = round((documented_items / total_items * 100) if total_items > 0 else 0, 1)
+            
+            # Try to get the project path from the first item
+            project_path = ""
+            if existing_data:
+                first_item = existing_data[0]
+                file_path = first_item.get('file_path', '')
+                if file_path:
+                    # Extract project path by removing file-specific parts
+                    import os
+                    project_path = os.path.dirname(file_path)
+                    # Find common parent directory
+                    while project_path and not os.path.exists(os.path.join(project_path, 'main.py')):
+                        parent = os.path.dirname(project_path)
+                        if parent == project_path:  # reached root
+                            break
+                        project_path = parent
+        else:
+            total_items = documented_items = coverage = 0
+            project_path = ""
+        
+        return render_template('index.html', 
+            has_existing_data=has_existing_data,
+            total_items=total_items,
+            documented_items=documented_items,
+            coverage=coverage,
+            project_path=project_path
+        )
     
     @app.route('/dashboard', methods=['GET', 'POST'])
     def serve_dashboard():
