@@ -1,6 +1,6 @@
-# API Documentation Documentation
+# API_Documentation Documentation
 
-Welcome to the API Documentation documentation. This documentation was automatically generated on 2025-07-29 10:05:23.
+Welcome to the API_Documentation documentation. This documentation was automatically generated on 2025-07-29 18:23:28.
 
 ## Quick Navigation
 
@@ -16,8 +16,8 @@ Welcome to the API Documentation documentation. This documentation was automatic
 ## Documentation Statistics
 
 - **Total Items**: 145
-- **Documented**: 16 (11.0%)
-- **Missing Documentation**: 129
+- **Documented**: 17 (11.7%)
+- **Missing Documentation**: 128
 
 ### Coverage by Type
 

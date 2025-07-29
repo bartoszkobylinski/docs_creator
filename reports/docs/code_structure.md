@@ -259,6 +259,7 @@ This document provides a comprehensive view of the code structure, including all
 #### logger_config
 
 - `setup_loggers()` - Line N/A
+  - This is some stupid docstring
 
 #### main
 

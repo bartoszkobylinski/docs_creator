@@ -1,22 +1,22 @@
-# API Documentation Documentation
+# API_Documentation Documentation
 
-> **Generated**: 2025-07-29 10:05:23  
-> **Coverage**: 11.0%  
+> **Generated**: 2025-07-29 18:23:28  
+> **Coverage**: 11.7%  
 > **Total Items**: 145
 
 ---
 
 ## 📋 Overview
 
-API Documentation is an automated documentation system that analyzes Python code and generates comprehensive documentation.
+API_Documentation is an automated documentation system that analyzes Python code and generates comprehensive documentation.
 
 ### Key Metrics
 
 | Metric | Value |
 |--------|-------|
 | Total Items | 145 |
-| Documented | 16 |
-| Coverage | 11.0% |
+| Documented | 17 |
+| Coverage | 11.7% |
 | Modules | 0 |
 | Classes | 15 |
 | Functions | 67 |
@@ -217,13 +217,12 @@ API Documentation is an automated documentation system that analyzes Python code
 ## 📊 Documentation Coverage
 
 ### Summary
-- ✅ Documented: 16 items
-- ❌ Missing: 129 items
-- 📈 Coverage: 11.0%
+- ✅ Documented: 17 items
+- ❌ Missing: 128 items
+- 📈 Coverage: 11.7%
 
 ### Items Needing Documentation
 
-- `setup_loggers` (logger_config) - Line N/A
 - `PlayerUpdater` (api_updater) - Line N/A
 - `PlayerUpdater.__init__` (api_updater) - Line N/A
 - `PlayerUpdater.make_request` (api_updater) - Line N/A
@@ -233,8 +232,9 @@ API Documentation is an automated documentation system that analyzes Python code
 - `PlayerUpdater.get_particular_game_stats_url` (api_updater) - Line N/A
 - `PlayerUpdater.get_required_matches_for_particular_player` (api_updater) - Line N/A
 - `PlayerUpdater.compare_and_update` (api_updater) - Line N/A
+- `PlayerUpdater.fetch_last_games` (api_updater) - Line N/A
 
-*... and 119 more items*
+*... and 118 more items*
 
 
 ---

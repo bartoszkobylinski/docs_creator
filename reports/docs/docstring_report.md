@@ -1,17 +1,17 @@
 # Documentation Coverage Report
 
-Generated on: 2025-07-29 10:05:23
+Generated on: 2025-07-29 18:23:28
 
 ## Summary
 
 - **Total Items**: 145
-- **Documented**: 16 (11.0%)
-- **Missing Documentation**: 129
+- **Documented**: 17 (11.7%)
+- **Missing Documentation**: 128
 
 ## Coverage Visualization
 
 ```
-[█░░░░░░░░░] 11.0%
+[█░░░░░░░░░] 11.7%
 ```
 
 ## Items Missing Documentation
@@ -67,10 +67,6 @@ The following items are missing documentation:
 ### league_base
 
 - `LeagueBase` (PYDANTIC_MODEL) - Line N/A
-
-### logger_config
-
-- `setup_loggers` (FUNCTION) - Line N/A
 
 ### main
 

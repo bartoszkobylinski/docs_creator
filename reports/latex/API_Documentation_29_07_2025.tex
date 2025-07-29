@@ -52,7 +52,7 @@
 % Header and footer
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{API Documentation}
+\rhead{API\_Documentation}
 \lhead{Documentation}
 \rfoot{Page \thepage}
 
@@ -62,7 +62,7 @@
     linkcolor=blue,
     filecolor=magenta,      
     urlcolor=cyan,
-    pdftitle={API Documentation Documentation},
+    pdftitle={API\_Documentation Documentation},
     pdfauthor={Auto-generated},
 }
 
@@ -79,9 +79,9 @@
 {1em}
 {}
 
-\title{API Documentation\\Documentation}
+\title{API\_Documentation\\Documentation}
 \author{Auto-generated Documentation}
-\date{2025-07-29 09:52:15}
+\date{2025-07-29 17:48:55}
 
 \begin{document}
 
@@ -94,14 +94,14 @@
 
 \section{Overview}
 
-This document provides comprehensive documentation for \textbf{API Documentation}. It includes API documentation, code analysis, and coverage statistics.
+This document provides comprehensive documentation for \textbf{API\_Documentation}. It includes API documentation, code analysis, and coverage statistics.
 
 \subsection{Documentation Statistics}
 
 \begin{itemize}
     \item \textbf{Total Items:} 145
-    \item \textbf{Documented Items:} 16
-    \item \textbf{Coverage:} 11.0\%
+    \item \textbf{Documented Items:} 17
+    \item \textbf{Coverage:} 11.7\%
     \item \textbf{Modules:} 37
 \end{itemize}
 
@@ -161,16 +161,19 @@ This section contains detailed documentation for all code elements found in the 
     \item \textbf{Line:} 5
 \end{itemize}
 
-\paragraph{Documentation:} \textit{No documentation available}
+\paragraph{Documentation:}
+\begin{quote}
+This is some stupid docstring
+\end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
+    """
+    This is some stupid docstring
+    """
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
-    info_logger = logging.getLogger('info_logger')
-    error_logger = logging.getLogger('error_logger')
-
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.\_\_init\_\_}}
@@ -184,13 +187,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         self.headers = {
             "Accept": "application/json",
             "Authorization": f"Bearer {api_token}"
         }
         self.database_manager = DatabaseManager(user=user, password=password, host=host, port=port, db_name=db_name)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.make\_request}}
@@ -204,13 +207,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         response = requests.get(url=url, headers=self.headers, params=params, timeout=10)
         time.sleep(0.4)
         PlayerUpdater.REQUEST_COUNTER += 1
         response.raise_for_status()
         info_logger.info(f"Total requests made to Pandascore API: {PlayerUpdater.REQUEST_COUNTER}. I've hit url: {url}")
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.get\_upcoming\_matches}}
@@ -224,13 +227,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         params = {
             "filter[future]": "true",
             "sort": "begin_at",
             "per_page": 100,
             "page": 1
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.get\_particular\_team\_url}}
@@ -244,9 +247,9 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         return f'https://api.pandascore.co/teams/{team_id}'
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.get\_particular\_player\_stats\_url}}
@@ -260,9 +263,9 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         return f"https://api.pandascore.co/csgo/players/{player_id}/stats"
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.get\_particular\_game\_stats\_url}}
@@ -276,9 +279,9 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         return f'https://api.pandascore.co/csgo/games/{game_id}'
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.get\_required\_matches\_for\_particular\_player}}
@@ -292,9 +295,9 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         return f"https://api.pandascore.co/players/{player_id}/matches?per_page{required_amount_of_matches}&sort=-modified_at"
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.compare\_and\_update}}
@@ -308,13 +311,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         updated = False
         for key, value in new_data.items():
             if getattr(existing_data, key) != value:
                 setattr(existing_data, key, value)
                 updated = True
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.fetch\_last\_games}}
@@ -328,13 +331,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         games_collected: List[int] = []
         page = 1
 
         while len(games_collected) < total_games:
             matches_url = self.get_required_matches_for_particular_player(player_id,
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_leagues}}
@@ -348,13 +351,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
 
         league_id: int = league_data.get('id')
         is_created = False
 
         try:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_series}}
@@ -368,13 +371,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         serie_id: int = series_data.get('id')
         is_created = False
 
         try:
             serie = session.query(Serie).filter_by(serie_id=serie_id).one_or_none()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_tournament}}
@@ -388,13 +391,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         tournament_id: int = match_data.get('tournament').get('id')
         tournament_data = match_data.get('tournament')
         is_created = False
 
         try:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_team}}
@@ -408,13 +411,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         team_id = team_data.get('id')
         print(f"players: {team_data}")
 
         is_created = False
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_player}}
@@ -428,13 +431,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         player_id = player_data.get('id')
         is_created = False
 
         try:
             player = session.query(Player).filter_by(player_id=player_id).one_or_none()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_match}}
@@ -448,13 +451,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         match_id = match_data.get('id')
         is_created = False
 
         try:
             match = session.query(Match).filter_by(match_id=match_id).one_or_none()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_game}}
@@ -468,13 +471,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         game_id = game_data.get('id')
         is_created = False
 
         try:
             game = session.query(Game).filter_by(game_id=game_id).one_or_none()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_match\_result}}
@@ -488,13 +491,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         match_result_id = match_result_data.get('id')
         is_created = False
 
         try:
             match_result = session.query(MatchResult).filter_by(id=match_result_id).one_or_none()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_round\_score}}
@@ -508,13 +511,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         if not game_id:
             error_logger.error("No game_id provided for round scores.")
             return
 
         try:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_player\_result}}
@@ -528,13 +531,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         if not game_id:
             error_logger.error("No game_id provided for player results.")
             return
 
         for player_data in players_result_data:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_player\_stats}}
@@ -548,13 +551,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         try:
             player_stats_data = self.make_request(url=self.get_particular_player_stats_url(player_id=player_id))
             player_stats_data = player_stats_data.json()
 
             # Map player_stats_data to the PlayerStats model
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.populate\_stream}}
@@ -568,13 +571,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         stream_id: int = stream_data.get('id')
         is_created = False
 
         try:
             stream = session.query(Stream).filter_by(id=stream_id).one_or_none()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerUpdater.main\_population}}
@@ -588,13 +591,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         with self.database_manager.get_session() as session:
             teams_ids = set()
             processed_tournaments = set()
             processed_matches = set()
             processed_teams = set()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{run\_api\_updater}}
@@ -608,13 +611,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     start = time.time()
     info_logger.info(f"API Updater start: {start}")
     try:
         player_updater = PlayerUpdater(api_token=pandascore_api_token, user=db_user, password=db_password, host=db_host, port=db_port, db_name=db_name)
         upcoming_matches = player_updater.get_upcoming_matches()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{get\_roster\_url}}
@@ -628,9 +631,9 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     return f"https://api.pandascore.co/tournaments/{tournament_id}/rosters"
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{fetch\_rosters}}
@@ -644,11 +647,11 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     response = requests.get(get_roster_url(tournament_id), headers=HEADERS)
     response.raise_for_status()
     return response.json()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{get\_player\_avg\_kills\_data}}
@@ -662,13 +665,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     player_stats = (db.query(PlayerResult)
                     .filter_by(player_id=player_id)
                     .order_by(PlayerResult.game_id.desc())
                     .limit(x_maps)
                     .all()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{fetch\_match\_info}}
@@ -682,13 +685,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     match_info = {
         "match_id": match.match_id,
         "teams": []
     }
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{get\_margin}}
@@ -702,13 +705,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     margin_str = data.get("margin", None)
     margin_error = None
 
     if margin_str is None:
         margin_error = "Margin value is missing."
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{calculate\_odds\_kill}}
@@ -722,13 +725,13 @@ This section contains detailed documentation for all code elements found in the 
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     absolute_kills_value = int(kills)
     threshold_kills = absolute_kills_value + 0.5
     poisson_distribution = poisson.cdf(absolute_kills_value, kills)
     survival_probability = 1 - poisson_distribution
     odds1 = 1 / (
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{poisson\_probabilities}}
@@ -745,10 +748,10 @@ Pre-compute Poisson probabilities for the range of kills using numpy for efficie
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Pre-compute Poisson probabilities for the range of kills using numpy for efficiency."""
     return poisson.pmf(np.arange(MAX_KILLS + 1), lam)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{create\_probability\_matrix}}
@@ -765,10 +768,10 @@ Use numpy to efficiently create a probability matrix for two players.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Use numpy to efficiently create a probability matrix for two players."""
     return np.outer(player_a_probs, player_b_probs)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{calculate\_total\_probabilities}}
@@ -785,13 +788,13 @@ Calculate total probabilities for A wins, draw, and B wins using numpy.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Calculate total probabilities for A wins, draw, and B wins using numpy."""
     prob_b_wins = np.sum(np.triu(prob_matrix, 1))
     prob_draw = np.sum(np.diag(prob_matrix))
     prob_a_wins = np.sum(np.tril(prob_matrix, -1))
     return prob_a_wins, prob_draw, prob_b_wins
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{calculate\_odds\_h2h}}
@@ -808,13 +811,13 @@ Convert probabilities to odds.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Convert probabilities to odds."""
     if prob_draw is None:
         a_prob_without_draw = prob_a / (prob_a + prob_b)
         b_prob_without_draw = prob_b / (prob_b + prob_a)
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{fetch\_upcoming\_matches}}
@@ -828,13 +831,13 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     global REQUEST_COUNT
     params = initial_params.copy() if initial_params else {}
     page = 1
     aggregated_results = []
     while True:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.\_\_init\_\_}}
@@ -848,11 +851,11 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         self.database_url = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
         self.engine = create_engine(self.database_url)
         self.Session = sessionmaker(bind=self.engine)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.create\_tables}}
@@ -866,9 +869,9 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         Base.metadata.create_all(self.engine)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.check\_all\_table\_exists}}
@@ -882,13 +885,13 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         inspector = inspect(self.engine)
         insp = reflection.Inspector.from_engine(self.engine)
         print("Tables in the database: ", insp.get_table_names())
         existing_tables = inspector.get_table_names()
         missing_tables = set(required_tables) - set(existing_tables)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.get\_session}}
@@ -902,9 +905,9 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         return self.Session()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.add}}
@@ -921,13 +924,13 @@ Save an instance of a model to the database
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         """
         Save an instance of a model to the database
         """
         with self.get_session() as session:
             session.add(instance)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.get}}
@@ -944,13 +947,13 @@ Fetch a single instance of a model by its ID.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         """
         Fetch a single instance of a model by its ID.
         """
         with self.get_session() as session:
             try:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.get\_all}}
@@ -967,13 +970,13 @@ Fetch all instances of a model
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         """
         Fetch all instances of a model
         """
         with self.get_session() as session:
             return session.query(model_class).all()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.update}}
@@ -990,13 +993,13 @@ Update a single instance of a model by its ID
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         """
         Update a single instance of a model by its ID
         """
         with self.get_session() as session:
             object = session.query(model_class).filter(model_class.id == object_id).one()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.delete}}
@@ -1013,13 +1016,13 @@ Delete a single instance of a model by its ID
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         """
         Delete a single instance of a model by its ID
         """
         with self.get_session() as session:
             try:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.clear\_all\_data}}
@@ -1033,13 +1036,13 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         with self.get_session() as session:
             meta = MetaData()
             meta.reflect(bind=self.engine)
             for table in reversed(meta.sorted_tables):
                 session.execute(table.delete())
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{DatabaseManager.get\_session}}
@@ -1053,13 +1056,13 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         session = self.Session()
         try:
             yield session
             session.commit()
         except:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{get\_db}}
@@ -1073,10 +1076,10 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     with database_manager.get_session() as db:
         yield db
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerBase.serialize\_birthday}}
@@ -1090,11 +1093,11 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         if birthday is not None:
             return birthday.strftime('%Y-%m-%d')
         return None
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{PlayerBase.serialize\_modified\_at}}
@@ -1108,11 +1111,11 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         if modified_at is not None:
             return modified_at.isoformat()
         return None
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{pp}}
@@ -1126,9 +1129,9 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     return (srednia ** k / (factorial(k))) * exp(-srednia)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{dp}}
@@ -1142,12 +1145,12 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     p = 0
     for m in range(k + 1, k + 30):
         p = p + pp(srednia, m)
     return p
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{wynik}}
@@ -1161,13 +1164,13 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     zaw = list(srednie.keys())
     s = 0
     for z in zaw:
         s = s + srednie[z]
     p = {}
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{roster\_url}}
@@ -1181,9 +1184,9 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     return f"https://api.pandascore.co/tournaments/{tournament_id}/rosters"
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{fetch\_matches}}
@@ -1197,13 +1200,13 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     global REQUEST_COUNT
     headers = {
         "Accept": "application/json",
         "Authorization": f"Bearer {api_token}"
     }
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{initialize\_api}}
@@ -1217,13 +1220,13 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     app = FastAPI(
         root_path="/api/v1"
     )
 
     app.add_middleware(
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{get\_margin}}
@@ -1237,13 +1240,13 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     margin_str = data.get("margin", None)
     margin_error = None
 
     if margin_str is None:
         margin_error = "Margin value is missing."
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{calculate\_odds}}
@@ -1257,13 +1260,13 @@ Delete a single instance of a model by its ID
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     absolute_kills_value = int(kills)
     threshold_kills = absolute_kills_value + 0.5
     poisson_distribution = poisson.cdf(absolute_kills_value, kills)
     survival_probability = 1 - poisson_distribution
     odds1 = 1 / (
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{poisson\_probabilities}}
@@ -1280,10 +1283,10 @@ Pre-compute Poisson probabilities for the range of kills using numpy for efficie
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Pre-compute Poisson probabilities for the range of kills using numpy for efficiency."""
     return poisson.pmf(np.arange(MAX_KILLS + 1), lam)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{create\_probability\_matrix}}
@@ -1300,10 +1303,10 @@ Use numpy to efficiently create a probability matrix for two players.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Use numpy to efficiently create a probability matrix for two players."""
     return np.outer(player_a_probs, player_b_probs)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{calculate\_total\_probabilities}}
@@ -1320,13 +1323,13 @@ Calculate total probabilities for A wins, draw, and B wins using numpy.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Calculate total probabilities for A wins, draw, and B wins using numpy."""
     prob_b_wins = np.sum(np.triu(prob_matrix, 1))
     prob_draw = np.sum(np.diag(prob_matrix))
     prob_a_wins = np.sum(np.tril(prob_matrix, -1))
     return prob_a_wins, prob_draw, prob_b_wins
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{calculate\_odds}}
@@ -1343,13 +1346,13 @@ Convert probabilities to odds.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Convert probabilities to odds."""
     if prob_draw is None:
         a_prob_without_draw = prob_a / (prob_a + prob_b)
         b_prob_without_draw = prob_b / (prob_b + prob_a)
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{fetch\_upcoming\_matches}}
@@ -1363,13 +1366,13 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     global REQUEST_COUNT
     params = initial_params.copy() if initial_params else {}
     page = 1
     aggregated_results = []
     while True:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{test\_league\_model}}
@@ -1383,13 +1386,13 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     league_data = {
         "id": 1,
         "name": "Test League",
         "slug": "test-league",
         "modified_at": datetime.utcnow(),
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{test\_serie\_model}}
@@ -1403,13 +1406,13 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     serie_data = {
         "id": 1,
         "begin_at": datetime.utcnow(),
         "end_at": datetime.utcnow(),
         "full_name": "Test Serie",
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{test\_team\_model}}
@@ -1423,13 +1426,13 @@ Convert probabilities to odds.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     team_data = {
         "id": 1,
         "name": "Test Team",
         "slug": "test-team",
         "modified_at": datetime.utcnow(),
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{run\_migrations\_offline}}
@@ -1454,13 +1457,13 @@ script output.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
     and not an Engine, though an Engine is acceptable
     here as well.  By skipping the Engine creation,
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{run\_migrations\_online}}
@@ -1480,13 +1483,13 @@ and associate a connection with the context.
 \end{quote}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     """Run migrations in 'online' mode.
 
     In this scenario, we need to create an Engine
     and associate a connection with the context.
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsection{Class}
@@ -1684,13 +1687,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     matches = db.query(Match).where(Match.status == MatchStatuses.NOT_STARTED.value).join(Match.tournament).all()
 
     if not matches:
         raise HTTPException(status_code=404, detail="No upcoming matches found")
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{all\_players\_list}}
@@ -1704,13 +1707,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     try:
         players = db.query(Player).all()
         if not players:
             raise HTTPException(status_code=404, detail="No players found")
         return players
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{add\_player\_to\_team}}
@@ -1724,13 +1727,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     team = db.query(Team).filter(Team.team_id == team_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if not player:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{remove\_player\_from\_team}}
@@ -1744,13 +1747,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     team = db.query(Team).filter(Team.team_id == team_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if not player:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{upcoming\_matches\_with\_rosters\_and\_stats}}
@@ -1764,13 +1767,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         match_id: int = None,
         x_maps: int = Query(..., gt=0, description="Number of recent maps to consider for statistics"),
         db: Session = Depends(get_db)):
     if match_id:
         matches = db.query(Match).filter(Match.match_id == match_id).all()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{match\_players\_stats}}
@@ -1784,13 +1787,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     match = db.query(Match).filter(Match.match_id == id).one_or_none()
 
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{upcoming\_matches}}
@@ -1804,13 +1807,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     api_token = os.getenv("PANDASCORE_API_TOKEN")
     if not api_token:
         raise HTTPException(status_code=500, detail="API token is missing")
 
     url = 'https://api.pandascore.co/csgo/matches/upcoming'
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
@@ -1824,13 +1827,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     start = time.time()
     global REQUEST_COUNT
     player_games = defaultdict(list)
     player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
     unique_game_ids = set()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{predict\_stats}}
@@ -1844,13 +1847,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     players_data = data.get("players", [])
     teams_data = data.get("teams", [])
     sum_kills_team1 = float(data.get("sum_kills_team1", 0))
     sum_kills_team2 = float(data.get("sum_kills_team2", 0))
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_h2h\_data}}
@@ -1864,13 +1867,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     margin = data.get("margin", 1.08)  # Default margin
     players_data = data.get("players")
     if not players_data or not margin:
         raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_over\_under\_data}}
@@ -1884,13 +1887,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     try:
         data = await request.json()
         margin, margin_error = get_margin(data)
         if margin_error:
             return JSONResponse(content={"margin_error": margin_error}, status_code=400)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{upcoming\_matches}}
@@ -1904,13 +1907,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     api_token = os.getenv("PANDASCORE_API_TOKEN")
     if not api_token:
         raise HTTPException(status_code=500, detail="API token is missing")
 
     url = 'https://api.pandascore.co/csgo/matches/upcoming'
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
@@ -1924,13 +1927,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     start = time.time()
     global REQUEST_COUNT
     player_games = defaultdict(list)
     player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
     unique_game_ids = set()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{predict\_stats}}
@@ -1944,13 +1947,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     players_data = data.get("players", [])
     sum_kills_team1 = float(data.get("sum_kills_team1", 0))
     sum_kills_team2 = float(data.get("sum_kills_team2", 0))
     predicted_kills_team1_map1 = float(data.get("predicted_kills_team1_map1", 0)) / 2
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_h2h\_data}}
@@ -1964,13 +1967,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     margin = data.get("margin", 1.08)  # Default margin
     players_data = data.get("players")
     if not players_data or not margin:
         raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_over\_under\_data}}
@@ -1984,13 +1987,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     try:
         data = await request.json()
         margin, margin_error = get_margin(data)
         if margin_error:
             return JSONResponse(content={"margin_error": margin_error}, status_code=400)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsection{Get}
@@ -2006,13 +2009,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     matches = db.query(Match).where(Match.status == MatchStatuses.NOT_STARTED.value).join(Match.tournament).all()
 
     if not matches:
         raise HTTPException(status_code=404, detail="No upcoming matches found")
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{all\_players\_list}}
@@ -2026,13 +2029,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     try:
         players = db.query(Player).all()
         if not players:
             raise HTTPException(status_code=404, detail="No players found")
         return players
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{upcoming\_matches\_with\_rosters\_and\_stats}}
@@ -2046,13 +2049,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         match_id: int = None,
         x_maps: int = Query(..., gt=0, description="Number of recent maps to consider for statistics"),
         db: Session = Depends(get_db)):
     if match_id:
         matches = db.query(Match).filter(Match.match_id == match_id).all()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{match\_players\_stats}}
@@ -2066,13 +2069,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     match = db.query(Match).filter(Match.match_id == id).one_or_none()
 
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
 
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{upcoming\_matches}}
@@ -2086,13 +2089,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     api_token = os.getenv("PANDASCORE_API_TOKEN")
     if not api_token:
         raise HTTPException(status_code=500, detail="API token is missing")
 
     url = 'https://api.pandascore.co/csgo/matches/upcoming'
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
@@ -2106,13 +2109,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     start = time.time()
     global REQUEST_COUNT
     player_games = defaultdict(list)
     player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
     unique_game_ids = set()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{upcoming\_matches}}
@@ -2126,13 +2129,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     api_token = os.getenv("PANDASCORE_API_TOKEN")
     if not api_token:
         raise HTTPException(status_code=500, detail="API token is missing")
 
     url = 'https://api.pandascore.co/csgo/matches/upcoming'
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{optimized\_fetch\_and\_aggregate}}
@@ -2146,13 +2149,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     start = time.time()
     global REQUEST_COUNT
     player_games = defaultdict(list)
     player_details = defaultdict(lambda: {"kills": [], "headshots": [], "rounds": []})
     unique_game_ids = set()
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsection{Post}
@@ -2168,13 +2171,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     team = db.query(Team).filter(Team.team_id == team_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if not player:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{predict\_stats}}
@@ -2188,13 +2191,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     players_data = data.get("players", [])
     teams_data = data.get("teams", [])
     sum_kills_team1 = float(data.get("sum_kills_team1", 0))
     sum_kills_team2 = float(data.get("sum_kills_team2", 0))
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_h2h\_data}}
@@ -2208,13 +2211,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     margin = data.get("margin", 1.08)  # Default margin
     players_data = data.get("players")
     if not players_data or not margin:
         raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_over\_under\_data}}
@@ -2228,13 +2231,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     try:
         data = await request.json()
         margin, margin_error = get_margin(data)
         if margin_error:
             return JSONResponse(content={"margin_error": margin_error}, status_code=400)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{predict\_stats}}
@@ -2248,13 +2251,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     players_data = data.get("players", [])
     sum_kills_team1 = float(data.get("sum_kills_team1", 0))
     sum_kills_team2 = float(data.get("sum_kills_team2", 0))
     predicted_kills_team1_map1 = float(data.get("predicted_kills_team1_map1", 0)) / 2
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_h2h\_data}}
@@ -2268,13 +2271,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     data = await request.json()
     margin = data.get("margin", 1.08)  # Default margin
     players_data = data.get("players")
     if not players_data or not margin:
         raise HTTPException(status_code=400, detail="Missing or invalid data in the request")
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsubsection{\texttt{generate\_over\_under\_data}}
@@ -2288,13 +2291,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     try:
         data = await request.json()
         margin, margin_error = get_margin(data)
         if margin_error:
             return JSONResponse(content={"margin_error": margin_error}, status_code=400)
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsection{Delete}
@@ -2310,13 +2313,13 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
     team = db.query(Team).filter(Team.team_id == team_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if not player:
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsection{Middleware}
@@ -2686,12 +2689,12 @@ and associate a connection with the context.
 \paragraph{Documentation:} \textit{No documentation available}
 
 \paragraph{Source Code Preview:}
-\begin{lstlisting}[language=Python]
+\begin{verbatim}
         data = super().from_orm(obj)
         if isinstance(data.modified_at, datetime):
             data.modified_at = data.modified_at.isoformat()
         return data
-\end{lstlisting}
+\end{verbatim}
 
 \vspace{1em}
 \subsection{Metadata}
@@ -2720,8 +2723,8 @@ This section contains UML diagrams that visualize the project structure and rela
 
 \begin{itemize}
     \item \textbf{Classes Found:} 27
-    \item \textbf{Relationships Found:} 86
-    \item \textbf{Packages:} stream, match\_result\_base, player, test\_routers, player\_stats, serie, stream\_base, game, player\_base, match\_result, match\_base, round\_score\_base, round\_score, player\_result, team, serie\_base, player\_result\_base, tournament, api\_updater, tournament\_base, league\_base, manager, game\_base, match, league, team\_base, player\_stats\_base
+    \item \textbf{Relationships Found:} 258
+    \item \textbf{Packages:} stream\_base, match\_base, round\_score, serie\_base, game\_base, league, player\_result, match, player, test\_routers, player\_base, serie, player\_stats\_base, match\_result, tournament\_base, api\_updater, match\_result\_base, tournament, manager, round\_score\_base, league\_base, team, player\_result\_base, stream, game, team\_base, player\_stats
 \end{itemize}
 
 \subsection{Main Diagram}
@@ -2729,7 +2732,7 @@ This section contains UML diagrams that visualize the project structure and rela
 The main UML diagram shows the overall structure of the system.
 
 \paragraph{PlantUML Source:}
-\begin{lstlisting}[language={}]
+\begin{verbatim}
 @startuml
 !theme plain
 skinparam classAttributeIconSize 0
@@ -2828,13 +2831,13 @@ package manager {
 
 
 @enduml
-\end{lstlisting}
+\end{verbatim}
 
 \subsection{Additional Diagrams}
 
 \subsubsection{Sequence Diagram}
 
-\begin{lstlisting}[language={}]
+\begin{verbatim}
 @startuml
 title upcoming_matches Request Flow
 
@@ -2857,10 +2860,10 @@ Endpoint --> Router : HTTP Response
 Router --> Client : JSON Response
 
 @enduml
-\end{lstlisting}
+\end{verbatim}
 \subsubsection{Component Diagram}
 
-\begin{lstlisting}[language={}]
+\begin{verbatim}
 @startuml
 !include <C4/C4_Component>
 
@@ -2893,13 +2896,13 @@ Rel(repo, db, "persists")
 Rel(services, confluence, "publishes")
 
 @enduml
-\end{lstlisting}
+\end{verbatim}
 
 \section{Coverage Analysis}
 
 \subsection{Function Coverage}
 
-67 total items, 15 documented (22.4\%).
+67 total items, 16 documented (23.9\%).
 
 \subsection{Class Coverage}
 

@@ -2,9 +2,9 @@
 
 ## General Questions
 
-### What is API Documentation?
+### What is API_Documentation?
 
-API Documentation is an automated documentation generation system that analyzes Python code and produces comprehensive documentation in multiple formats.
+API_Documentation is an automated documentation generation system that analyzes Python code and produces comprehensive documentation in multiple formats.
 
 ### What formats are supported?
 
