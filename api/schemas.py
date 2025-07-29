@@ -3,6 +3,8 @@ API request/response schemas using Marshmallow.
 """
 
 from marshmallow import Schema, fields, validate, ValidationError
+from functools import wraps
+from flask import request, jsonify
 
 
 class ScanRequestSchema(Schema):
@@ -87,3 +89,32 @@ class ErrorSchema(Schema):
     error = fields.Str(required=True)
     message = fields.Str()
     status_code = fields.Int()
+
+
+def validate_request(schema_definition):
+    """
+    Decorator for request validation using simple schema definitions.
+    This is a placeholder implementation since the original validate_request
+    function is being used but wasn't defined.
+    """
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Simple validation - just check if request has JSON data
+            if not request.is_json:
+                return jsonify({"error": "Request must be JSON"}), 400
+            
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON data provided"}), 400
+            
+            # Basic validation based on schema_definition
+            if isinstance(schema_definition, dict):
+                required_fields = schema_definition.get('required', [])
+                for field in required_fields:
+                    if field not in data:
+                        return jsonify({"error": f"Missing required field: {field}"}), 400
+            
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator

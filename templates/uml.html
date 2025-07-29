@@ -254,7 +254,14 @@
             status.innerHTML = '';
             
             try {
-                const diagramData = {{ result | tojson }};
+                const diagramData = {{ result | tojson if result else 'null' }};
+                
+                if (!diagramData || !diagramData.success) {
+                    status.innerHTML = '<div style="color: red;">❌ No diagram data available. Please generate a diagram first.</div>';
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    return;
+                }
                 
                 const response = await fetch('/api/confluence/publish-uml', {
                     method: 'POST',

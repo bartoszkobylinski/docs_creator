@@ -106,13 +106,18 @@
                             </form>
                             
                             <!-- PDF Generation -->
-                            <button type="button" class="action-btn latex-btn" onclick="showPdfDialog()">
-                                <span class="btn-icon">📄</span>
-                                <div class="btn-content">
-                                    <div class="btn-title">PDF Documentation</div>
-                                    <div class="btn-subtitle">Professional LaTeX output</div>
-                                </div>
-                            </button>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="project_name" value="{{ project_name or 'Documentation' }}">
+                                <input type="hidden" name="pdf_filename" value="{{ project_name or 'Documentation' }}_documentation">
+                                <input type="hidden" name="include_uml" value="on">
+                                <button type="submit" name="generate_pdf" class="action-btn latex-btn">
+                                    <span class="btn-icon">📄</span>
+                                    <div class="btn-content">
+                                        <div class="btn-title">PDF Documentation</div>
+                                        <div class="btn-subtitle">Professional LaTeX output</div>
+                                    </div>
+                                </button>
+                            </form>
                             
                             <!-- Markdown Generation -->
                             <form method="POST" style="display: inline;">
@@ -254,55 +259,6 @@
     }
     </style>
     
-    <!-- PDF Generation Dialog -->
-    <div id="pdfDialog" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Generate PDF Documentation</h3>
-                <span class="close" onclick="closePdfDialog()">&times;</span>
-            </div>
-            <form method="POST" id="pdfForm">
-                <div class="form-group">
-                    <label for="pdf_project_name">Project Name:</label>
-                    <input type="text" id="pdf_project_name" name="project_name" value="{{ project_name or 'Documentation' }}" placeholder="Enter project name">
-                </div>
-                <div class="form-group">
-                    <label for="pdf_filename">PDF Filename (without .pdf):</label>
-                    <input type="text" id="pdf_filename" name="pdf_filename" value="{{ project_name or 'Documentation' }}_documentation" placeholder="Enter filename">
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" name="include_uml" checked> Include UML Diagrams
-                    </label>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" name="generate_pdf" class="btn btn-primary">Generate PDF</button>
-                    <button type="button" onclick="closePdfDialog()" class="btn btn-secondary">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <script>
-        function showPdfDialog() {
-            document.getElementById('pdfDialog').style.display = 'block';
-        }
-        
-        function closePdfDialog() {
-            document.getElementById('pdfDialog').style.display = 'none';
-        }
-        
-        // Close dialog when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('pdfDialog');
-            if (event.target == modal) {
-                closePdfDialog();
-            }
-        }
-    </script>
-    
-    <style>
-        /* Modal styles */
         .modal {
             position: fixed;
             z-index: 1000;

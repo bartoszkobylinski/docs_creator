@@ -129,7 +129,7 @@ def create_app() -> Flask:
             # Handle UML generation
             if 'generate_uml' in request.form:
                 diagram_type = request.form.get('diagram_type', 'overview')
-                return redirect(url_for('generate_uml_endpoint', diagram_type=diagram_type))
+                return redirect(url_for('uml_page', config=diagram_type))
             
             # Handle PDF generation
             elif 'generate_pdf' in request.form:
@@ -349,6 +349,98 @@ def create_app() -> Flask:
         except Exception as e:
             print(f"Error serving UML cache {cache_key}: {e}")
             return "Error serving diagram", 500
+    
+    # UML Confluence publishing route
+    @app.route('/api/confluence/publish-uml', methods=['POST'])
+    def publish_uml_to_confluence():
+        """Publish UML diagram to Confluence."""
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No data provided"}), 400
+            
+            diagram_data = data.get('diagram_data')
+            title_suffix = data.get('title_suffix', '')
+            
+            if not diagram_data or not diagram_data.get('success'):
+                return jsonify({"error": "Invalid diagram data"}), 400
+            
+            # Generate title with project name
+            items = report_service.get_report_data()
+            project_name = "API_Documentation"  # Default name
+            if items:
+                # Try to get project name from first item's file path
+                first_item = items[0]
+                if 'file_path' in first_item:
+                    import os
+                    project_name = os.path.basename(os.path.dirname(first_item['file_path']))
+            
+            title = f"{project_name} - UML Diagram"
+            if title_suffix:
+                title += f" ({title_suffix})"
+            
+            # Create Confluence content with diagram
+            confluence_content = f"""
+<h1>{title}</h1>
+
+<h2>UML Diagram Analysis</h2>
+"""
+            
+            if diagram_data.get('analysis'):
+                analysis = diagram_data['analysis']
+                confluence_content += f"""
+<ul>
+<li>Classes found: {analysis.get('classes_found', 0)}</li>
+<li>Relationships found: {analysis.get('relationships_found', 0)}</li>
+<li>Packages: {', '.join(analysis.get('packages', []))}</li>
+</ul>
+"""
+            
+            # Add main diagram
+            if diagram_data.get('main_diagram') and diagram_data['main_diagram'].get('url'):
+                diagram_url = diagram_data['main_diagram']['url']
+                # Convert relative URL to absolute
+                if diagram_url.startswith('/'):
+                    diagram_url = f"http://{request.host}{diagram_url}"
+                
+                confluence_content += f"""
+<h2>Main Diagram</h2>
+<p><img src="{diagram_url}" alt="UML Diagram" /></p>
+"""
+            
+            # Add PlantUML source if available
+            if diagram_data.get('main_diagram') and diagram_data['main_diagram'].get('source'):
+                source = diagram_data['main_diagram']['source']
+                confluence_content += f"""
+<h2>PlantUML Source</h2>
+<pre><code>{source}</code></pre>
+"""
+            
+            # Publish to Confluence
+            result = confluence_service.create_or_update_page(
+                title=title,
+                content=confluence_content
+            )
+            
+            if result.get('success'):
+                # Get the full page URL
+                page_id = result.get('page_id')
+                confluence_url = confluence_service.confluence_url
+                space_key = confluence_service.space_key
+                page_url = f"{confluence_url}/spaces/{space_key}/pages/{page_id}"
+                
+                return jsonify({
+                    "success": True,
+                    "page_id": page_id,
+                    "page_url": page_url,
+                    "message": "UML diagram published successfully"
+                })
+            else:
+                return jsonify({"error": result.get('message', 'Failed to publish')}), 500
+                
+        except Exception as e:
+            print(f"Error publishing UML to Confluence: {e}")
+            return jsonify({"error": str(e)}), 500
     
     # Static files are now handled by Flask's default static handling
     

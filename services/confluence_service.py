@@ -306,7 +306,7 @@ class ConfluenceService:
         # First create the page with basic content
         initial_content = self._render_uml_template(diagram_data, include_images=False)
         page_result = self.create_or_update_page(title, initial_content)
-        page_id = page_result.get('id')
+        page_id = page_result.get('page_id')
         
         if not page_id:
             return page_result
