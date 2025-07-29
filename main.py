@@ -212,6 +212,37 @@ def create_app() -> Flask:
             generated_docstring=generated_docstring
         )
     
+    # UML cache serving route
+    @app.route('/api/uml/cache/<cache_key>', methods=['GET', 'HEAD'])
+    def serve_uml_cache(cache_key):
+        """Serve cached UML diagram images."""
+        try:
+            cached_file = uml_service.get_cached_diagram(cache_key)
+            
+            if not cached_file or not cached_file.exists():
+                flash(f'UML diagram not found: {cache_key}', 'error')
+                return "Diagram not found", 404
+            
+            # Determine media type based on file extension
+            if cache_key.endswith('.svg'):
+                media_type = "image/svg+xml"
+            elif cache_key.endswith('.txt'):
+                media_type = "text/plain"
+            else:
+                media_type = "image/png"
+            
+            return send_file(
+                cached_file,
+                mimetype=media_type,
+                as_attachment=False,
+                download_name=cache_key,
+                conditional=True,
+                max_age=3600  # Cache for 1 hour
+            )
+        except Exception as e:
+            print(f"Error serving UML cache {cache_key}: {e}")
+            return "Error serving diagram", 500
+    
     # Static files are now handled by Flask's default static handling
     
     # UML page endpoints
@@ -224,7 +255,7 @@ def create_app() -> Flask:
             # Check if we have data available
             try:
                 data = report_service.get_report_data()
-                has_data = data and data.get("items")
+                has_data = data and len(data) > 0
             except:
                 has_data = False
             
@@ -241,8 +272,8 @@ def create_app() -> Flask:
         
         try:
             # Get current data
-            data = report_service.get_report_data()
-            if not data or not data.get("items"):
+            items_data = report_service.get_report_data()
+            if not items_data or len(items_data) == 0:
                 return render_template("uml.html",
                     has_data=False,
                     show_source=show_source,
@@ -253,7 +284,7 @@ def create_app() -> Flask:
             # Convert dictionary items back to DocItem objects
             from fastdoc.models import DocItem
             items = []
-            for item_data in data["items"]:
+            for item_data in items_data:
                 item = DocItem(**item_data)
                 items.append(item)
             
