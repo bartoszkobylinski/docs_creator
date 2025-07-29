@@ -635,6 +635,8 @@ body {
 
 .modal-body {
     padding: var(--space-6);
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 /* Forms */

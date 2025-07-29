@@ -483,7 +483,7 @@ class DocumentationDashboard {
                     
                     // Add download button
                     statusHTML += `<div style="margin-top: 10px;">`;
-                    statusHTML += `<a href="${this.apiBaseUrl}/api/docs/markdown/download" class="btn btn-primary btn-sm">📥 Download All Markdown Files</a>`;
+                    statusHTML += `<a href="${this.apiBaseUrl}/api/docs/markdown/download?project_name=${encodeURIComponent(projectName)}" class="btn btn-primary btn-sm">📥 Download All Markdown Files</a>`;
                     statusHTML += `</div>`;
                     
                     // If publish to Confluence is checked
@@ -514,6 +514,9 @@ class DocumentationDashboard {
                     
                     statusHTML += '</div>';
                     statusDiv.innerHTML = statusHTML;
+                    
+                    // Scroll to bottom of modal to show the Confluence link
+                    statusDiv.scrollTop = statusDiv.scrollHeight;
                 } else {
                     throw new Error(result.error || 'Unknown error');
                 }

@@ -465,16 +465,26 @@ async def publish_markdown_to_confluence(request: dict):
 
 
 @router.get("/docs/markdown/download")
-async def download_markdown_documentation():
+async def download_markdown_documentation(project_name: str = "API_Documentation"):
     """Download all Markdown documentation files as a ZIP archive."""
     from fastapi.responses import FileResponse
     import zipfile
     import tempfile
+    from datetime import datetime
     
     docs_dir = Path("reports/docs")
     
     if not docs_dir.exists() or not any(docs_dir.iterdir()):
         raise HTTPException(status_code=404, detail="No Markdown documentation found. Please generate it first.")
+    
+    # Create filename with project name and timestamp
+    timestamp = datetime.now().strftime("%d_%m_%Y")
+    safe_project_name = "".join(c for c in project_name if c.isalnum() or c in (' ', '-', '_')).strip()
+    safe_project_name = safe_project_name.replace(' ', '_')
+    if not safe_project_name:
+        safe_project_name = "documentation"
+    
+    zip_filename = f"{safe_project_name}_markdown_{timestamp}.zip"
     
     # Create a temporary ZIP file
     with tempfile.NamedTemporaryFile(mode='w+b', suffix='.zip', delete=False) as tmp_file:
@@ -488,8 +498,8 @@ async def download_markdown_documentation():
     return FileResponse(
         path=zip_path,
         media_type="application/zip",
-        filename="documentation.zip",
+        filename=zip_filename,
         headers={
-            "Content-Disposition": "attachment; filename=documentation.zip"
+            "Content-Disposition": f"attachment; filename={zip_filename}"
         }
     )
