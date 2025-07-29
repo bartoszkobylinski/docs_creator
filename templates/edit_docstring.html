@@ -61,20 +61,28 @@
                     
                     <div class="form-actions">
                         <button type="submit" name="save_docstring" class="btn btn-primary">Save Docstring</button>
-                        <button type="submit" name="generate_ai_docstring" class="btn btn-secondary">Generate AI Suggestion</button>
+                        <button type="submit" name="generate_ai_docstring" class="btn btn-secondary">🤖 Generate AI Docstring</button>
                         <a href="/dashboard" class="btn btn-outline">Cancel</a>
                     </div>
                 </form>
 
                 <!-- AI Generated Suggestion (if available) -->
                 {% if generated_docstring %}
-                <div class="section-card" style="margin-top: 2rem; background: #f0f9ff;">
-                    <h3>AI Generated Suggestion</h3>
-                    <pre style="white-space: pre-wrap; background: white; padding: 1rem; border-radius: 4px; border: 1px solid #e5e7eb;">{{ generated_docstring }}</pre>
+                <div class="section-card" style="margin-top: 2rem; background: #f0f9ff; border-left: 4px solid #3b82f6;">
+                    <h3 style="color: #1e40af; margin-bottom: 1rem;">🤖 AI Generated Docstring</h3>
+                    <p style="color: #6b7280; margin-bottom: 1rem; font-size: 0.875rem;">
+                        {% if generated_docstring != item.get('qualname', 'unknown') %}
+                            AI has analyzed your code and generated a comprehensive docstring. Review it and click "Use This Docstring" if you like it.
+                        {% else %}
+                            AI generation is not available. Make sure you have set your OpenAI API key.
+                        {% endif %}
+                    </p>
+                    <pre style="white-space: pre-wrap; background: white; padding: 1.5rem; border-radius: 6px; border: 1px solid #e5e7eb; font-size: 0.875rem; line-height: 1.6;">{{ generated_docstring }}</pre>
                     <form method="POST" style="margin-top: 1rem;">
                         <input type="hidden" name="item_index" value="{{ item_index }}">
-                        <input type="hidden" name="docstring" value="{{ generated_docstring }}">
-                        <button type="submit" name="save_docstring" class="btn btn-primary">Use This Docstring</button>
+                        <input type="hidden" name="docstring" value="{{ generated_docstring | e }}">
+                        <button type="submit" name="save_docstring" class="btn btn-primary">✅ Use This Docstring</button>
+                        <button type="submit" name="generate_ai_docstring" class="btn btn-secondary" style="margin-left: 0.5rem;">🔄 Generate New Suggestion</button>
                     </form>
                 </div>
                 {% endif %}

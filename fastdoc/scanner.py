@@ -118,44 +118,13 @@ class FastAPIScanner(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Call(self, node: ast.Call):
-        """Detect FastAPI method calls like app.add_middleware(), app.include_router()"""
+        """Skip FastAPI configuration calls - these are not documentable code elements"""
         if isinstance(node.func, ast.Attribute):
-            # Check for middleware additions
-            if node.func.attr == "add_middleware":
-                middleware_info = self._extract_middleware_info(node)
-                if middleware_info:
-                    self.items.append(DocItem(
-                        module=self.module,
-                        qualname=f"{middleware_info['app_name']}.middleware",
-                        path="",
-                        method="MIDDLEWARE",
-                        signature=middleware_info['middleware_class'],
-                        docstring=None,
-                        description=f"Middleware: {middleware_info['middleware_class']}",
-                        first_lines="",
-                        full_source="",
-                        lineno=node.lineno,
-                        file_path=self.filename
-                    ))
-            
-            # Check for router inclusions
-            elif node.func.attr == "include_router":
-                router_info = self._extract_router_inclusion_info(node)
-                if router_info:
-                    self.items.append(DocItem(
-                        module=self.module,
-                        qualname=f"{router_info['app_name']}.router_inclusion",
-                        path=router_info.get('prefix', ''),
-                        method="ROUTER_INCLUSION",
-                        signature=router_info['router_name'],
-                        docstring=None,
-                        description=f"Router inclusion: {router_info['router_name']}",
-                        first_lines="",
-                        full_source="",
-                        lineno=node.lineno,
-                        file_path=self.filename,
-                        tags=router_info.get('tags', [])
-                    ))
+            # SKIP: Configuration calls like app.add_middleware() and app.include_router()
+            # These are not function definitions and cannot have docstrings
+            # They should not appear as documentable items in the dashboard
+            if node.func.attr in ["add_middleware", "include_router"]:
+                pass  # Skip these configuration calls entirely
         
         self.generic_visit(node)
 

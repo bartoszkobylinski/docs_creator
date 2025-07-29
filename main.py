@@ -15,6 +15,7 @@ from services.latex_service import latex_service
 from services.markdown_service import markdown_service
 from services.confluence_service import confluence_service
 from services.docstring_service import docstring_service
+from services.scanner_service import scanner_service
 
 
 def create_app() -> Flask:
@@ -117,11 +118,37 @@ def create_app() -> Flask:
     def serve_dashboard():
         """Serve the dashboard interface with server-side rendering."""
         # Get report data
-        items = report_service.get_report_data()
+        all_items = report_service.get_report_data()
         
-        # Calculate statistics
+        # Scanner now properly skips non-documentable items, so no filtering needed
+        items = all_items
+        
+        # Calculate statistics with improved docstring detection
+        def has_actual_docstring(item):
+            """Check if item actually has a docstring, including from source file."""
+            # First check the stored docstring
+            stored_docstring = item.get('docstring')
+            if stored_docstring and stored_docstring.strip():
+                return True
+            
+            # If no stored docstring, try to detect from source
+            full_source = item.get('full_source', '')
+            if full_source:
+                # Simple check for triple quotes in source
+                lines = full_source.split('\n')
+                for i, line in enumerate(lines):
+                    if i == 0:  # Skip the function/class definition line
+                        continue
+                    stripped = line.strip()
+                    if stripped.startswith('"""') or stripped.startswith("'''"):
+                        return True
+                    elif stripped and not stripped.startswith('#'):
+                        # Hit non-comment code before docstring
+                        break
+            return False
+        
         total_items = len(items)
-        documented_items = len([item for item in items if item.get('docstring') and item.get('docstring').strip()])
+        documented_items = len([item for item in items if has_actual_docstring(item)])
         coverage = round((documented_items / total_items * 100) if total_items > 0 else 0, 1)
         missing_docs = total_items - documented_items
         
@@ -287,6 +314,7 @@ def create_app() -> Flask:
             return redirect(url_for('serve_dashboard'))
         
         item = items[item_index]
+        print(f"DEBUG: Editing item {item_index}: {item.get('qualname')} at line {item.get('lineno')} in {item.get('file_path')}")
         generated_docstring = None
         
         if request.method == 'POST':
@@ -297,7 +325,35 @@ def create_app() -> Flask:
                     result = docstring_service.save_docstring(item, new_docstring)
                     
                     if result.get('success'):
-                        flash('Docstring saved successfully!', 'success')
+                        flash('Docstring saved successfully! Re-scanning project to update line numbers...', 'success')
+                        
+                        # Automatically re-scan the project to update line numbers
+                        try:
+                            # Get the project path from the item's file path
+                            file_path = item.get('file_path', '')
+                            if file_path:
+                                # Extract project root from file path (go up to find the project root)
+                                import os
+                                project_path = os.path.dirname(file_path)
+                                while project_path and project_path != '/' and not any(
+                                    os.path.exists(os.path.join(project_path, marker)) 
+                                    for marker in ['pyproject.toml', 'requirements.txt', 'setup.py', '.git']
+                                ):
+                                    project_path = os.path.dirname(project_path)
+                                
+                                if project_path and project_path != '/':
+                                    print(f"Re-scanning project at: {project_path}")
+                                    scanner_service.scan_local_project(project_path)
+                                    flash('Project re-scanned successfully!', 'success')
+                                else:
+                                    flash('Docstring saved, but could not auto-detect project path for re-scanning. Please manually re-scan if needed.', 'warning')
+                            else:
+                                flash('Docstring saved, but could not determine project path for re-scanning. Please manually re-scan if needed.', 'warning')
+                                
+                        except Exception as scan_error:
+                            print(f"Auto re-scan failed: {scan_error}")
+                            flash('Docstring saved, but auto re-scan failed. Please manually re-scan the project.', 'warning')
+                        
                         return redirect(url_for('serve_dashboard'))
                     else:
                         flash(f'Failed to save docstring: {result.get("message")}', 'error')
@@ -308,8 +364,11 @@ def create_app() -> Flask:
             # Handle AI generation
             elif 'generate_ai_docstring' in request.form:
                 try:
-                    generated_docstring = docstring_service.generate_ai_docstring(item)
-                    flash('AI docstring generated! Review and save if you like it.', 'success')
+                    generated_docstring, used_ai = docstring_service.generate_ai_docstring(item)
+                    if used_ai:
+                        flash('🤖 AI docstring generated! Review and save if you like it.', 'success')
+                    else:
+                        flash('⚠️ AI not available (check OpenAI API key). Generated template instead.', 'warning')
                 except Exception as e:
                     flash(f'Error generating docstring: {str(e)}', 'error')
         

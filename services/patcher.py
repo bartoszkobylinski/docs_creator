@@ -61,11 +61,30 @@ def apply_docstring_patch(file_path: str, lineno: int, new_doc: str,
         
         # Validate that this is a def/class line
         if not re.match(r"^\s*(def|class|async\s+def)\s+", lines[i]):
-            return {
-                "success": False,
-                "message": f"Line {lineno} is not a function/class definition",
-                "backup_path": backup_path
-            }
+            actual_content = lines[i].strip() if lines[i] else "<empty line>"
+            
+            # Search for any function definition within a reasonable range (±10 lines)
+            found_line = None
+            for search_line in range(max(1, lineno - 10), min(len(lines) + 1, lineno + 11)):
+                search_index = search_line - 1
+                if search_index < len(lines):
+                    line_content = lines[search_index]
+                    if re.match(r"^\s*(def|class|async\s+def)\s+", line_content):
+                        found_line = search_line
+                        break
+            
+            if found_line:
+                return {
+                    "success": False,
+                    "message": f"Line {lineno} is not the function definition (found: '{actual_content}'). A function definition was found at line {found_line}. Please re-scan the project to update line numbers.",
+                    "backup_path": backup_path
+                }
+            else:
+                return {
+                    "success": False,
+                    "message": f"Line {lineno} is not a function/class definition (found: '{actual_content}'). No function definition found nearby. Please re-scan the project.",
+                    "backup_path": backup_path
+                }
         
         # Get base indentation
         indent_match = re.match(r"^(\s*)", lines[i])
@@ -109,19 +128,26 @@ def apply_docstring_patch(file_path: str, lineno: int, new_doc: str,
             docstring_indent = base_indent + "    "  # Standard 4-space indent
             
             block = []
-            block.append(f'{docstring_indent}"""\n')
             
             # Handle multi-line docstrings properly
             doc_lines = new_doc.strip().splitlines()
-            for idx, line in enumerate(doc_lines):
-                if idx == 0:
-                    # First line can be on same line as opening quotes
-                    block.append(f'{docstring_indent}{line}\n')
-                else:
-                    # Subsequent lines are indented
-                    block.append(f'{docstring_indent}{line}\n')
             
-            block.append(f'{docstring_indent}"""\n')
+            if len(doc_lines) == 1:
+                # Single-line docstring: """Content on same line"""
+                block.append(f'{docstring_indent}"""{doc_lines[0]}"""\n')
+            else:
+                # Multi-line docstring: """First line on same line as quotes
+                block.append(f'{docstring_indent}"""{doc_lines[0]}\n')
+                
+                # Add remaining lines with proper indentation
+                for line in doc_lines[1:]:
+                    if line.strip():  # Skip completely empty lines
+                        block.append(f'{docstring_indent}{line}\n')
+                    else:
+                        block.append('\n')  # Preserve empty lines
+                
+                # Closing quotes on separate line
+                block.append(f'{docstring_indent}"""\n')
             
             # Insert the new docstring
             new_lines = lines[:i+1] + block + lines[j:]
@@ -269,13 +295,16 @@ def apply_docitem_patch(item_data: Dict[str, Any], new_doc: str,
     Apply docstring patch based on DocItem type and data.
     """
     method_type = item_data.get('method', '').upper()
+    qualname = item_data.get('qualname', '')
+    
+    # Scanner now properly skips non-documentable items, so this check is no longer needed
     
     if method_type == 'MODULE':
         file_path = get_item_file_path(item_data, base_path)
         return apply_module_docstring_patch(file_path, new_doc, create_backup_file, base_path)
     
     elif method_type in ['FUNCTION', 'ASYNC_FUNCTION', 'CLASS', 'PYDANTIC_MODEL', 
-                         'PROPERTY', 'STATICMETHOD', 'CLASSMETHOD',
+                         'PROPERTY', 'STATICMETHOD', 'CLASSMETHOD', 'MIDDLEWARE',
                          'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'WEBSOCKET']:
         file_path = get_item_file_path(item_data, base_path)
         lineno = item_data.get('lineno', 1)

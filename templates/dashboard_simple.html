@@ -174,19 +174,20 @@
                                         <td><code>{{ item.qualname or item.name or 'N/A' }}</code></td>
                                         <td><span class="badge">{{ item.method or item.type or 'N/A' }}</span></td>
                                         <td>
-                                            <span class="status-badge {% if item.docstring and item.docstring.strip() %}success{% else %}error{% endif %}">
-                                                {% if item.docstring and item.docstring.strip() %}✓{% else %}✗{% endif %}
+                                            {% set has_docstring = (item.docstring and item.docstring.strip()) or (item.full_source and ('"""' in item.full_source or "'''" in item.full_source)) %}
+                                            <span class="status-badge {% if has_docstring %}success{% else %}error{% endif %}">
+                                                {% if has_docstring %}✓{% else %}✗{% endif %}
                                             </span>
                                         </td>
                                         <td>
                                             <div class="mini-progress">
-                                                <div class="mini-progress-fill" style="width: {% if item.docstring and item.docstring.strip() %}100{% else %}0{% endif %}%"></div>
+                                                <div class="mini-progress-fill" style="width: {% if has_docstring %}100{% else %}0{% endif %}%"></div>
                                             </div>
-                                            {% if item.docstring and item.docstring.strip() %}100{% else %}0{% endif %}%
+                                            {% if has_docstring %}100{% else %}0{% endif %}%
                                         </td>
                                         <td>
-                                            <span class="badge {% if item.docstring and item.docstring.strip() %}success{% else %}error{% endif %}">
-                                                {% if item.docstring and item.docstring.strip() %}Good{% else %}Missing{% endif %}
+                                            <span class="badge {% if has_docstring %}success{% else %}error{% endif %}">
+                                                {% if has_docstring %}Good{% else %}Missing{% endif %}
                                             </span>
                                             <a href="/edit-docstring/{{ loop.index0 }}" class="btn-small">Edit</a>
                                         </td>
