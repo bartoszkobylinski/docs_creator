@@ -15,6 +15,10 @@
                 <h1>📚 Docs Creator</h1>
                 <p>Professional Documentation Assistant</p>
             </div>
+            <div class="demo-header">
+                <span class="demo-badge">🚀 DEMO MODE</span>
+                <a href="/logout" class="logout-link">🚪 Logout</a>
+            </div>
         </header>
 
         <!-- Flash Messages -->
@@ -66,14 +70,11 @@
 
             <!-- Hidden New Scan Form -->
             <form method="POST" class="section-card" id="newScanForm" style="display: none;">
-                <h3>🚀 Scan New Project</h3>
+                <h3>🚀 Re-scan Demo Project</h3>
+                <p>This will clear the current data and scan the e-commerce sample project again.</p>
                 <div class="form-group">
-                    <label for="project_path">Project Path:</label>
-                    <div class="input-group">
-                        <input type="text" name="project_path" id="project_path" 
-                               placeholder="/path/to/your/project" class="form-input" required>
-                        <button type="submit" name="scan_project" class="btn btn-primary">Scan Project</button>
-                    </div>
+                    <input type="hidden" name="project_path" value="demo">
+                    <button type="submit" name="scan_project" class="btn btn-primary">Re-scan Sample Project</button>
                 </div>
                 <div class="form-actions">
                     <button type="button" onclick="hideNewScanForm()" class="btn btn-outline">Cancel</button>
@@ -89,14 +90,23 @@
 
             <!-- Project Scanning Section -->
             <form method="POST" class="section-card">
-                <h3>🚀 Scan Project</h3>
+                <h3>🚀 Scan Demo Project</h3>
+                <p>Click the button below to scan our comprehensive e-commerce platform sample project. This will demonstrate all the documentation features including AI-powered docstring generation, UML diagrams, and PDF exports.</p>
                 <div class="form-group">
-                    <label for="project_path">Project Path:</label>
-                    <div class="input-group">
-                        <input type="text" name="project_path" id="project_path" 
-                               placeholder="/path/to/your/project" class="form-input" required>
-                        <button type="submit" name="scan_project" class="btn btn-primary">Scan Project</button>
-                    </div>
+                    <input type="hidden" name="project_path" value="demo">
+                    <button type="submit" name="scan_project" class="btn btn-primary btn-large">
+                        <span style="font-size: 1.2em;">📂 Scan E-commerce Sample Project</span>
+                    </button>
+                </div>
+                <div class="demo-project-info">
+                    <h4>Sample Project Contents:</h4>
+                    <ul>
+                        <li>✓ Product Management System</li>
+                        <li>✓ Order Processing Engine</li>
+                        <li>✓ Customer Service Module</li>
+                        <li>✓ Inventory Control System</li>
+                        <li>✓ Utility Functions & Helpers</li>
+                    </ul>
                 </div>
             </form>
             {% endif %}
@@ -309,6 +319,44 @@
             color: white;
         }
         
+        .demo-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .demo-badge {
+            background: #10b981;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        .logout-link {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .logout-link:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
         .form-textarea {
             width: 100%;
             padding: 0.75rem;
@@ -402,6 +450,37 @@
             background-position: right 0.75rem center;
             background-size: 8px 10px;
             padding-right: 2.5rem;
+        }
+        
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .demo-project-info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .demo-project-info h4 {
+            margin: 0 0 0.75rem 0;
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+        
+        .demo-project-info ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            list-style: none;
+        }
+        
+        .demo-project-info li {
+            color: #4b5563;
+            font-size: 0.85rem;
+            line-height: 1.6;
         }
     </style>
 </body>

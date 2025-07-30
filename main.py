@@ -102,10 +102,10 @@ def create_app() -> Flask:
             if 'scan_project' in request.form:
                 project_path = request.form.get('project_path', '').strip()
                 
-                # In demo mode, restrict to demo project only
-                if os.environ.get('DEMO_MODE') == 'true':
+                # In demo mode, always use the demo project
+                if os.environ.get('DEMO_MODE') == 'true' or project_path == 'demo':
                     project_path = '/app/demo_sample_project'
-                    flash('Demo mode: Scanning built-in e-commerce sample project', 'info')
+                    flash('🔍 Scanning e-commerce sample project...', 'info')
                 
                 if project_path:
                     try:
@@ -183,7 +183,7 @@ def create_app() -> Flask:
         
         # Show demo mode message if no demo data exists
         if os.environ.get('DEMO_MODE') == 'true' and not has_existing_data:
-            flash('Welcome to demo mode! Click "Scan Project" to analyze the built-in e-commerce sample.', 'info')
+            flash('👋 Welcome to Docs Creator Demo! Click "Scan E-commerce Sample Project" below to get started.', 'info')
         
         if has_existing_data:
             # Calculate basic stats for existing data
