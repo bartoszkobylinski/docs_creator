@@ -198,7 +198,6 @@ def create_app() -> Flask:
                 file_path = first_item.get('file_path', '')
                 if file_path:
                     # Extract project path by removing file-specific parts
-                    import os
                     project_path = os.path.dirname(file_path)
                     # Find common parent directory
                     while project_path and not os.path.exists(os.path.join(project_path, 'main.py')):
@@ -249,7 +248,6 @@ def create_app() -> Flask:
             file_path = first_item.get('file_path', '')
             if file_path:
                 # Extract project path by finding the project root
-                import os
                 project_path = os.path.dirname(file_path)
                 while project_path and project_path != '/' and not any(
                     os.path.exists(os.path.join(project_path, marker)) 
