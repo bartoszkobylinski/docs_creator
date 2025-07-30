@@ -37,9 +37,10 @@ EXPOSE 8200
 
 # Set environment variables
 ENV PYTHONPATH=/app
-ENV PROJECT_BASE_PATH=/app/project
+ENV PROJECT_BASE_PATH=/app/demo_sample_project
 ENV REPORTS_DIR=/app/reports
 ENV BACKUPS_DIR=/app/backups
+ENV DEMO_MODE=true
 
 # Health check for Flask
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

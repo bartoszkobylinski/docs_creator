@@ -7,8 +7,6 @@ services:
     ports:
       - "8200:8200"
     volumes:
-      # Mount your project directory
-      - ./project:/app/project:ro
       # Mount directory for generated reports and backups (persistent)
       - ./reports:/app/reports
       - ./backups:/app/backups
@@ -18,7 +16,7 @@ services:
       # OpenAI API key for AI features (optional)
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       # Application settings
-      - PROJECT_BASE_PATH=/app/project
+      - PROJECT_BASE_PATH=/app/demo_sample_project
       - REPORTS_DIR=/app/reports
       - BACKUPS_DIR=/app/backups
       - PYTHONPATH=/app
@@ -35,15 +33,14 @@ services:
     build: .
     container_name: flask-docs-scanner
     volumes:
-      - ./project:/app/project:ro
       - ./reports:/app/reports
     environment:
-      - PROJECT_BASE_PATH=/app/project
+      - PROJECT_BASE_PATH=/app/demo_sample_project
       - REPORTS_DIR=/app/reports
     command: >
       sh -c "
         echo 'Starting Documentation Scanner...' &&
-        poetry run python fastdoc/cli.py /app/project --out /app/reports/comprehensive_report.json --verbose &&
+        poetry run python fastdoc/cli.py /app/demo_sample_project --out /app/reports/comprehensive_report.json --verbose &&
         echo 'Scanner completed. Report available at /app/reports/comprehensive_report.json'
       "
     profiles:
