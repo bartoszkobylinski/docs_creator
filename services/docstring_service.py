@@ -41,6 +41,15 @@ class DocstringService:
             Exception: If saving fails
         """
         try:
+            # In demo mode, check if file path is from demo project
+            if os.environ.get('DEMO_MODE') == 'true':
+                file_path = item.get('file_path', '')
+                if not file_path.startswith('/app/demo_sample_project'):
+                    # This is old data from a different project
+                    return {
+                        "success": False,
+                        "message": "Demo mode: Please scan the demo project first to edit docstrings"
+                    }
             # Apply the docstring patch
             result = apply_docitem_patch(
                 item,

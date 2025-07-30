@@ -5,6 +5,7 @@ Main application entry point for Flask Documentation Assistant.
 from flask import Flask, request, render_template, jsonify, send_from_directory, redirect, url_for, flash, send_file, session
 from flask_cors import CORS
 import os
+import json
 
 from core.config import settings
 from api.endpoints import create_api_blueprint
@@ -36,6 +37,17 @@ def create_app() -> Flask:
         template_folder='templates',
         static_folder='frontend'  # Use frontend as static folder
     )
+    
+    # In demo mode, clear any existing report data on startup
+    if os.environ.get('DEMO_MODE') == 'true':
+        try:
+            # Clear the report file to start fresh
+            if os.path.exists(settings.report_file_path):
+                with open(settings.report_file_path, 'w') as f:
+                    json.dump([], f)
+            print("Demo mode: Cleared existing report data")
+        except Exception as e:
+            print(f"Warning: Could not clear report data: {e}")
     
     # Configure Flask
     app.config['DEBUG'] = settings.DEBUG
@@ -89,6 +101,12 @@ def create_app() -> Flask:
             # Handle project scanning
             if 'scan_project' in request.form:
                 project_path = request.form.get('project_path', '').strip()
+                
+                # In demo mode, restrict to demo project only
+                if os.environ.get('DEMO_MODE') == 'true':
+                    project_path = '/app/demo_sample_project'
+                    flash('Demo mode: Scanning built-in e-commerce sample project', 'info')
+                
                 if project_path:
                     try:
                         # Reset cost tracking for new project
