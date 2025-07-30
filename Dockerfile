@@ -23,8 +23,10 @@ ENV POETRY_CACHE_DIR=/tmp/poetry_cache
 # Copy dependency files
 COPY pyproject.toml poetry.lock* ./
 
-# Install dependencies (try both new and old syntax)
-RUN poetry install --only=main || poetry install --no-dev && rm -rf $POETRY_CACHE_DIR
+# Install dependencies
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-interaction --no-ansi && \
+    rm -rf $POETRY_CACHE_DIR
 
 # Copy application code
 COPY . .
@@ -46,5 +48,5 @@ ENV DEMO_MODE=true
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8200/health || exit 1
 
-# Default command - run the Flask application
-CMD ["python", "main.py"]
+# Default command - run the Flask application with poetry
+CMD ["poetry", "run", "python", "main.py"]
