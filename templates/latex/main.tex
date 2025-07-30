@@ -92,9 +92,26 @@
 \tableofcontents
 \newpage
 
-\section{Overview}
+\BLOCK{if business_overview}
+\section{Business Overview}
 
-This document provides comprehensive documentation for \textbf{\VAR{latex_escape(project_name)}}. It includes API documentation, code analysis, and coverage statistics.
+\BLOCK{if business_overview.project_purpose}
+\textbf{Project Purpose:} \VAR{latex_escape(business_overview.project_purpose)}
+
+\BLOCK{endif}
+\BLOCK{if business_overview.business_context}
+\textbf{Business Context:} \VAR{latex_escape(business_overview.business_context)}
+
+\BLOCK{endif}
+\BLOCK{if business_overview.key_business_value}
+\textbf{Key Business Value:} \VAR{latex_escape(business_overview.key_business_value)}
+
+\BLOCK{endif}
+\BLOCK{endif}
+
+\section{Technical Overview}
+
+This document provides comprehensive technical documentation for \textbf{\VAR{latex_escape(project_name)}}. It includes API documentation, code analysis, and coverage statistics.
 
 \subsection{Documentation Statistics}
 

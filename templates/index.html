@@ -101,13 +101,111 @@
             </form>
             {% endif %}
 
+            <!-- Business Overview Section -->
+            <div class="section-card">
+                <h3>💼 Business Overview</h3>
+                <p>Add a simple business-layer description that will appear at the beginning of your documentation.</p>
+                
+                <form method="POST" class="settings-group">
+                    <div class="form-group">
+                        <label for="project_purpose">Project Purpose (2-3 sentences):</label>
+                        <textarea name="project_purpose" id="project_purpose" rows="3" class="form-textarea" 
+                                  placeholder="Describe what this project does from a business perspective...">{{ business_overview.project_purpose if business_overview else '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="business_context">Business Context (2-3 sentences):</label>
+                        <textarea name="business_context" id="business_context" rows="3" class="form-textarea" 
+                                  placeholder="Explain the business context and why this project exists...">{{ business_overview.business_context if business_overview else '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="key_business_value">Key Business Value (2-3 sentences):</label>
+                        <textarea name="key_business_value" id="key_business_value" rows="3" class="form-textarea" 
+                                  placeholder="Describe the key business value and benefits this project provides...">{{ business_overview.key_business_value if business_overview else '' }}</textarea>
+                    </div>
+                    
+                    <button type="submit" name="save_business_overview" class="btn btn-primary">💾 Save Business Overview</button>
+                    {% if business_overview and business_overview.last_updated %}
+                    <p class="form-note">Last updated: {{ business_overview.last_updated[:10] }}</p>
+                    {% endif %}
+                </form>
+            </div>
+
             <!-- Settings Section -->
             <div class="section-card">
                 <h3>⚙️ Settings</h3>
                 
+                <!-- OpenAI Settings -->
+                <form method="POST" class="settings-group">
+                    <h4>🤖 OpenAI Integration</h4>
+                    <p class="settings-description">Configure OpenAI API for AI-powered docstring generation. Usage costs will be tracked and displayed.</p>
+                    
+                    <div class="form-group">
+                        <label for="openai_api_key">OpenAI API Key:</label>
+                        <input type="password" name="openai_api_key" id="openai_api_key" 
+                               placeholder="sk-..." class="form-input" 
+                               value="{{ openai_settings.api_key if openai_settings and openai_settings.api_key != 'sk-...your-api-key-here...' else '' }}">
+                        <small class="form-help">Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="openai_model">Model:</label>
+                            <select name="openai_model" id="openai_model" class="form-input">
+                                <option value="gpt-4.1-nano" {{ 'selected' if openai_settings and openai_settings.model == 'gpt-4.1-nano' else '' }}>GPT-4.1 Nano ($0.10/$0.40 per 1M)</option>
+                                <option value="gpt-4.1-mini" {{ 'selected' if openai_settings and openai_settings.model == 'gpt-4.1-mini' else '' }}>GPT-4.1 Mini ($0.40/$1.60 per 1M)</option>
+                                <option value="gpt-4o-mini" {{ 'selected' if openai_settings and openai_settings.model == 'gpt-4o-mini' else '' }}>GPT-4o Mini ($0.15/$0.60 per 1M)</option>
+                                <option value="gpt-4.1" {{ 'selected' if openai_settings and openai_settings.model == 'gpt-4.1' else '' }}>GPT-4.1 ($2.00/$8.00 per 1M)</option>
+                                <option value="gpt-4o" {{ 'selected' if openai_settings and openai_settings.model == 'gpt-4o' else '' }}>GPT-4o ($2.50/$10.00 per 1M)</option>
+                            </select>
+                            <small class="form-help">Prices shown as input/output per million tokens</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="max_tokens">Max Tokens:</label>
+                            <input type="number" name="max_tokens" id="max_tokens" 
+                                   value="{{ openai_settings.max_tokens if openai_settings else '400' }}" 
+                                   min="50" max="1000" class="form-input">
+                            <small class="form-help">Maximum tokens for generated docstrings</small>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" name="save_openai" class="btn btn-primary">💾 Save OpenAI Settings</button>
+                    
+                    {% if openai_settings %}
+                    <p class="form-note">
+                        {% if openai_settings.source == 'env' %}
+                        ✅ Using API key from .env file
+                        {% else %}
+                        Using saved API key
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                    
+                    {% if openai_settings and openai_settings.api_key and openai_settings.api_key != 'sk-...your-api-key-here...' %}
+                    <div class="cost-info">
+                        <h5>💰 Cost Tracking</h5>
+                        <div class="cost-stats">
+                            <div class="cost-item">
+                                <span class="cost-label">Today:</span>
+                                <span class="cost-value">${{ cost_stats.today if cost_stats else '0.00' }}</span>
+                            </div>
+                            <div class="cost-item">
+                                <span class="cost-label">This Month:</span>
+                                <span class="cost-value">${{ cost_stats.month if cost_stats else '0.00' }}</span>
+                            </div>
+                            <div class="cost-item">
+                                <span class="cost-label">Total Requests:</span>
+                                <span class="cost-value">{{ cost_stats.total_requests if cost_stats else '0' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </form>
+                
                 <!-- Confluence Settings -->
                 <form method="POST" class="settings-group">
-                    <h4>Confluence Integration</h4>
+                    <h4>🌐 Confluence Integration</h4>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="confluence_url">Confluence URL:</label>
@@ -208,6 +306,101 @@
         .btn-outline:hover {
             background: #6c757d;
             color: white;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-note {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+        
+        .settings-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+        
+        .form-help {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        
+        .form-help a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        .form-help a:hover {
+            text-decoration: underline;
+        }
+        
+        .cost-info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .cost-info h5 {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .cost-stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .cost-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+        }
+        
+        .cost-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cost-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        select.form-input {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 8px 10px;
+            padding-right: 2.5rem;
         }
     </style>
 </body>

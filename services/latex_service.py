@@ -11,6 +11,7 @@ from datetime import datetime
 
 from jinja2 import Environment, FileSystemLoader
 from fastdoc.models import DocItem
+from services.business_service import business_service
 
 
 class LaTeXService:
@@ -120,6 +121,9 @@ class LaTeXService:
         # Get unique modules
         modules = list(set(item.module for item in doc_items if item.module))
         
+        # Get business overview
+        business_overview = business_service.get_business_overview()
+        
         return {
             "project_name": project_name,
             "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -129,7 +133,8 @@ class LaTeXService:
             "modules": sorted(modules),
             "items_by_type": items_by_type,
             "uml_diagrams": uml_diagrams or {},
-            "doc_items": doc_items
+            "doc_items": doc_items,
+            "business_overview": business_overview
         }
     
     def _generate_latex_source(self, template_data: Dict[str, Any]) -> str:

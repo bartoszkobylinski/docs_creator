@@ -13,6 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from fastdoc.models import DocItem
 from core.config import settings
+from services.business_service import business_service
 
 
 class MarkdownService:
@@ -216,6 +217,9 @@ Includes UML diagrams: {include_uml}
         # Prepare module hierarchy
         module_tree = self._build_module_tree(items)
         
+        # Get business overview
+        business_overview = business_service.get_business_overview()
+        
         return {
             "project_name": project_name,
             "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -224,7 +228,8 @@ Includes UML diagrams: {include_uml}
             "stats": stats,
             "module_tree": module_tree,
             "uml_data": uml_data,
-            "total_items": len(items)
+            "total_items": len(items),
+            "business_overview": business_overview
         }
     
     def _group_items(self, items: List[DocItem]) -> Dict[str, List[DocItem]]:
@@ -338,9 +343,33 @@ Welcome to the {context['project_name']} documentation. This documentation was a
     
     def _generate_overview(self, context: Dict[str, Any]) -> str:
         """Generate overview.md file."""
+        business_overview = context.get('business_overview')
+        
+        # Start with business overview if available
         content = f"""# Project Overview
-
-## About {context['project_name']}
+"""
+        
+        if business_overview:
+            content += f"""
+## Business Overview
+"""
+            if business_overview.get('project_purpose'):
+                content += f"""
+**Project Purpose:** {business_overview['project_purpose']}
+"""
+            
+            if business_overview.get('business_context'):
+                content += f"""
+**Business Context:** {business_overview['business_context']}
+"""
+            
+            if business_overview.get('key_business_value'):
+                content += f"""
+**Key Business Value:** {business_overview['key_business_value']}
+"""
+        
+        content += f"""
+## Technical Overview
 
 This project is a comprehensive API documentation system that automatically analyzes Python code and generates documentation in multiple formats.
 
@@ -891,6 +920,8 @@ Check:
     
     def _generate_confluence_master(self, context: Dict[str, Any]) -> str:
         """Generate a master document optimized for Confluence."""
+        business_overview = context.get('business_overview')
+        
         content = f"""# {context['project_name']} Documentation
 
 > **Generated**: {context['generation_date']}  
@@ -898,8 +929,33 @@ Check:
 > **Total Items**: {context['stats']['total']}
 
 ---
-
-## 📋 Overview
+"""
+        
+        # Add business overview if available
+        if business_overview:
+            content += f"""
+## 💼 Business Overview
+"""
+            if business_overview.get('project_purpose'):
+                content += f"""
+**Project Purpose:** {business_overview['project_purpose']}
+"""
+            
+            if business_overview.get('business_context'):
+                content += f"""
+**Business Context:** {business_overview['business_context']}
+"""
+            
+            if business_overview.get('key_business_value'):
+                content += f"""
+**Key Business Value:** {business_overview['key_business_value']}
+"""
+            content += f"""
+---
+"""
+        
+        content += f"""
+## 📋 Technical Overview
 
 {context['project_name']} is an automated documentation system that analyzes Python code and generates comprehensive documentation.
 

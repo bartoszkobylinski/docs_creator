@@ -9,6 +9,8 @@ from typing import Dict, Any
 from services.patcher import apply_docitem_patch
 from core.config import settings
 from services.scanner_service import scanner_service
+from services.cost_tracking_service import cost_tracking_service
+from services.openai_service import openai_service
 
 try:
     import openai
@@ -82,7 +84,7 @@ class DocstringService:
             with open(settings.report_file_path, 'w') as f:
                 json.dump(data, f, indent=2)
     
-    def generate_ai_docstring(self, item: Dict[str, Any]) -> tuple[str, bool]:
+    def generate_ai_docstring(self, item: Dict[str, Any]) -> tuple[str, bool, Dict[str, Any]]:
         """
         Generate a docstring using AI or fallback to template.
         
@@ -90,27 +92,42 @@ class DocstringService:
             item: Documentation item to generate docstring for
             
         Returns:
-            tuple: (Generated docstring, True if AI was used, False if template)
+            tuple: (Generated docstring, True if AI was used, cost info dict)
         """
-        # Try OpenAI generation first if available
-        if OPENAI_AVAILABLE and settings.OPENAI_API_KEY and settings.OPENAI_API_KEY != "sk-...your-api-key-here...":
+        # Check if we have valid OpenAI settings
+        if not OPENAI_AVAILABLE:
+            print("OpenAI library not available")
+        else:
+            openai_settings = openai_service.get_settings()
+            if openai_settings:
+                print(f"OpenAI settings found from {openai_settings.get('source', 'unknown')}")
+                print(f"Using model: {openai_settings.get('model', 'unknown')}")
+            else:
+                print("No valid OpenAI settings found")
+        
+        if OPENAI_AVAILABLE and openai_service.has_valid_settings():
             try:
-                docstring = self._generate_openai_docstring(item)
-                return docstring, True
+                docstring, cost_info = self._generate_openai_docstring(item)
+                return docstring, True, cost_info
             except Exception as e:
                 print(f"OpenAI generation failed: {e}, falling back to template")
         
         # Fallback to template generation
         docstring = self._generate_template_docstring(item)
-        return docstring, False
+        return docstring, False, {"cost": 0.0, "tokens_used": 0}
     
-    def _generate_openai_docstring(self, item: Dict[str, Any]) -> str:
-        """Generate docstring using OpenAI."""
+    def _generate_openai_docstring(self, item: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+        """Generate docstring using OpenAI and track costs."""
         qualname = item.get('qualname', 'unknown')
         method_type = item.get('method', 'FUNCTION')
         signature = item.get('signature', '')
         source_code = item.get('source', '')
         file_path = item.get('file_path', '')
+        
+        # Get OpenAI settings
+        openai_settings = openai_service.get_settings()
+        if not openai_settings:
+            raise Exception("No OpenAI settings found")
         
         # Build context for AI
         context = f"Function/Method: {qualname}\n"
@@ -156,15 +173,28 @@ Raises:
 Return ONLY the docstring content WITHOUT the triple quotes. Do not include the triple quotes in your response."""
 
         # Call OpenAI API
-        client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+        client = openai.OpenAI(api_key=openai_settings["api_key"])
         response = client.chat.completions.create(
-            model="gpt-4.1-nano",
+            model=openai_settings["model"],
             messages=[
                 {"role": "system", "content": "You are a Python expert. Write docstrings that follow PEP 257 and Google style. Be concise and clear. Focus on what the function does, its parameters, return value, and exceptions."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=400,
-            temperature=0.1
+            max_tokens=openai_settings["max_tokens"],
+            temperature=openai_settings["temperature"]
+        )
+        
+        # Extract usage information
+        usage = response.usage
+        prompt_tokens = usage.prompt_tokens if usage else 0
+        completion_tokens = usage.completion_tokens if usage else 0
+        
+        # Track the cost
+        cost_info = cost_tracking_service.track_usage(
+            model=response.model,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            context=f"docstring_generation:{qualname}"
         )
         
         content = response.choices[0].message.content.strip()
@@ -172,7 +202,7 @@ Return ONLY the docstring content WITHOUT the triple quotes. Do not include the 
         # Defensive: Strip any triple quotes that AI might have added despite our prompt
         content = content.strip('"""').strip("'''")
         
-        return content
+        return content, cost_info
     
     def _generate_template_docstring(self, item: Dict[str, Any]) -> str:
         """Generate docstring using template fallback."""

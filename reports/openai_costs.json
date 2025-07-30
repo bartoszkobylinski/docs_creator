@@ -1,0 +1,39 @@
+{
+  "total_cost": 2.492067,
+  "total_requests": 3,
+  "daily_costs": {
+    "2025-07-30": 2.492067
+  },
+  "monthly_costs": {
+    "2025-07": 2.492067
+  },
+  "requests": [
+    {
+      "timestamp": "2025-07-30T08:32:37.992126",
+      "model": "gpt-4.1-nano-2025-04-14",
+      "prompt_tokens": 293,
+      "completion_tokens": 71,
+      "total_tokens": 364,
+      "cost": 1.154,
+      "context": "docstring_generation:PlayerUpdater.get_particular_game_stats_url"
+    },
+    {
+      "timestamp": "2025-07-30T08:33:04.289048",
+      "model": "gpt-4.1-nano-2025-04-14",
+      "prompt_tokens": 301,
+      "completion_tokens": 92,
+      "total_tokens": 393,
+      "cost": 1.338,
+      "context": "docstring_generation:PlayerUpdater.get_required_matches_for_particular_player"
+    },
+    {
+      "timestamp": "2025-07-30T08:37:55.612231",
+      "model": "gpt-4.1-nano-2025-04-14",
+      "prompt_tokens": 301,
+      "completion_tokens": 92,
+      "total_tokens": 393,
+      "cost": 6.7e-05,
+      "context": "docstring_generation:PlayerUpdater.get_required_matches_for_particular_player"
+    }
+  ]
+}

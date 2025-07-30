@@ -16,6 +16,15 @@ from services.markdown_service import markdown_service
 from services.confluence_service import confluence_service
 from services.docstring_service import docstring_service
 from services.scanner_service import scanner_service
+from services.business_service import business_service
+from services.openai_service import openai_service
+from services.cost_tracking_service import cost_tracking_service
+
+try:
+    import openai
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
 
 
 def create_app() -> Flask:
@@ -60,6 +69,37 @@ def create_app() -> Flask:
                         flash(f'Scan failed: {str(e)}', 'error')
                 else:
                     flash('Please enter a project path', 'error')
+            
+            # Handle Business Overview
+            elif 'save_business_overview' in request.form:
+                try:
+                    result = business_service.save_business_overview(
+                        project_purpose=request.form.get('project_purpose', ''),
+                        business_context=request.form.get('business_context', ''),
+                        key_business_value=request.form.get('key_business_value', '')
+                    )
+                    if result.get('success'):
+                        flash('Business overview saved successfully!', 'success')
+                    else:
+                        flash(f'Failed to save business overview: {result.get("error")}', 'error')
+                except Exception as e:
+                    flash(f'Error saving business overview: {str(e)}', 'error')
+            
+            # Handle OpenAI Settings
+            elif 'save_openai' in request.form:
+                try:
+                    result = openai_service.save_settings(
+                        api_key=request.form.get('openai_api_key', ''),
+                        model=request.form.get('openai_model', 'gpt-4.1-nano'),
+                        max_tokens=int(request.form.get('max_tokens', 400)),
+                        temperature=0.1
+                    )
+                    if result.get('success'):
+                        flash('OpenAI settings saved successfully!', 'success')
+                    else:
+                        flash(f'Failed to save OpenAI settings: {result.get("message")}', 'error')
+                except Exception as e:
+                    flash(f'Error saving OpenAI settings: {str(e)}', 'error')
             
             # Handle Confluence settings
             elif 'save_confluence' in request.form:
@@ -106,12 +146,22 @@ def create_app() -> Flask:
             total_items = documented_items = coverage = 0
             project_path = ""
         
+        # Get business overview data
+        business_overview = business_service.get_business_overview()
+        
+        # Get OpenAI settings and cost stats
+        openai_settings = openai_service.get_settings()
+        cost_stats = cost_tracking_service.get_cost_stats()
+        
         return render_template('index.html', 
             has_existing_data=has_existing_data,
             total_items=total_items,
             documented_items=documented_items,
             coverage=coverage,
-            project_path=project_path
+            project_path=project_path,
+            business_overview=business_overview,
+            openai_settings=openai_settings,
+            cost_stats=cost_stats
         )
     
     @app.route('/dashboard', methods=['GET', 'POST'])
@@ -293,6 +343,9 @@ def create_app() -> Flask:
                 except Exception as e:
                     flash(f"Markdown generation failed: {str(e)}", 'error')
         
+        # Get cost stats for dashboard
+        cost_stats = cost_tracking_service.get_cost_stats()
+        
         return render_template('dashboard_simple.html',
             items=items,
             total_items=total_items,
@@ -300,7 +353,8 @@ def create_app() -> Flask:
             coverage=coverage,
             missing_docs=missing_docs,
             has_data=total_items > 0,
-            project_name="API_Documentation"
+            project_name="API_Documentation",
+            cost_stats=cost_stats
         )
     
     @app.route('/edit-docstring/<int:item_index>', methods=['GET', 'POST'])
@@ -364,9 +418,14 @@ def create_app() -> Flask:
             # Handle AI generation
             elif 'generate_ai_docstring' in request.form:
                 try:
-                    generated_docstring, used_ai = docstring_service.generate_ai_docstring(item)
+                    generated_docstring, used_ai, cost_info = docstring_service.generate_ai_docstring(item)
                     if used_ai:
-                        flash('🤖 AI docstring generated! Review and save if you like it.', 'success')
+                        if cost_info.get('success'):
+                            cost_display = cost_info.get('formatted_cost', '$0.00')
+                            tokens_used = cost_info.get('tokens_used', 0)
+                            flash(f'🤖 AI docstring generated! Cost: {cost_display} ({tokens_used} tokens). Review and save if you like it.', 'success')
+                        else:
+                            flash('🤖 AI docstring generated! Review and save if you like it.', 'success')
                     else:
                         flash('⚠️ AI not available (check OpenAI API key). Generated template instead.', 'warning')
                 except Exception as e:
@@ -570,6 +629,26 @@ def create_app() -> Flask:
     def health_check():
         """Health check endpoint."""
         return jsonify({"status": "healthy", "version": settings.VERSION})
+    
+    # Debug endpoint for OpenAI settings
+    @app.route('/api/debug/openai')
+    def debug_openai():
+        """Debug endpoint to check OpenAI configuration."""
+        openai_settings = openai_service.get_settings()
+        has_valid = openai_service.has_valid_settings()
+        
+        if openai_settings:
+            # Mask the API key for security
+            masked_key = openai_settings["api_key"][:8] + "..." + openai_settings["api_key"][-4:]
+            openai_settings["api_key"] = masked_key
+        
+        return jsonify({
+            "has_valid_settings": has_valid,
+            "settings": openai_settings,
+            "env_key_exists": bool(settings.OPENAI_API_KEY),
+            "env_key_starts_with_sk": settings.OPENAI_API_KEY.startswith("sk-") if settings.OPENAI_API_KEY else False,
+            "openai_library_available": OPENAI_AVAILABLE
+        })
     
     return app
 

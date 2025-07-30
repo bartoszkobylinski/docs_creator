@@ -84,6 +84,18 @@
                                 <div class="coverage-bar" style="width: {{ coverage }}%"></div>
                             </div>
                         </div>
+                        
+                        <!-- AI Cost Summary -->
+                        {% if cost_stats and (cost_stats.today != '0.00' or cost_stats.month != '0.00') %}
+                        <div class="ai-cost-summary">
+                            <h4>🤖 AI Usage Costs</h4>
+                            <div class="cost-stats-small">
+                                <span>Today: <strong>${{ cost_stats.today }}</strong></span>
+                                <span>This Month: <strong>${{ cost_stats.month }}</strong></span>
+                                <span>Requests: <strong>{{ cost_stats.total_requests }}</strong></span>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -364,6 +376,39 @@
         
         .btn-secondary:hover {
             background-color: #545b62;
+        }
+        
+        .ai-cost-summary {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .ai-cost-summary h4 {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .cost-stats-small {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .cost-stats-small span {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cost-stats-small strong {
+            color: #059669;
+            margin-left: 0.25rem;
         }
     </style>
 </body>
