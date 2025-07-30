@@ -2,7 +2,7 @@
 Main application entry point for Flask Documentation Assistant.
 """
 
-from flask import Flask, request, render_template, jsonify, send_from_directory, redirect, url_for, flash, send_file
+from flask import Flask, request, render_template, jsonify, send_from_directory, redirect, url_for, flash, send_file, session
 from flask_cors import CORS
 import os
 
@@ -48,10 +48,43 @@ def create_app() -> Flask:
     api_bp = create_api_blueprint()
     app.register_blueprint(api_bp, url_prefix='/api')
     
+    # Demo login functionality
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        """Demo login page."""
+        if request.method == 'POST':
+            username = request.form.get('username', '').strip()
+            password = request.form.get('password', '').strip()
+            
+            # Simple demo credentials check
+            if username == 'demo' and password == 'demo123':
+                session['demo_authenticated'] = True
+                flash('🎉 Welcome to the Docs Creator demo!', 'success')
+                return redirect(url_for('index'))
+            else:
+                flash('❌ Invalid credentials. Please use: demo / demo123', 'error')
+        
+        return render_template('login.html')
+    
+    @app.route('/logout')
+    def logout():
+        """Logout from demo."""
+        session.pop('demo_authenticated', None)
+        flash('👋 You have been logged out of the demo.', 'success')
+        return redirect(url_for('login'))
+    
+    def require_demo_auth():
+        """Check if user is authenticated for demo."""
+        return session.get('demo_authenticated', False)
+    
     # Frontend routes
     @app.route('/', methods=['GET', 'POST'])
     def index():
         """Serve the main interface with server-side rendering."""
+        # Check demo authentication
+        if not require_demo_auth():
+            return redirect(url_for('login'))
+            
         if request.method == 'POST':
             # Handle project scanning
             if 'scan_project' in request.form:
@@ -170,6 +203,10 @@ def create_app() -> Flask:
     @app.route('/dashboard', methods=['GET', 'POST'])
     def serve_dashboard():
         """Serve the dashboard interface with server-side rendering."""
+        # Check demo authentication
+        if not require_demo_auth():
+            return redirect(url_for('login'))
+            
         # Get report data
         all_items = report_service.get_report_data()
         
@@ -381,6 +418,10 @@ def create_app() -> Flask:
     @app.route('/edit-docstring/<int:item_index>', methods=['GET', 'POST'])
     def edit_docstring(item_index):
         """Edit docstring for a specific item."""
+        # Check demo authentication
+        if not require_demo_auth():
+            return redirect(url_for('login'))
+            
         # Get current items
         items = report_service.get_report_data()
         
@@ -587,6 +628,10 @@ def create_app() -> Flask:
     @app.route('/uml', methods=['GET', 'POST'])
     def uml_page():
         """Render and handle UML diagrams page."""
+        # Check demo authentication
+        if not require_demo_auth():
+            return redirect(url_for('login'))
+            
         if request.method == 'GET':
             show_source = request.args.get('show_source', False, type=bool)
             

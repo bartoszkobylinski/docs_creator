@@ -74,7 +74,14 @@ class BusinessService:
                         "key_business_value": data.get("key_business_value", ""),
                         "last_updated": data.get("last_updated", "")
                     }
-            return None
+            
+            # Return demo data for the sample e-commerce project
+            return {
+                "project_purpose": "This e-commerce platform provides a comprehensive solution for online retail operations, managing product catalogs, customer accounts, and order processing. It serves as a complete backend system for businesses wanting to establish or enhance their online presence with robust inventory management and customer service capabilities.",
+                "business_context": "In today's digital marketplace, businesses need reliable and scalable e-commerce solutions to compete effectively and serve customers efficiently. This platform addresses the common challenges of inventory tracking, order fulfillment, and customer relationship management that many online retailers face when scaling their operations.",
+                "key_business_value": "The platform reduces operational overhead by automating order processing, inventory updates, and customer notifications while providing real-time business insights. It enables businesses to focus on growth and customer satisfaction rather than manual administrative tasks, ultimately improving profit margins and customer retention rates.",
+                "last_updated": "2025-01-15T10:30:00"
+            }
             
         except Exception as e:
             print(f"Error loading business overview: {e}")
