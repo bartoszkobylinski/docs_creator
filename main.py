@@ -173,7 +173,17 @@ def create_app() -> Flask:
         
         # Check for existing project data
         existing_data = report_service.get_report_data()
+        
+        # In demo mode, filter out non-demo data
+        if os.environ.get('DEMO_MODE') == 'true':
+            existing_data = [item for item in existing_data 
+                           if item.get('file_path', '').startswith('/app/demo_sample_project')]
+        
         has_existing_data = len(existing_data) > 0
+        
+        # Show demo mode message if no demo data exists
+        if os.environ.get('DEMO_MODE') == 'true' and not has_existing_data:
+            flash('Welcome to demo mode! Click "Scan Project" to analyze the built-in e-commerce sample.', 'info')
         
         if has_existing_data:
             # Calculate basic stats for existing data
@@ -227,6 +237,11 @@ def create_app() -> Flask:
             
         # Get report data
         all_items = report_service.get_report_data()
+        
+        # In demo mode, filter out non-demo data
+        if os.environ.get('DEMO_MODE') == 'true':
+            all_items = [item for item in all_items 
+                        if item.get('file_path', '').startswith('/app/demo_sample_project')]
         
         # Set current project for cost tracking based on existing data
         if all_items:
@@ -442,6 +457,11 @@ def create_app() -> Flask:
             
         # Get current items
         items = report_service.get_report_data()
+        
+        # In demo mode, filter out non-demo data
+        if os.environ.get('DEMO_MODE') == 'true':
+            items = [item for item in items 
+                    if item.get('file_path', '').startswith('/app/demo_sample_project')]
         
         if item_index < 0 or item_index >= len(items):
             flash('Invalid item index', 'error')
