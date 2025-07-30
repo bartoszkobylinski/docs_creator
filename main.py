@@ -587,7 +587,6 @@ def create_app() -> Flask:
                 # Try to get project name from first item's file path
                 first_item = items[0]
                 if 'file_path' in first_item:
-                    import os
                     project_name = os.path.basename(os.path.dirname(first_item['file_path']))
             
             title = f"{project_name} - UML Diagram"
