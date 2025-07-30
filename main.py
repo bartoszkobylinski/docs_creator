@@ -485,7 +485,6 @@ def create_app() -> Flask:
                             file_path = item.get('file_path', '')
                             if file_path:
                                 # Extract project root from file path (go up to find the project root)
-                                import os
                                 project_path = os.path.dirname(file_path)
                                 while project_path and project_path != '/' and not any(
                                     os.path.exists(os.path.join(project_path, marker)) 
