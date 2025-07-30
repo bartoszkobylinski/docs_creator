@@ -13,10 +13,11 @@ from core.openai_pricing import calculate_cost, format_cost
 
 
 class CostTrackingService:
-    """Service for tracking OpenAI API costs and usage."""
+    """Service for tracking OpenAI API costs and usage per project."""
     
     def __init__(self):
         self.cost_file_path = os.path.join(os.path.dirname(settings.report_file_path), "openai_costs.json")
+        self.current_project_path = None
         self._ensure_cost_file_exists()
     
     def _ensure_cost_file_exists(self):
@@ -25,17 +26,84 @@ class CostTrackingService:
             # Create directory if it doesn't exist
             os.makedirs(os.path.dirname(self.cost_file_path), exist_ok=True)
             
-            # Initialize with empty data
+            # Initialize with empty project-based structure
             initial_data = {
+                "projects": {},
+                "current_project": None
+            }
+            
+            with open(self.cost_file_path, 'w', encoding='utf-8') as f:
+                json.dump(initial_data, f, indent=2)
+    
+    def set_current_project(self, project_path: str, reset_costs: bool = True):
+        """
+        Set the current project for cost tracking.
+        
+        Args:
+            project_path: Path to the current project
+            reset_costs: Whether to reset costs for this project
+        """
+        self.current_project_path = project_path
+        
+        try:
+            # Load existing data
+            with open(self.cost_file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # Update current project
+            data["current_project"] = project_path
+            
+            # Initialize or reset project data if needed
+            if project_path not in data["projects"] or reset_costs:
+                data["projects"][project_path] = {
+                    "total_cost": 0.0,
+                    "total_requests": 0,
+                    "daily_costs": {},
+                    "monthly_costs": {},
+                    "requests": [],
+                    "created_at": datetime.now().isoformat()
+                }
+            
+            # Save updated data
+            with open(self.cost_file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2)
+                
+        except Exception as e:
+            print(f"Error setting current project: {e}")
+    
+    def _get_current_project_data(self) -> Dict[str, Any]:
+        """Get cost data for the current project."""
+        try:
+            with open(self.cost_file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            current_project = data.get("current_project")
+            if not current_project:
+                return {
+                    "total_cost": 0.0,
+                    "total_requests": 0,
+                    "daily_costs": {},
+                    "monthly_costs": {},
+                    "requests": []
+                }
+            
+            return data.get("projects", {}).get(current_project, {
+                "total_cost": 0.0,
+                "total_requests": 0,
+                "daily_costs": {},
+                "monthly_costs": {},
+                "requests": []
+            })
+            
+        except Exception as e:
+            print(f"Error getting current project data: {e}")
+            return {
                 "total_cost": 0.0,
                 "total_requests": 0,
                 "daily_costs": {},
                 "monthly_costs": {},
                 "requests": []
             }
-            
-            with open(self.cost_file_path, 'w', encoding='utf-8') as f:
-                json.dump(initial_data, f, indent=2)
     
     def track_usage(
         self, 
@@ -45,7 +113,7 @@ class CostTrackingService:
         context: str = "docstring_generation"
     ) -> Dict[str, Any]:
         """
-        Track a single API usage and calculate costs.
+        Track a single API usage and calculate costs for the current project.
         
         Args:
             model: OpenAI model used
@@ -66,25 +134,47 @@ class CostTrackingService:
             with open(self.cost_file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
+            # Get current project or create default
+            current_project = data.get("current_project")
+            if not current_project:
+                # If no current project set, create a default one
+                current_project = "default_project"
+                data["current_project"] = current_project
+                
+            if "projects" not in data:
+                data["projects"] = {}
+                
+            if current_project not in data["projects"]:
+                data["projects"][current_project] = {
+                    "total_cost": 0.0,
+                    "total_requests": 0,
+                    "daily_costs": {},
+                    "monthly_costs": {},
+                    "requests": [],
+                    "created_at": datetime.now().isoformat()
+                }
+            
+            project_data = data["projects"][current_project]
+            
             # Current date and time
             now = datetime.now()
             today_str = now.strftime("%Y-%m-%d")
             month_str = now.strftime("%Y-%m")
             timestamp = now.isoformat()
             
-            # Update totals
-            data["total_cost"] = data.get("total_cost", 0.0) + cost
-            data["total_requests"] = data.get("total_requests", 0) + 1
+            # Update project totals
+            project_data["total_cost"] = project_data.get("total_cost", 0.0) + cost
+            project_data["total_requests"] = project_data.get("total_requests", 0) + 1
             
             # Update daily costs
-            if "daily_costs" not in data:
-                data["daily_costs"] = {}
-            data["daily_costs"][today_str] = data["daily_costs"].get(today_str, 0.0) + cost
+            if "daily_costs" not in project_data:
+                project_data["daily_costs"] = {}
+            project_data["daily_costs"][today_str] = project_data["daily_costs"].get(today_str, 0.0) + cost
             
             # Update monthly costs
-            if "monthly_costs" not in data:
-                data["monthly_costs"] = {}
-            data["monthly_costs"][month_str] = data["monthly_costs"].get(month_str, 0.0) + cost
+            if "monthly_costs" not in project_data:
+                project_data["monthly_costs"] = {}
+            project_data["monthly_costs"][month_str] = project_data["monthly_costs"].get(month_str, 0.0) + cost
             
             # Add request record
             request_record = {
@@ -97,13 +187,13 @@ class CostTrackingService:
                 "context": context
             }
             
-            if "requests" not in data:
-                data["requests"] = []
-            data["requests"].append(request_record)
+            if "requests" not in project_data:
+                project_data["requests"] = []
+            project_data["requests"].append(request_record)
             
-            # Keep only last 1000 requests to prevent file from growing too large
-            if len(data["requests"]) > 1000:
-                data["requests"] = data["requests"][-1000:]
+            # Keep only last 1000 requests per project to prevent file from growing too large
+            if len(project_data["requests"]) > 1000:
+                project_data["requests"] = project_data["requests"][-1000:]
             
             # Save updated data
             with open(self.cost_file_path, 'w', encoding='utf-8') as f:
@@ -113,8 +203,8 @@ class CostTrackingService:
                 "success": True,
                 "cost": cost,
                 "formatted_cost": format_cost(cost),
-                "total_cost": data["total_cost"],
-                "total_requests": data["total_requests"],
+                "total_cost": project_data["total_cost"],
+                "total_requests": project_data["total_requests"],
                 "tokens_used": prompt_tokens + completion_tokens
             }
             
@@ -127,39 +217,28 @@ class CostTrackingService:
     
     def get_cost_stats(self) -> Dict[str, Any]:
         """
-        Get current cost statistics.
+        Get current project cost statistics.
         
         Returns:
-            Dictionary with cost statistics
+            Dictionary with cost statistics for the current project
         """
         try:
-            if not os.path.exists(self.cost_file_path):
-                return {
-                    "today": "0.00",
-                    "month": "0.00",
-                    "total": "0.00",
-                    "total_requests": 0,
-                    "today_requests": 0,
-                    "month_requests": 0
-                }
-            
-            with open(self.cost_file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+            project_data = self._get_current_project_data()
             
             today_str = date.today().strftime("%Y-%m-%d")
             month_str = date.today().strftime("%Y-%m")
             
-            # Get costs
-            today_cost = data.get("daily_costs", {}).get(today_str, 0.0)
-            month_cost = data.get("monthly_costs", {}).get(month_str, 0.0)
-            total_cost = data.get("total_cost", 0.0)
-            total_requests = data.get("total_requests", 0)
+            # Get costs from current project
+            today_cost = project_data.get("daily_costs", {}).get(today_str, 0.0)
+            month_cost = project_data.get("monthly_costs", {}).get(month_str, 0.0)
+            total_cost = project_data.get("total_cost", 0.0)
+            total_requests = project_data.get("total_requests", 0)
             
             # Count today's and this month's requests
             today_requests = 0
             month_requests = 0
             
-            for request in data.get("requests", []):
+            for request in project_data.get("requests", []):
                 request_date = datetime.fromisoformat(request["timestamp"]).date()
                 if request_date == date.today():
                     today_requests += 1
@@ -188,19 +267,17 @@ class CostTrackingService:
     
     def get_recent_requests(self, limit: int = 50) -> list:
         """
-        Get recent API requests with cost information.
+        Get recent API requests with cost information for the current project.
         
         Args:
             limit: Maximum number of requests to return
             
         Returns:
-            List of recent request records
+            List of recent request records from the current project
         """
         try:
-            with open(self.cost_file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            
-            requests = data.get("requests", [])
+            project_data = self._get_current_project_data()
+            requests = project_data.get("requests", [])
             # Return most recent first
             return list(reversed(requests[-limit:]))
             
@@ -210,21 +287,20 @@ class CostTrackingService:
     
     def get_monthly_breakdown(self, year: int, month: int) -> Dict[str, Any]:
         """
-        Get detailed breakdown for a specific month.
+        Get detailed breakdown for a specific month for the current project.
         
         Args:
             year: Year (e.g., 2024)
             month: Month (1-12)
             
         Returns:
-            Dictionary with monthly breakdown
+            Dictionary with monthly breakdown for the current project
         """
         try:
-            with open(self.cost_file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+            project_data = self._get_current_project_data()
             
             month_str = f"{year:04d}-{month:02d}"
-            requests = data.get("requests", [])
+            requests = project_data.get("requests", [])
             
             # Filter requests for the specific month
             month_requests = []
@@ -267,7 +343,7 @@ class CostTrackingService:
             return {
                 "month": f"{year:04d}-{month:02d}",
                 "total_requests": 0,
-                "total_cost": "0.00",
+                "total_cost": "$0.00",
                 "model_usage": {},
                 "daily_breakdown": {},
                 "requests": []

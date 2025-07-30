@@ -86,14 +86,15 @@
                         </div>
                         
                         <!-- AI Cost Summary -->
-                        {% if cost_stats and (cost_stats.today != '0.00' or cost_stats.month != '0.00') %}
+                        {% if cost_stats and (cost_stats.today != '$0.00' or cost_stats.month != '$0.00') %}
                         <div class="ai-cost-summary">
-                            <h4>🤖 AI Usage Costs</h4>
+                            <h4>🤖 AI Usage Costs (Current Project)</h4>
                             <div class="cost-stats-small">
-                                <span>Today: <strong>${{ cost_stats.today }}</strong></span>
-                                <span>This Month: <strong>${{ cost_stats.month }}</strong></span>
+                                <span>Today: <strong>{{ cost_stats.today }}</strong></span>
+                                <span>This Month: <strong>{{ cost_stats.month }}</strong></span>
                                 <span>Requests: <strong>{{ cost_stats.total_requests }}</strong></span>
                             </div>
+                            <p class="cost-note">Costs reset when scanning a new project</p>
                         </div>
                         {% endif %}
                     </div>
@@ -409,6 +410,14 @@
         .cost-stats-small strong {
             color: #059669;
             margin-left: 0.25rem;
+        }
+        
+        .cost-note {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+            font-style: italic;
         }
     </style>
 </body>

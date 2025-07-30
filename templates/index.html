@@ -184,21 +184,22 @@
                     
                     {% if openai_settings and openai_settings.api_key and openai_settings.api_key != 'sk-...your-api-key-here...' %}
                     <div class="cost-info">
-                        <h5>💰 Cost Tracking</h5>
+                        <h5>💰 Cost Tracking (Current Project)</h5>
                         <div class="cost-stats">
                             <div class="cost-item">
                                 <span class="cost-label">Today:</span>
-                                <span class="cost-value">${{ cost_stats.today if cost_stats else '0.00' }}</span>
+                                <span class="cost-value">{{ cost_stats.today if cost_stats else '$0.00' }}</span>
                             </div>
                             <div class="cost-item">
                                 <span class="cost-label">This Month:</span>
-                                <span class="cost-value">${{ cost_stats.month if cost_stats else '0.00' }}</span>
+                                <span class="cost-value">{{ cost_stats.month if cost_stats else '$0.00' }}</span>
                             </div>
                             <div class="cost-item">
                                 <span class="cost-label">Total Requests:</span>
                                 <span class="cost-value">{{ cost_stats.total_requests if cost_stats else '0' }}</span>
                             </div>
                         </div>
+                        <p class="form-note">Costs are tracked per project and reset when scanning a new project</p>
                     </div>
                     {% endif %}
                 </form>

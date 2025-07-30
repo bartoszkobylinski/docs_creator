@@ -58,12 +58,15 @@ def create_app() -> Flask:
                 project_path = request.form.get('project_path', '').strip()
                 if project_path:
                     try:
+                        # Reset cost tracking for new project
+                        cost_tracking_service.set_current_project(project_path, reset_costs=True)
+                        
                         # Call the scan service directly
                         from services.scanner_service import scanner_service
                         items_data, total_files, scan_time = scanner_service.scan_local_project(project_path)
                         
                         # Save to session or redirect to dashboard
-                        flash(f'Successfully scanned {total_files} files!', 'success')
+                        flash(f'Successfully scanned {total_files} files! Cost tracking reset for new project.', 'success')
                         return redirect(url_for('serve_dashboard'))
                     except Exception as e:
                         flash(f'Scan failed: {str(e)}', 'error')
@@ -169,6 +172,24 @@ def create_app() -> Flask:
         """Serve the dashboard interface with server-side rendering."""
         # Get report data
         all_items = report_service.get_report_data()
+        
+        # Set current project for cost tracking based on existing data
+        if all_items:
+            first_item = all_items[0]
+            file_path = first_item.get('file_path', '')
+            if file_path:
+                # Extract project path by finding the project root
+                import os
+                project_path = os.path.dirname(file_path)
+                while project_path and project_path != '/' and not any(
+                    os.path.exists(os.path.join(project_path, marker)) 
+                    for marker in ['pyproject.toml', 'requirements.txt', 'setup.py', '.git']
+                ):
+                    project_path = os.path.dirname(project_path)
+                
+                if project_path and project_path != '/':
+                    # Set current project without resetting costs (we just want to track for this project)
+                    cost_tracking_service.set_current_project(project_path, reset_costs=False)
         
         # Scanner now properly skips non-documentable items, so no filtering needed
         items = all_items
